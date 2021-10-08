@@ -32,10 +32,12 @@ export const restPost = (url, data, config) => instance.post(url, data, {
     ...getHeader(config && config.headers),
   },
 });
+
 export const restPatch = (url, data, config) => instance.patch(url, data, {
   ...config,
   headers: {
     ...getHeader(config && config.headers),
+
   },
 });
 export default instance;

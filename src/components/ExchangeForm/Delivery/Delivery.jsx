@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
@@ -50,12 +51,8 @@ const useStyle = makeStyles(() => ({
   },
 }));
 
-const Delivery = () => {
+const Delivery = ({ control }) => {
   const style = useStyle();
-  const { handleSubmit, control } = useForm();
-  const onSubmit = (data) => {
-    console.log(data);
-  };
   return (
     <div className={style.container}>
       <div className={style.containerOfForms}>
@@ -110,6 +107,7 @@ const Delivery = () => {
               />
               <div className={style.inputHome}>
                 <Input
+                  defaultValue=""
                   className={style.test}
                   rules={
                   {
@@ -152,6 +150,7 @@ const Delivery = () => {
                   name="AddrHouse"
                 />
                 <Input
+                  defaultValue=""
                   className={style.test}
                   rules={
                   {
@@ -172,6 +171,7 @@ const Delivery = () => {
               </div>
               <Input
                 className={style.test}
+                defaultValue=""
                 rules={
                   {
                     maxLength: {
@@ -239,6 +239,7 @@ const Delivery = () => {
               />
               <Input
                 className={style.test}
+                defaultValue=""
                 rules={
                   {
                     maxLength: {

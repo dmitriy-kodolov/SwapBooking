@@ -49,7 +49,7 @@ const useStyle = makeStyles(() => ({
   },
 }));
 
-const Exchange = ({ control }) => {
+const Exchange = ({ control, setCategorFromExchange, categorFromExchange }) => {
   const style = useStyle();
   return (
     <div className={style.container}>
@@ -128,6 +128,7 @@ const Exchange = ({ control }) => {
               />
               <div className={style.inputHome}>
                 <Input
+                  defaultValue=""
                   className={style.test}
                   rules={
                   {
@@ -174,7 +175,7 @@ const Exchange = ({ control }) => {
         </Paper>
         <Paper className={style.paper} elevation={4}>
           <div className={style.categor}>
-            <Category control={control} />
+            <Category categorFromExchange={categorFromExchange} setCategorFromExchange={setCategorFromExchange} control={control} name="exchangeCategor" />
           </div>
         </Paper>
       </div>

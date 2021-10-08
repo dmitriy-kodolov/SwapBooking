@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/require-default-props */
@@ -32,33 +33,36 @@ export default function ExchangeForm() {
   const style = useStyle();
   const { handleSubmit, control } = useForm();
   const [step, setStep] = useState(1);
-  const onSubmit = (data) => {
+  const [categorFromRecive, setCategorFromRecive] = useState([]);
+  const [categorFromExchange, setCategorFromExchange] = useState([]);
+  const onSubmitForm = (data) => {
+    setStep((prevState) => prevState + 1);
     console.log(data);
+    if (step === 3) {
+      const newData = { ...data, exchangeCategor: categorFromExchange, receiveCategor: categorFromRecive };
+      console.log(newData);
+    }
+    // console.log('step3', data);
+    // if (!data.genere.length) {
+    // console.log('net');
+    // }
   };
+
   const Next = () => (
     <Button
       className={style.btn}
       variant="contained"
-      onClick={handleSubmit(onSubmit)}
-      // TODO Проблема здесь в том что валидация происходит по кнопке далее, через функцию
-      // handlesubmit Но на этой же кнопке должна висеть функция переключения шагов, и если
-      // ее прокидывать через колбэк то она не работает
-      // onClick={() => {
-        // handleSubmit(onSubmit);
-        // if (step !== 3) {
-          // setStep((prevState) => prevState + 1);
-        // }
-      // }}
+      type="submit"
     >
       Далее
     </Button>
   );
   const Accept = () => (
     <Button
+      type="submit"
       size="medium"
       className={style.btn}
       variant="contained"
-      onClick={handleSubmit(onSubmit)}
     >
       Подтвердить данные
     </Button>
@@ -78,10 +82,10 @@ export default function ExchangeForm() {
     </Button>
   );
   return (
-    <form className={style.root} onSubmit={handleSubmit(onSubmit)}>
+    <form className={style.root} onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}>
       {step === 1 && (
       <div>
-        <Exchange control={control} />
+        <Exchange setCategorFromExchange={setCategorFromExchange} categorFromExchange={categorFromExchange} control={control} />
         <div className={style.exchange}>
           <Next />
         </div>
@@ -90,7 +94,7 @@ export default function ExchangeForm() {
       {step === 2 && (
       <div className={style.root}>
         <h4>Хочу получить</h4>
-        <Receive control={control} />
+        <Receive categorFromRecive={categorFromRecive} setCategorFromRecive={setCategorFromRecive} control={control} />
         <div className={style.delivery}>
           <Back />
           <Next />
@@ -100,12 +104,16 @@ export default function ExchangeForm() {
       {step === 3
       && (
       <div>
-        <Delivery />
+        <Delivery control={control} />
         <div className={style.delivery}>
           <Back />
           <Accept />
         </div>
       </div>
+      )}
+      {step === 4
+      && (
+      <p>Данные успешно отправлены</p>
       )}
     </form>
   );
