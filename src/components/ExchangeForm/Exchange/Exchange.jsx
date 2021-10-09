@@ -1,13 +1,19 @@
+/* eslint-disable max-len */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { Paper } from '@mui/material';
-import { useForm } from 'react-hook-form';
-import Category from '../../Category/Category';
 import Input from '../../Input/Input';
 
 const useStyle = makeStyles(() => ({
+  paper: {
+    overflow: 'auto',
+    padding: '15px',
+    height: '300px',
+    margin: '15px',
+    width: '450px',
+  },
   test: {
     margin: '5px',
     marginTop: '10px',
@@ -16,25 +22,12 @@ const useStyle = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'row',
   },
-  paper: {
-    overflow: 'auto',
-    padding: '15px',
-    height: '300px',
-    margin: '15px',
-    width: '450px',
-
-  },
   containerOfForms: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
 
-  },
-  root: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
   },
   form: {
     width: '100%',
@@ -49,19 +42,18 @@ const useStyle = makeStyles(() => ({
   },
 }));
 
-const Exchange = ({ control, setCategorFromExchange, categorFromExchange }) => {
+const Exchange = ({
+  control,
+}) => {
   const style = useStyle();
   return (
-    <div className={style.container}>
-      <h4>Хочу обменять</h4>
-      <div className={style.containerOfForms}>
-        <Paper className={style.paper} elevation={4}>
-          <div className={style.root}>
-            <div className={style.form}>
-              <div className={style.inputHome}>
-                <Input
-                  className={style.test}
-                  rules={
+    <div className={style.containerOfForms}>
+      <Paper className={style.paper} elevation={4}>
+        <div className={style.form}>
+          <div className={style.inputHome}>
+            <Input
+              className={style.test}
+              rules={
                   {
                     required: {
                       value: true,
@@ -77,13 +69,13 @@ const Exchange = ({ control, setCategorFromExchange, categorFromExchange }) => {
                     },
                   }
                 }
-                  control={control}
-                  label="Имя автора*"
-                  name="FirstName"
-                />
-                <Input
-                  className={style.test}
-                  rules={
+              control={control}
+              label="Имя автора*"
+              name="FirstName"
+            />
+            <Input
+              className={style.test}
+              rules={
                   {
                     required: {
                       value: true,
@@ -99,14 +91,14 @@ const Exchange = ({ control, setCategorFromExchange, categorFromExchange }) => {
                     },
                   }
                 }
-                  control={control}
-                  label="Фамилия автора*"
-                  name="LastName"
-                />
-              </div>
-              <Input
-                className={style.test}
-                rules={
+              control={control}
+              label="Фамилия автора*"
+              name="LastName"
+            />
+          </div>
+          <Input
+            className={style.test}
+            rules={
                   {
                     required: {
                       value: true,
@@ -122,15 +114,15 @@ const Exchange = ({ control, setCategorFromExchange, categorFromExchange }) => {
                     },
                   }
                 }
-                control={control}
-                label="Название книги*"
-                name="BookName"
-              />
-              <div className={style.inputHome}>
-                <Input
-                  defaultValue=""
-                  className={style.test}
-                  rules={
+            control={control}
+            label="Название книги*"
+            name="BookName"
+          />
+          <div className={style.inputHome}>
+            <Input
+              defaultValue=""
+              className={style.test}
+              rules={
                   {
                     maxLength: {
                       value: 13,
@@ -142,13 +134,13 @@ const Exchange = ({ control, setCategorFromExchange, categorFromExchange }) => {
                     },
                   }
                 }
-                  control={control}
-                  label="ISBN"
-                  name="ISBN"
-                />
-                <Input
-                  className={style.test}
-                  rules={
+              control={control}
+              label="ISBN"
+              name="ISBN"
+            />
+            <Input
+              className={style.test}
+              rules={
                   {
                     required: {
                       value: true,
@@ -165,23 +157,14 @@ const Exchange = ({ control, setCategorFromExchange, categorFromExchange }) => {
                     validate: (value) => value <= new Date().getFullYear() || 'Не больше текущего года',
                   }
                 }
-                  control={control}
-                  label="Год издания*"
-                  name="YearOfPublishing"
-                />
-              </div>
-            </div>
+              control={control}
+              label="Год издания*"
+              name="YearOfPublishing"
+            />
           </div>
-        </Paper>
-        <Paper className={style.paper} elevation={4}>
-          <div className={style.categor}>
-            <Category categorFromExchange={categorFromExchange} setCategorFromExchange={setCategorFromExchange} control={control} name="exchangeCategor" />
-          </div>
-        </Paper>
-      </div>
-
+        </div>
+      </Paper>
     </div>
-
   );
 };
 export default Exchange;

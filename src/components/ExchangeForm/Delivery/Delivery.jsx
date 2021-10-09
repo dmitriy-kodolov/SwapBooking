@@ -3,7 +3,6 @@
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { Paper } from '@mui/material';
-import { useForm } from 'react-hook-form';
 import Input from '../../Input/Input';
 
 const useStyle = makeStyles(() => ({
@@ -21,13 +20,6 @@ const useStyle = makeStyles(() => ({
     margin: '15px',
     width: '450px',
   },
-  containerOfForms: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-
-  },
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -35,19 +27,10 @@ const useStyle = makeStyles(() => ({
     width: '400px',
     margin: 'auto',
   },
-
   container: {
     display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  containerOfInput: {
-    display: 'flex',
     flexDirection: 'row',
-  },
-  submit: {
-    display: 'flex',
-    justifyContent: 'center',
+    alignItems: 'center',
   },
 }));
 
@@ -55,14 +38,11 @@ const Delivery = ({ control }) => {
   const style = useStyle();
   return (
     <div className={style.container}>
-      <div className={style.containerOfForms}>
-        <h4>Адрес доставки</h4>
-        <div className={style.containerOfInput}>
-          <Paper className={style.paper} elevation={4}>
-            <div className={style.root}>
-              <Input
-                className={style.test}
-                rules={
+      <Paper className={style.paper} elevation={4}>
+        <div className={style.root}>
+          <Input
+            className={style.test}
+            rules={
                   {
                     required: {
                       value: true,
@@ -79,13 +59,13 @@ const Delivery = ({ control }) => {
                     },
                   }
                 }
-                control={control}
-                label="Город*"
-                name="AddrCity"
-              />
-              <Input
-                className={style.test}
-                rules={
+            control={control}
+            label="Город*"
+            name="AddrCity"
+          />
+          <Input
+            className={style.test}
+            rules={
                   {
                     required: {
                       value: true,
@@ -101,15 +81,15 @@ const Delivery = ({ control }) => {
                     },
                   }
                 }
-                control={control}
-                label="Улица*"
-                name="AddrStreet"
-              />
-              <div className={style.inputHome}>
-                <Input
-                  defaultValue=""
-                  className={style.test}
-                  rules={
+            control={control}
+            label="Улица*"
+            name="AddrStreet"
+          />
+          <div className={style.inputHome}>
+            <Input
+              defaultValue=""
+              className={style.test}
+              rules={
                   {
                     maxLength: {
                       value: 3,
@@ -122,13 +102,13 @@ const Delivery = ({ control }) => {
                     },
                   }
                 }
-                  control={control}
-                  label="Строение"
-                  name="AddrStructure"
-                />
-                <Input
-                  className={style.test}
-                  rules={
+              control={control}
+              label="Строение"
+              name="AddrStructure"
+            />
+            <Input
+              className={style.test}
+              rules={
                   {
                     required: {
                       value: true,
@@ -145,14 +125,14 @@ const Delivery = ({ control }) => {
                     },
                   }
                 }
-                  control={control}
-                  label="Дом*"
-                  name="AddrHouse"
-                />
-                <Input
-                  defaultValue=""
-                  className={style.test}
-                  rules={
+              control={control}
+              label="Дом*"
+              name="AddrHouse"
+            />
+            <Input
+              defaultValue=""
+              className={style.test}
+              rules={
                   {
                     maxLength: {
                       value: 3,
@@ -164,15 +144,15 @@ const Delivery = ({ control }) => {
                     },
                   }
                 }
-                  control={control}
-                  label="Квартира"
-                  name="AddrApart"
-                />
-              </div>
-              <Input
-                className={style.test}
-                defaultValue=""
-                rules={
+              control={control}
+              label="Квартира"
+              name="AddrApart"
+            />
+          </div>
+          <Input
+            className={style.test}
+            defaultValue=""
+            rules={
                   {
                     maxLength: {
                       value: 6,
@@ -184,18 +164,18 @@ const Delivery = ({ control }) => {
                     },
                   }
                 }
-                control={control}
-                label="Индекс*"
-                name="AddrIndex"
-              />
-            </div>
-          </Paper>
-          <Paper className={style.paper} elevation={4}>
-            <div className={style.root}>
+            control={control}
+            label="Индекс*"
+            name="AddrIndex"
+          />
+        </div>
+      </Paper>
+      <Paper className={style.paper} elevation={4}>
+        <div className={style.root}>
 
-              <Input
-                className={style.test}
-                rules={
+          <Input
+            className={style.test}
+            rules={
                   {
                     required: {
                       value: true,
@@ -211,13 +191,13 @@ const Delivery = ({ control }) => {
                     },
                   }
                 }
-                control={control}
-                label="Фамилия*"
-                name="LastName"
-              />
-              <Input
-                className={style.test}
-                rules={
+            control={control}
+            label="Фамилия*"
+            name="LastName"
+          />
+          <Input
+            className={style.test}
+            rules={
                   {
                     required: {
                       value: true,
@@ -233,14 +213,14 @@ const Delivery = ({ control }) => {
                     },
                   }
                 }
-                control={control}
-                label="Имя*"
-                name="FirstName"
-              />
-              <Input
-                className={style.test}
-                defaultValue=""
-                rules={
+            control={control}
+            label="Имя*"
+            name="FirstName"
+          />
+          <Input
+            className={style.test}
+            defaultValue=""
+            rules={
                   {
                     maxLength: {
                       value: 25,
@@ -252,14 +232,12 @@ const Delivery = ({ control }) => {
                     },
                   }
                 }
-                control={control}
-                label="Отчество"
-                name="SecondName"
-              />
-            </div>
-          </Paper>
+            control={control}
+            label="Отчество"
+            name="SecondName"
+          />
         </div>
-      </div>
+      </Paper>
     </div>
 
   );

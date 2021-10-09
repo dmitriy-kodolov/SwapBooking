@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable import/no-useless-path-segments */
@@ -21,7 +22,7 @@ const Receive = ({ control, setCategorFromRecive, categorFromRecive }) => {
   return (
     <div>
       <Paper elevation={4} className={style.paper}>
-        <Category categorFromRecive={categorFromRecive} setCategorFromRecive={setCategorFromRecive} name="receiveCategor" control={control} />
+        <Category categorFromRecive={categorFromRecive} setCategorFromRecive={setCategorFromRecive} control={control} />
       </Paper>
 
     </div>

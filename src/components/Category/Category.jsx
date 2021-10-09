@@ -1,3 +1,5 @@
+/* eslint-disable comma-dangle */
+/* eslint-disable max-len */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
@@ -6,8 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import Checkbox from '@mui/material/Checkbox';
-import { Controller } from 'react-hook-form';
-import { fetchCategories } from '../../store/slices/categoriesSlice';
+import { Paper } from '@mui/material';
 
 const useStyle = makeStyles({
   root: {
@@ -18,33 +19,37 @@ const useStyle = makeStyles({
     flexDirection: 'column',
     alignItems: 'center',
   },
+  paper: {
+    overflow: 'auto',
+    padding: '15px',
+    height: '300px',
+    margin: '15px',
+    width: '450px',
+  },
+
 });
 const Category = ({
-  control, name, setCategorFromRecive = undefined, setCategorFromExchange = undefined,
-  categorFromRecive, categorFromExchange,
+  setCategory,
+  initialCategories,
+  isLoading = false,
+  isErrorLoading = false
 }) => {
   const style = useStyle();
-  const categories = useSelector((store) => store.category);
-  const dispatch = useDispatch();
-  // const [checkValues, setCheckedValues] = useState([]);
-  const handleSelect = (nameOfCateg) => {
-    if (setCategorFromRecive) {
-      const newCategorFromReceive = [...categorFromRecive];
-      if (categorFromRecive?.includes(nameOfCateg)) {
-        const index = newCategorFromReceive.indexOf(nameOfCateg);
-        newCategorFromReceive.splice(index, 1);
-      } else {
-        newCategorFromReceive.push(nameOfCateg);
-      }
-      setCategorFromRecive((prev) => [...prev, newCategorFromReceive]);
+  const [categories, setCategories] = useState([]);
+  console.log(categories);
+  useEffect(() => {
+    setCategories(initialCategories);
+  }, []);
+
+  const toggle = (nameOfCateg) => {
+    const hasCategory = categories.find((item) => item === nameOfCateg) || false;
+
+    if (hasCategory) {
+      setCategories(
+        [...categories.filter((item) => item !== nameOfCateg)],
+      );
     } else {
-      if (categorFromExchange.includes(nameOfCateg)) {
-        const index = categorFromExchange.indexOf(nameOfCateg);
-        setCategorFromExchange((prev) => [...prev, ...prev.splice(index, 1)]);
-      } else {
-        setCategorFromExchange((prev) => [...prev, nameOfCateg]);
-      }
-      console.log(categorFromExchange);
+      setCategories([...categories, nameOfCateg]);
     }
   };
 
@@ -84,72 +89,58 @@ const Category = ({
       ],
     },
   };
-  // console.log(checkValues);
-
-  useEffect(() => {
-    dispatch(fetchCategories());
-  }, []);
-  if (categories.isLoading) {
-    return (
-      <div className={style.container}>
-        <p>Загрузка...</p>
-      </div>
-    );
-  }
-  if (categories.error) {
-    return (
-      <div className={style.container}>
-        <p>Ошибка заругзких</p>
-      </div>
-    );
-  }
 
   return (
     <div className={style.container}>
-      {/*
-      <ul className={style.root}>
-        { mockCategor.Categories.Subcategories.map((item) => (
-          <li>
-            {item.Name}
-            {item.Subcategories
+      <Paper className={style.paper} elevation={4}>
+        <ul className={style.root}>
+          { mockCategor.Categories.Subcategories.map((item) => (
+            <li>
+              <Checkbox
+                //* checked={categories?.find((itemCateory) => item === itemCateory)}
+                // onChange={(e) => {
+                  // toggle(item.title);
+                //* }}
+              // eslint-disable-next-line react/jsx-closing-bracket-location
+              />
+              {item.Name}
+              {item.Subcategories
             && (
             <ul className={style.root}>
-              {item.Subcategories.map((test) => (<li>{test.Name}</li>))}
+              {item.Subcategories.map((test) => (
+                <li>
+                  <Checkbox />
+                  {test.Name}
+                </li>
+              ))}
             </ul>
             )}
-          </li>
-        ))}
-      </ul> */}
-      {categories.categories
-      && (
-        <div>
-          <h4>Категории</h4>
-          <ul className={style.root}>
-            {categories.categories.map((item) => (
-              <li key={item.id}>
-                <Controller
-                  control={control}
-                  name={name}
-                  render={(props) => (
-                    <>
-                      <Checkbox
-                        checked={props.value}
-                        onChange={(e) => {
-                          props.field.onChange(e.target.checked);
-                          handleSelect(item.title);
-                        }}
-                      />
-                      {item.title}
-                    </>
-                  )}
-                  rules={{ required: true, message: 'Поле обязательно' }}
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+            </li>
+          ))}
+        </ul>
+        {/* категории который были в лишках от jsonPlaceholder
+      {categories.categories */}
+        {/* // && ( */}
+        {/* // <div> */}
+        {/* <h4>Категории</h4> */}
+        {/* <ul className={style.root}> */}
+        {/* {categories.categories.map((item) => ( */}
+        {/* // <li key={item.id}> */}
+        {/* <Checkbox */}
+        {/* // checked={categories?.find((itemCateory) => item === itemCateory)} */}
+        {/* // onChange={(e) => { */}
+        {/* // toggle(item.title); */}
+        {/* // }} */}
+        {/* // /> */}
+        {/* {item.title} */}
+        {/* </li> */}
+        {/* // ))} */}
+        {/* </ul> */}
+        {/* </div> */}
+        {/* // )} */}
+      </Paper>
     </div>
+
   );
 };
 export default Category;
