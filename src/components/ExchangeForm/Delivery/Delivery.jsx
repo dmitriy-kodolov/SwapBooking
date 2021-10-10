@@ -154,6 +154,10 @@ const Delivery = ({ control }) => {
             defaultValue=""
             rules={
                   {
+                    required: {
+                      value: true,
+                      message: 'Поле обязательно',
+                    },
                     maxLength: {
                       value: 6,
                       message: 'Не больше 6-ти символов',
@@ -172,7 +176,6 @@ const Delivery = ({ control }) => {
       </Paper>
       <Paper className={style.paper} elevation={4}>
         <div className={style.root}>
-
           <Input
             className={style.test}
             rules={
@@ -239,7 +242,6 @@ const Delivery = ({ control }) => {
         </div>
       </Paper>
     </div>
-
   );
 };
 export default Delivery;

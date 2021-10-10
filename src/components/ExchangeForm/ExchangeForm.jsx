@@ -76,7 +76,6 @@ const mockCategor = {
 };
 
 export default function ExchangeForm() {
-  const dispatch = useDispatch();
   const style = useStyle();
   const propsFrom = useForm({
     defaultValues: {
@@ -89,15 +88,16 @@ export default function ExchangeForm() {
     clearErrors,
   } = propsFrom;
 
-  useEffect(() => {
-    dispatch(fetchCategories());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(fetchCategories());  сюда запрос в дальнейшем
+  // }, []);
 
   const formValues = propsFrom?.getValues();
 
   const [step, setStep] = useState(1);
   const [categorFromRecive, setCategorFromRecive] = useState([]);
-  const [categorFromExchange, setCategorFromExchange] = useState(mockCategor);
+  const [categorFromExchange, setCategorFromExchange] = useState([]);
+  // console.log('categorFromExchange', categorFromExchange);
   useEffect(() => {
     clearErrors('categoriesExchange');
     setValue('categoriesExchange', categorFromExchange);
@@ -113,9 +113,10 @@ export default function ExchangeForm() {
 
   const onSubmitForm = (data) => {
     setStep((prevState) => prevState + 1);
+    console.log('formValues', formValues);
     if (step === 3) {
       const newData = { ...data, exchangeCategor: categorFromExchange, receiveCategor: categorFromRecive };
-      console.log(newData);
+      // console.log(newData);
     }
   };
 
@@ -123,9 +124,7 @@ export default function ExchangeForm() {
     <Button
       className={style.btn}
       variant="contained"
-      onClick={() => {
-        setStep((prev) => prev + 1);
-      }}
+      type="submit"
     >
       { step === 3 ? 'Подтвердить данные' : 'Далее' }
     </Button>
@@ -146,10 +145,9 @@ export default function ExchangeForm() {
   );
 
   // console.log('form values', propsFrom?.getValues());
-  // console.log('form erros', errors);
-  //  это вешаем на форму onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}
+  console.log('form erros', errors);
   return (
-    <form className={style.root}>
+    <form className={style.root} onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}>
       <Box sx={{ width: '100%' }}>
         <Tabs
           centered
@@ -167,14 +165,15 @@ export default function ExchangeForm() {
       <div>
         <div className={style.containerOfExchange}>
           <Exchange
-            setCategorFromExchange={setCategorFromExchange}
-            categorFromExchange={categorFromExchange}
-            formValues={formValues?.categoriesExchange || []}
+            // setCategorFromExchange={setCategorFromExchange}
+            // categorFromExchange={categorFromExchange}
+            // formValues={formValues?.categoriesExchange || []}
             control={control}
           />
           <Category
+            selectedCategories={categorFromExchange}
             setCategories={setCategorFromExchange}
-            initialCategories={categorFromExchange}
+            initialCategories={mockCategor.Categories.Subcategories}
           />
         </div>
         <div className={style.exchange}>

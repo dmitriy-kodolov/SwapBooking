@@ -71,7 +71,7 @@ const Exchange = ({
                 }
               control={control}
               label="Имя автора*"
-              name="FirstName"
+              name="FirstNameAutor"
             />
             <Input
               className={style.test}
@@ -93,7 +93,7 @@ const Exchange = ({
                 }
               control={control}
               label="Фамилия автора*"
-              name="LastName"
+              name="LastNameAutor"
             />
           </div>
           <Input
