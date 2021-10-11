@@ -13,6 +13,7 @@ export default [
     id: 3,
     label: 'Мои обмены',
     path: '/myExchanges',
+    isLogin: true,
   },
   {
     id: 4,

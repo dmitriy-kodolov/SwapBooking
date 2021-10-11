@@ -9,8 +9,10 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
-import { logIn } from '../../store/slice/loginSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { LoadingButton } from '@mui/lab';
+import { logIn, loginStart } from '../../store/slices/loginSlice';
+import { restPost } from '../../api/instances/main';
 
 const style = {
   position: 'absolute',
@@ -29,7 +31,7 @@ const style = {
 const regExpCyrillic = new RegExp(/^[а-яА-Я]+$/);
 const regExpCyrillicAndLatinic = new RegExp(/^[а-яА-Яa-zA-Z]+$/);
 const regExpNumber = new RegExp(/^[0-9]/);
-const regExpStreet = new RegExp(/^[а-яА-Я0-9-]{0,25}$/);
+const regExpStreet = new RegExp(/^[а-яА-Я0-9-\s]{0,25}$/);
 const regExpNumberHome = new RegExp(/^[0-9]+[а-яА-Я]?$/);
 const regExpDistrict = new RegExp(/^[а-яА-Я]?[0-9]{0,2}$/);
 const regExpPassword = new RegExp(/^[a-zA-Z0-9]{8,30}$/);
@@ -51,9 +53,61 @@ export default function Registered({ close, isOpen, toggleModal }) {
   const dispatch = useDispatch();
 
   const submit = React.useCallback(() => {
-    dispatch(logIn());
-    close();
-  }, [dispatch, logIn, close]);
+    dispatch(loginStart());
+    restPost('http://localhost/user', {
+      login,
+      password,
+      name,
+      lastname,
+      fatherName,
+      email,
+      index,
+      city,
+      street,
+      numberHome,
+      district,
+      numberRoom,
+    }).then((response) => {
+      if (response.status === 200) {
+        dispatch(logIn(response.data));
+      }
+    }).catch((error) => {
+      console.log(error);
+      setTimeout(() => {
+        dispatch(logIn({
+          login,
+          password,
+          name,
+          lastname,
+          fatherName,
+          email,
+          index,
+          city,
+          street,
+          numberHome,
+          district,
+          numberRoom,
+        }));
+        close();
+      }, 5000);
+    });
+  }, [
+    dispatch,
+    logIn,
+    close,
+    login,
+    password,
+    name,
+    lastname,
+    fatherName,
+    email,
+    index,
+    city,
+    street,
+    numberHome,
+    district,
+    numberRoom,
+  ]);
 
   const [errors, setErrors] = React.useState({});
 
@@ -66,6 +120,8 @@ export default function Registered({ close, isOpen, toggleModal }) {
     && city
     && street
     && numberHome;
+
+  const isLoading = useSelector((state) => state.login.isLoading);
 
   return (
     <Modal
@@ -202,7 +258,10 @@ export default function Registered({ close, isOpen, toggleModal }) {
                     if (e.target.value.length < 8) {
                       setErrors((prevState) => ({ ...prevState, password: 'Минимум 8 символов' }));
                     } else if (!regExpPassword.test(e.target.value)) {
-                      setErrors((prevState) => ({ ...prevState, password: 'Длинна не меньше 8 символов, должна быть одна заглавная и одна прописная буква,а так же одна цифри, не должно быть спецсимволов' }));
+                      setErrors((prevState) => ({
+                        ...prevState,
+                        password: 'Длинна не меньше 8 символов, должна быть одна заглавная и одна прописная буква,а так же одна цифри, не должно быть спецсимволов',
+                      }));
                     } else {
                       setErrors((prevState) => ({ ...prevState, password: null }));
                     }
@@ -331,32 +390,20 @@ export default function Registered({ close, isOpen, toggleModal }) {
                 />
               </div>
             </div>
-            {/* <TextField */}
-            {/*  id="login" */}
-            {/*  label="Введите ваш Логин" */}
-            {/*  variant="outlined" */}
-            {/*  value={login} */}
-            {/*  onChange={(e) => setLogin(e.target.value)} */}
-            {/* /> */}
-            {/* <TextField */}
-            {/*  id="password" */}
-            {/*  label="Введите ваш Пароль" */}
-            {/*  variant="outlined" */}
-            {/*  type="password" */}
-            {/*  value={password} */}
-            {/*  onChange={(e) => setPassword(e.target.value)} */}
-            {/* /> */}
-
+            <span style={{ paddingLeft: '8px', fontSize: '12px' }}>
+              Нажимая эту кнопку, вы подтверждаете... и  даёте согласие...
+            </span>
           </CardContent>
           <CardActions>
-            <Button
+            <LoadingButton
               size="small"
               variant="contained"
               onClick={submit}
               disabled={!isSubmit}
+              loading={isLoading}
             >
               Регистрация
-            </Button>
+            </LoadingButton>
             <Button size="small" onClick={toggleModal}>Войти</Button>
           </CardActions>
         </Card>
@@ -370,8 +417,3 @@ Registered.propTypes = {
   close: PropTypes.func.isRequired,
   toggleModal: PropTypes.func.isRequired,
 };
-// Registered.propTypes = {
-//   isOpen: PropTypes.bool.isRequired,
-//   close: PropTypes.func.isRequired,
-//   toggleModal: PropTypes.func.isRequired,
-// }

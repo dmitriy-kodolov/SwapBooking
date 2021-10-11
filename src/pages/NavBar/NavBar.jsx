@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import {
   Link, useLocation,
 } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import NavBarRoutes from './routes';
 
 export default function NavBar() {
@@ -20,6 +21,8 @@ export default function NavBar() {
       setValue(exactPath.id);
     }
   }, []);
+  const isLogin = useSelector((state) => state.login.isLogin);
+
   return (
     <Box sx={{ width: '100%' }}>
       <Tabs
@@ -37,6 +40,7 @@ export default function NavBar() {
             to={route.path}
             key={route.id}
             value={route.id}
+            disabled={route.isLogin && route.isLogin !== isLogin}
           />
         ))}
       </Tabs>

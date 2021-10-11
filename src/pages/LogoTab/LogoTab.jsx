@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
 import Auth from '../../components/Auth';
 import Registered from '../../components/Registered';
-import { logOut } from '../../store/slice/loginSlice';
+import { logOut } from '../../store/slices/loginSlice';
 
 export default function ButtonAppBar() {
   const dispatch = useDispatch();
@@ -34,6 +34,7 @@ export default function ButtonAppBar() {
   }, [isOpenRegistered, isOpenAuth]);
 
   const isLogin = useSelector((state) => state.login.isLogin);
+  const name = useSelector((state) => state.login.profile?.name);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -54,7 +55,9 @@ export default function ButtonAppBar() {
           {
             isLogin ? (
               <div>
-                Привет Вася
+                Привет
+                {' '}
+                {name}
                 <Button color="inherit" onClick={() => dispatch(logOut())}>Exit</Button>
               </div>
             )
