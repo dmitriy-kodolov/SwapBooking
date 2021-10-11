@@ -101,7 +101,7 @@ export default function ExchangeForm() {
 
   const formValues = propsFrom?.getValues();
 
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(1);
   const [categorFromRecive, setCategorFromRecive] = useState([]);
   const [categorFromExchange, setCategorFromExchange] = useState([]);
   useEffect(() => {
