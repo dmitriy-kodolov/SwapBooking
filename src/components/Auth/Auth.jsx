@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { logIn } from '../../store/slices/loginSlice';
+import { logIn } from '../../store/slice/loginSlice';
 
 const style = {
   position: 'absolute',
@@ -26,7 +26,7 @@ const style = {
   '& .MuiCardActions-root': { ml: 2 },
 };
 
-export default function Auth({ close, isOpen }) {
+export default function Auth({ close, isOpen, toggleModal }) {
   const [login, setLogin] = React.useState('');
   const [password, setPassword] = React.useState('');
   const dispatch = useDispatch();
@@ -83,7 +83,7 @@ export default function Auth({ close, isOpen }) {
             >
               Войти
             </Button>
-            <Button size="small">Регистрация</Button>
+            <Button size="small" onClick={toggleModal}>Регистрация</Button>
           </CardActions>
         </Card>
       </Fade>
@@ -94,4 +94,5 @@ export default function Auth({ close, isOpen }) {
 Auth.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
+  toggleModal: PropTypes.func.isRequired,
 };

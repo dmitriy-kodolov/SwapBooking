@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
 import Auth from '../../components/Auth';
 import Registered from '../../components/Registered';
-import { logOut } from '../../store/slices/loginSlice';
+import { logOut } from '../../store/slice/loginSlice';
 
 export default function ButtonAppBar() {
   const dispatch = useDispatch();
@@ -20,6 +20,18 @@ export default function ButtonAppBar() {
   const [isOpenRegistered, setOpenRegistered] = useState(false);
   const handleRegisteredOpen = useCallback(() => setOpenRegistered(true), []);
   const handleRegisteredClose = useCallback(() => setOpenRegistered(false), []);
+
+  const toggleModal = useCallback(() => {
+    if (isOpenRegistered) {
+      handleRegisteredClose();
+      handleAuthOpen();
+    }
+
+    if (isOpenAuth) {
+      handleAuthClose();
+      handleRegisteredOpen();
+    }
+  }, [isOpenRegistered, isOpenAuth]);
 
   const isLogin = useSelector((state) => state.login.isLogin);
 
@@ -53,8 +65,12 @@ export default function ButtonAppBar() {
                 </>
               )
           }
-          <Auth close={handleAuthClose} isOpen={isOpenAuth} />
-          <Registered close={handleRegisteredClose} isOpen={isOpenRegistered} />
+          <Auth close={handleAuthClose} isOpen={isOpenAuth} toggleModal={toggleModal} />
+          <Registered
+            close={handleRegisteredClose}
+            isOpen={isOpenRegistered}
+            toggleModal={toggleModal}
+          />
         </Toolbar>
       </AppBar>
     </Box>
