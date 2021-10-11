@@ -64,7 +64,7 @@ const Exchange = ({
                       message: 'Не больше 20-ти символов',
                     },
                     pattern: {
-                      value: /[a-zа-я]/gi,
+                      value: /^[а-яА-Яa-zA-z]+$/,
                       message: 'Только буквы',
                     },
                   }
@@ -86,7 +86,7 @@ const Exchange = ({
                       message: 'Не больше 50-ти символов',
                     },
                     pattern: {
-                      value: /[a-zа-я]/gi,
+                      value: /^[а-яА-Яa-zA-z]+$/,
                       message: 'Только буквы',
                     },
                   }
@@ -109,14 +109,14 @@ const Exchange = ({
                       message: 'Не больше 50-ти символов',
                     },
                     pattern: {
-                      value: /[a-zа-я0-9("|'|-|.|,|\n?|!|;)]/gi,
+                      value: /^[a-zа-я0-9"'-.,\n?!;)]+$/,
                       message: 'Неправильное имя',
                     },
                   }
                 }
             control={control}
             label="Название книги*"
-            name="BookName"
+            name="book_name"
           />
           <div className={style.inputHome}>
             <Input
@@ -129,14 +129,14 @@ const Exchange = ({
                       message: 'Не больше 13-ти символов',
                     },
                     pattern: {
-                      value: /[0-9(-)]/g,
+                      value: /^[0-9-]+$/,
                       message: 'Только цифры и тире',
                     },
                   }
                 }
               control={control}
               label="ISBN"
-              name="ISBN"
+              name="isbn"
             />
             <Input
               className={style.test}
@@ -151,7 +151,7 @@ const Exchange = ({
                       message: 'Не больше 4-eх символов',
                     },
                     pattern: {
-                      value: /[0-9]/g,
+                      value: /^[0-9]+$/,
                       message: 'Только цифры',
                     },
                     validate: (value) => value <= new Date().getFullYear() || 'Не больше текущего года',
@@ -159,7 +159,7 @@ const Exchange = ({
                 }
               control={control}
               label="Год издания*"
-              name="YearOfPublishing"
+              name="year_publishing"
             />
           </div>
         </div>

@@ -11,6 +11,16 @@ import Checkbox from '@mui/material/Checkbox';
 import { Paper } from '@mui/material';
 
 const useStyle = makeStyles({
+  required: {
+    display: 'flex',
+    justifyContent: 'center',
+    fontWeight: '400',
+    fontSize: '0.75rem',
+    lineHeight: 1.66,
+    letterSpacing: '0.03333em',
+    textAlign: 'left',
+    color: '#d32f2f'
+  },
   root: {
     listStyle: 'none',
   },
@@ -29,13 +39,27 @@ const useStyle = makeStyles({
 
 });
 const Category = ({
+  setError,
+  clearErrors,
   setCategoriesForm,
   initialCategories,
   selectedCategories,
   isLoading = false,
   isErrorLoading = false
 }) => {
-  // console.log('initialCategories', initialCategories.flat(Infinity));
+  console.log('начальные категории', initialCategories);
+
+  // console.log('test', testKla);
+  // здесь поднятие всех вложеных жанров
+  // const flatten = (array) => array.reduce((acc, categor) => {
+  // acc.push(categor.Name);
+  // if (categor.Subcategories) {
+  // acc = acc.concat(flatten(categor.Subcategories));
+  // }
+  // return acc;
+  // }, []);
+  // const flattenCategor = flatten(initialCategories);
+  // console.log('все уровни вложеннсоти', flattenCategor);
   const style = useStyle();
   const [categories, setCategories] = useState([]);
   useEffect(() => {
@@ -43,56 +67,24 @@ const Category = ({
   }, []);
 
   const toggle = (nameOfCateg) => {
-    const hasCategory = categories.find((item) => item.Name === nameOfCateg) || false;
+    const hasCategory = categories.find((item) => item === nameOfCateg) || false;
     if (hasCategory) {
       setCategories(
-        [...categories.filter((item) => item.Name !== nameOfCateg)],
+        [...categories.filter((item) => item !== nameOfCateg)],
       );
-      // console.log('test', categories);
     } else {
       setCategories([...categories, nameOfCateg]);
-      // console.log('testelse', categories);
     }
   };
+  useEffect(() => {
+    clearErrors('category');
+    setCategoriesForm(categories);
+    if (categories?.length < 1) {
+      setError('category', { type: 'required' });
+    }
+  }, [categories]);
+  console.log('в компоненте categories ', categories);
 
-  // const mockCategor = {
-  // Categories: {
-  // ID: 1,
-  // Name: 'Все книги',
-  // Multiselect: true,
-  // Subcategories: [
-  // {
-  // ID: 2,
-  // Name: 'Детектив',
-  // Multiselect: true,
-  // Subcategories: [
-  // {
-  // ID: 5,
-  // Name: 'Русский детектив',
-  // Multiselect: true,
-  // },
-  // {
-  // ID: 6,
-  // Name: 'Зарубежный детектив',
-  // Multiselect: true,
-  // },
-  // ],
-  // },
-  // {
-  // ID: 3,
-  // Name: 'Фантастика',
-  // Multiselect: true,
-  // },
-  // {
-  // ID: 4,
-  // Name: 'Фэнтези',
-  // Multiselect: true,
-  // },
-  // ],
-  // },
-  // };
-  //
-  // console.log(categories);
   return (
     <div className={style.container}>
       <Paper className={style.paper} elevation={4}>
@@ -104,7 +96,7 @@ const Category = ({
                   { initialCategories.map((item) => (
                     <li>
                       <Checkbox
-                        checked={categories?.find((itemCateory) => item.Name === itemCateory)}
+                        checked={categories?.find((nameOfCateory) => item.Name === nameOfCateory)}
                         onChange={(e) => {
                           toggle(item.Name);
                         }}
@@ -116,7 +108,7 @@ const Category = ({
                     {item.Subcategories.map((test) => (
                       <li>
                         <Checkbox
-                          checked={categories?.find((itemCateory) => item.Name === itemCateory)}
+                          // checked={categories?.find((nameOfCateory) => item.Name === nameOfCateory)}
                           onChange={(e) => {
                             toggle(item.Name);
                           }}
@@ -131,29 +123,10 @@ const Category = ({
                   ))}
                 </ul>
                 )}
-        {/* категории который были в лишках от jsonPlaceholder
-      {categories.categories */}
-        {/* // && ( */}
-        {/* // <div> */}
-        {/* <h4>Категории</h4> */}
-        {/* <ul className={style.root}> */}
-        {/* {categories.categories.map((item) => ( */}
-        {/* // <li key={item.id}> */}
-        {/* <Checkbox */}
-        {/* // checked={categories?.find((itemCateory) => item === itemCateory)} */}
-        {/* // onChange={(e) => { */}
-        {/* // toggle(item.title); */}
-        {/* // }} */}
-        {/* // /> */}
-        {/* {item.title} */}
-        {/* </li> */}
-        {/* // ))} */}
-        {/* </ul> */}
-        {/* </div> */}
-        {/* // )} */}
+        {!categories?.length
+                && <p className={style.required}>Выберите хотябы один жанр</p>}
       </Paper>
     </div>
-
   );
 };
 export default Category;

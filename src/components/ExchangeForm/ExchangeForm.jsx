@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable max-len */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
@@ -6,10 +7,11 @@ import React, { useState, useEffect } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import { restPost } from 'api/instances/main';
 import { makeStyles } from '@material-ui/styles';
 import { useForm } from 'react-hook-form';
 import { Button } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Category from '../Category';
 import { fetchCategories } from '../../store/slices/categoriesSlice';
 import Exchange from './Exchange';
@@ -77,48 +79,49 @@ const mockCategor = {
 
 export default function ExchangeForm() {
   const style = useStyle();
+  const isLogin = useSelector((state) => state.login);
+  const userID = isLogin ? -1 : true;
   const propsFrom = useForm({
     defaultValues: {
-      categoriesExchange: [],
-      categoriesRecive: [],
+      category_offer: [],
+      category_wish: [],
+      id_user: userID,
     },
   });
+
   const {
     handleSubmit, control, setValue, setError, formState: { errors },
     clearErrors,
   } = propsFrom;
-
   // useEffect(() => {
-  //   dispatch(fetchCategories());  сюда запрос в дальнейшем
+  //   getCategoriesOfBook().data
+  //   .then(setInitialCategories(data))
   // }, []);
 
   const formValues = propsFrom?.getValues();
 
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(3);
   const [categorFromRecive, setCategorFromRecive] = useState([]);
   const [categorFromExchange, setCategorFromExchange] = useState([]);
-  // console.log('categorFromExchange', categorFromExchange);
   useEffect(() => {
-    clearErrors('categoriesExchange');
-    setValue('categoriesExchange', categorFromExchange);
-
-    if (categorFromExchange?.length < 1) {
-      setError('categoriesExchange', { type: 'required', message: 'Обязательно выберите' });
-    }
+    setValue('category_offer', categorFromExchange);
   }, [categorFromExchange]);
 
   useEffect(() => {
-    setValue('categoriesRecive', categorFromRecive);
+    setValue('category_wish', categorFromRecive);
   }, [categorFromRecive]);
 
   const onSubmitForm = (data) => {
     setStep((prevState) => prevState + 1);
-    console.log('formValues', formValues);
+    console.log('Все значение полей в форме', formValues);
     if (step === 3) {
-      const newData = { ...data, exchangeCategor: categorFromExchange, receiveCategor: categorFromRecive };
-      // console.log(newData);
+      // const postForm = restPost('/order', {
+      // formValues,
+      // });
     }
   };
+  // console.log('Категории в форме с 1 шага', categorFromExchange);
+  // console.log('Категории в форме с 2 шага', categorFromRecive);
 
   const Next = () => (
     <Button
@@ -144,8 +147,6 @@ export default function ExchangeForm() {
     </Button>
   );
 
-  // console.log('form values', propsFrom?.getValues());
-  console.log('form erros', errors);
   return (
     <form className={style.root} onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}>
       <Box sx={{ width: '100%' }}>
@@ -165,16 +166,17 @@ export default function ExchangeForm() {
       <div>
         <div className={style.containerOfExchange}>
           <Exchange
-            // setCategorFromExchange={setCategorFromExchange}
-            // categorFromExchange={categorFromExchange}
-            // formValues={formValues?.categoriesExchange || []}
             control={control}
           />
-          <Category
-            selectedCategories={categorFromExchange}
-            setCategories={setCategorFromExchange}
-            initialCategories={mockCategor.Categories.Subcategories}
-          />
+          <div>
+            <Category
+              clearErrors={clearErrors}
+              setError={setError}
+              selectedCategories={formValues?.category_offer}
+              setCategoriesForm={setCategorFromExchange}
+              initialCategories={mockCategor.Categories.Subcategories}
+            />
+          </div>
         </div>
         <div className={style.exchange}>
           <Next />
@@ -183,10 +185,12 @@ export default function ExchangeForm() {
       )}
       {step === 2 && (
       <div className={style.root}>
-        {/* <Receive categorFromRecive={categorFromRecive} setCategorFromRecive={setCategorFromRecive} control={control} /> */}
         <Category
-          setCategories={setCategorFromExchange}
-          initialCategories={categorFromExchange}
+          clearErrors={clearErrors}
+          setError={setError}
+          selectedCategories={formValues?.category_wish}
+          setCategoriesForm={setCategorFromRecive}
+          initialCategories={mockCategor.Categories.Subcategories}
         />
         <div className={style.delivery}>
           <Back />

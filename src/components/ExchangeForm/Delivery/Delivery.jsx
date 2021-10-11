@@ -54,14 +54,14 @@ const Delivery = ({ control }) => {
                       message: 'Не больше 15-ти символов',
                     },
                     pattern: {
-                      value: /[a-zа-я]/gi,
-                      message: 'Только буквы',
+                      value: /^[а-яА-Я]+$/,
+                      message: 'Только кириллица',
                     },
                   }
                 }
             control={control}
             label="Город*"
-            name="AddrCity"
+            name="addr_city"
           />
           <Input
             className={style.test}
@@ -76,14 +76,14 @@ const Delivery = ({ control }) => {
                       message: 'Не больше 25-ти символов',
                     },
                     pattern: {
-                      value: /[a-zа-я(-)]/g,
-                      message: 'Только буквы и тире',
+                      value: /^[а-яА-Я0-9-]{0,25}$/,
+                      message: 'Только кириллица, цифры, тире',
                     },
                   }
                 }
             control={control}
             label="Улица*"
-            name="AddrStreet"
+            name="addr_street"
           />
           <div className={style.inputHome}>
             <Input
@@ -96,15 +96,14 @@ const Delivery = ({ control }) => {
                       message: 'Не больше 3-ех символов',
                     },
                     pattern: {
-                      // тут регулярка на букву и цифру
-                      value: /[0-9(-)]/g,
+                      value: /^[0-9]{1,2}[а-яА-Я]{1}/,
                       message: 'Только буква и цифры',
                     },
                   }
                 }
               control={control}
               label="Строение"
-              name="AddrStructure"
+              name="addr_structure"
             />
             <Input
               className={style.test}
@@ -119,15 +118,14 @@ const Delivery = ({ control }) => {
                       message: 'Не больше 5-ти символов',
                     },
                     pattern: {
-                      value: /[0-9(-)]/g,
-                      // ругялрка на цифры и одну букву
+                      value: /^[0-9]+[а-яА-Я]?$/,
                       message: 'Только цифры и буква',
                     },
                   }
                 }
               control={control}
               label="Дом*"
-              name="AddrHouse"
+              name="addr_house"
             />
             <Input
               defaultValue=""
@@ -139,14 +137,14 @@ const Delivery = ({ control }) => {
                       message: 'Не больше 3-ех символов',
                     },
                     pattern: {
-                      value: /[0-9]/g,
+                      value: /^[0-9]+$/,
                       message: 'Только цифры',
                     },
                   }
                 }
               control={control}
               label="Квартира"
-              name="AddrApart"
+              name="addr_appart"
             />
           </div>
           <Input
@@ -163,14 +161,14 @@ const Delivery = ({ control }) => {
                       message: 'Не больше 6-ти символов',
                     },
                     pattern: {
-                      value: /[0-9]/g,
+                      value: /^[0-9]+$/,
                       message: 'Только цифры',
                     },
                   }
                 }
             control={control}
             label="Индекс*"
-            name="AddrIndex"
+            name="addr_index"
           />
         </div>
       </Paper>
@@ -189,8 +187,8 @@ const Delivery = ({ control }) => {
                       message: 'Не больше 25-ти символов',
                     },
                     pattern: {
-                      value: /[a-zа-я]/gi,
-                      message: 'Только буквы',
+                      value: /^[а-яА-Я]+$/,
+                      message: 'Только кириллица',
                     },
                   }
                 }
@@ -211,8 +209,8 @@ const Delivery = ({ control }) => {
                       message: 'Не больше 25-ти символов',
                     },
                     pattern: {
-                      value: /[a-zа-я]/gi,
-                      message: 'Только буквы',
+                      value: /^[а-яА-Я]+$/,
+                      message: 'Только кириллица',
                     },
                   }
                 }
@@ -230,8 +228,8 @@ const Delivery = ({ control }) => {
                       message: 'Не больше 25-ти символов',
                     },
                     pattern: {
-                      value: /[a-zа-я]/gi,
-                      message: 'Только буквы',
+                      value: /^[а-яА-Я]+$/,
+                      message: 'Только кириллица',
                     },
                   }
                 }
