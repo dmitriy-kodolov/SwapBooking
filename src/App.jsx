@@ -1,9 +1,9 @@
 import React from 'react';
 import {
-  BrowserRouter as Router, Switch,
+  BrowserRouter as Router, Route, Switch,
 } from 'react-router-dom';
-import DefaultLayout from './components/DefaultLayout';
 import LogoTab from './pages/LogoTab';
+import NavBar from './pages/NavBar';
 import MainPage from './pages/MainPage';
 import StartExchange from './pages/StartExchange';
 import MyExchange from './pages/MyExchanges';
@@ -15,12 +15,13 @@ function App() {
       <Router>
         <div>
           <LogoTab />
+          <NavBar />
         </div>
         <Switch>
-          <DefaultLayout exact path="/main" component={MainPage} />
-          <DefaultLayout exact path="/startExchange" component={StartExchange} />
-          <DefaultLayout exact path="/myExchanges" component={MyExchange} />
-          <DefaultLayout exact path="/questionTab" component={QuestionTab} />
+          <Route exact path="/main" component={MainPage} />
+          <Route path="/startExchange" component={StartExchange} />
+          <Route path="/myExchanges" component={MyExchange} />
+          <Route path="/questionTab" component={QuestionTab} />
         </Switch>
       </Router>
     </>
