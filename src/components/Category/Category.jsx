@@ -65,7 +65,9 @@ const Category = ({
   useEffect(() => {
     setCategories(selectedCategories);
   }, []);
-
+  // TODO сделать чтобы вложенные категории тоже записывались в состояние формы
+  // TODO сделать если у категории есть вложенная категория и она проставлена,
+  // то чекбокс у родителя = true
   const toggle = (nameOfCateg) => {
     const hasCategory = categories.find((item) => item === nameOfCateg) || false;
     if (hasCategory) {

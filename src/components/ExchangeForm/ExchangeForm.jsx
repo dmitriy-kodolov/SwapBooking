@@ -93,6 +93,7 @@ export default function ExchangeForm() {
     handleSubmit, control, setValue, setError, formState: { errors },
     clearErrors,
   } = propsFrom;
+  // TODO   запрос на получение данных с сервака
   // useEffect(() => {
   //   getCategoriesOfBook().data
   //   .then(setInitialCategories(data))
@@ -115,6 +116,7 @@ export default function ExchangeForm() {
     setStep((prevState) => prevState + 1);
     console.log('Все значение полей в форме', formValues);
     if (step === 3) {
+      // TODO отправку формы на серв
       // const postForm = restPost('/order', {
       // formValues,
       // });
