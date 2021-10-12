@@ -8,11 +8,12 @@ const initialState = {
   isLoading: null,
   error: null,
 };
+
 export const fetchProfileInfo = createAsyncThunk(
   'fetchProfileInfo',
   async () => {
     const profileInfo = await getProfileInfo();
-    return profileInfo;
+    return profileInfo.data;
   },
 );
 

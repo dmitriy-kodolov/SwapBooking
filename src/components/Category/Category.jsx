@@ -12,8 +12,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import Checkbox from '@mui/material/Checkbox';
 import { Paper } from '@mui/material';
-import matchCategory from 'components/utils/matchCategory';
-import hasCategoryInSubcategory from '../utils/hasCategoryInSubcategory';
+import {
+  isMainCategoryInList, findSourceCategory, getNamesListFromSubcategories, isSourceCategoryInListWithAllChildren
+} from '../utils/categories';
 
 const useStyle = makeStyles({
   required: {
@@ -52,47 +53,32 @@ const Category = ({
   isLoading = false,
   isErrorLoading = false
 }) => {
-  // console.log('начальные категории', initialCategories);
-  // const flatten = (array) => array.reduce((acc, categor) => {
-  // acc.push(categor.Name);
-  // if (categor.Subcategories) {
-  // acc = acc.concat(flatten(categor.Subcategories));
-  // }
-  // return acc;
-  // }, []);
-  // const flattenCategor = flatten(initialCategories);
-  // console.log('все уровни вложеннсоти', flattenCategor);
   const style = useStyle();
   const [categories, setCategories] = useState([]);
   useEffect(() => {
     setCategories(selectedCategories);
   }, []);
-  // DONE сделать чтобы вложенные категории тоже записывались в состояние формы \done
-  // DONE сделать если у категории есть вложенная категория и она проставлена,
-  // то чекбокс у родителя = true \ done
-  // Новая пробьлема: проставили чекбоксы у родителя и у всех его детей
-  // сняли чекбокс у одного из ребенка, то чекбокс у родителя тоже снимается,
-  // хотя должен оставаться, так как у одного из его детей есть чекбокс
-  const toggle = (nameOfCateg) => {
-    const hasParent = matchCategory(initialCategories, nameOfCateg) !== nameOfCateg;
-    const hasCategory = categories.find((item) => item === nameOfCateg);
-    const targetCategory = initialCategories.find((category) => category.Name === nameOfCateg);
-    const targetSubcategories = targetCategory && targetCategory.Subcategories?.reduce((acc, item) => [...acc, item.Name], []);
-    const listWithParent = hasParent
-      ? [matchCategory(initialCategories, nameOfCateg), nameOfCateg]
-      : [nameOfCateg];
-    const mainCategory = hasParent
-      ? initialCategories.find((item) => item.Name === matchCategory(initialCategories, nameOfCateg))
-      : initialCategories.find((item) => item.Name === nameOfCateg);
-    const isCategorysParentInList = hasCategoryInSubcategory(categories, mainCategory);
-    const withDefined = isCategorysParentInList
-      ? [nameOfCateg]
-      : listWithParent;
-    const listToCategories = targetSubcategories
-      ? [...targetSubcategories, nameOfCateg]
-      : listWithParent;
-    const result = hasCategory
-      ? [...categories.filter((item) => (!listToCategories.includes(item)))]
+
+  const toggle = (targetCategory) => {
+    const isCategoryHaveParent = findSourceCategory(initialCategories, targetCategory) !== targetCategory;
+    const isCategoryInList = categories.find((category) => category === targetCategory);
+    const clickedTargetInMainCategories = initialCategories.find((category) => category.Name === targetCategory);
+    const clickedTargetInSubcategories = clickedTargetInMainCategories && getNamesListFromSubcategories(clickedTargetInMainCategories);
+    const sourceCategory = isCategoryHaveParent
+      ? initialCategories.find((category) => category.Name === findSourceCategory(initialCategories, targetCategory))
+      : initialCategories.find((categiry) => categiry.Name === targetCategory);
+    const isTargetCategoryParentInList = isCategoryHaveParent && isMainCategoryInList(categories, sourceCategory.Name);
+    const isMainCategoryInListWithAllChildren = isCategoryHaveParent && isSourceCategoryInListWithAllChildren(categories, sourceCategory);
+    const defineListToCategoriesWithParent = isCategoryHaveParent
+      ? [...(isTargetCategoryParentInList
+        ? [...(isMainCategoryInListWithAllChildren ? [targetCategory] : [findSourceCategory(initialCategories, targetCategory), targetCategory])]
+        : [findSourceCategory(initialCategories, targetCategory), targetCategory])]
+      : [targetCategory];
+    const listToCategories = clickedTargetInSubcategories
+      ? [...clickedTargetInSubcategories, targetCategory]
+      : defineListToCategoriesWithParent;
+    const result = isCategoryInList
+      ? [...categories.filter((category) => (!listToCategories.includes(category)))]
       : [...categories, ...listToCategories];
     setCategories(Array.from(new Set(result)));
   };
@@ -103,7 +89,6 @@ const Category = ({
       setError('category', { type: 'required' });
     }
   }, [categories]);
-  console.log('в компоненте categories ', categories);
 
   return (
     <div className={style.container}>

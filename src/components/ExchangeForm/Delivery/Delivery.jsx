@@ -129,7 +129,6 @@ const Delivery = ({ control }) => {
               name="addr_house"
             />
             <Input
-              defaultValue=""
               className={style.test}
               rules={
                   {

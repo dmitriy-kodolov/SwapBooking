@@ -3,7 +3,6 @@ import {
   BrowserRouter as Router, Switch,
 } from 'react-router-dom';
 import DefaultLayout from './components/DefaultLayout';
-import LogoTab from './pages/LogoTab';
 import MainPage from './pages/MainPage';
 import StartExchange from './pages/StartExchange';
 import MyExchange from './pages/MyExchanges';
@@ -13,9 +12,6 @@ function App() {
   return (
     <>
       <Router>
-        <div>
-          <LogoTab />
-        </div>
         <Switch>
           <DefaultLayout exact path="/main" component={MainPage} />
           <DefaultLayout exact path="/startExchange" component={StartExchange} />
