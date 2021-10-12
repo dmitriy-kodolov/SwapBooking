@@ -1,3 +1,6 @@
+/* eslint-disable no-console */
+/* eslint-disable no-lonely-if */
+/* eslint-disable import/no-unresolved */
 /* eslint-disable comma-dangle */
 /* eslint-disable max-len */
 /* eslint-disable no-unused-expressions */
@@ -9,6 +12,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import Checkbox from '@mui/material/Checkbox';
 import { Paper } from '@mui/material';
+import matchCategory from 'components/utils/matchCategory';
+import hasCategoryInSubcategory from '../utils/hasCategoryInSubcategory';
 
 const useStyle = makeStyles({
   required: {
@@ -47,10 +52,7 @@ const Category = ({
   isLoading = false,
   isErrorLoading = false
 }) => {
-  console.log('начальные категории', initialCategories);
-
-  // console.log('test', testKla);
-  // здесь поднятие всех вложеных жанров
+  // console.log('начальные категории', initialCategories);
   // const flatten = (array) => array.reduce((acc, categor) => {
   // acc.push(categor.Name);
   // if (categor.Subcategories) {
@@ -65,18 +67,34 @@ const Category = ({
   useEffect(() => {
     setCategories(selectedCategories);
   }, []);
-  // TODO сделать чтобы вложенные категории тоже записывались в состояние формы
-  // TODO сделать если у категории есть вложенная категория и она проставлена,
-  // то чекбокс у родителя = true
+  // DONE сделать чтобы вложенные категории тоже записывались в состояние формы \done
+  // DONE сделать если у категории есть вложенная категория и она проставлена,
+  // то чекбокс у родителя = true \ done
+  // Новая пробьлема: проставили чекбоксы у родителя и у всех его детей
+  // сняли чекбокс у одного из ребенка, то чекбокс у родителя тоже снимается,
+  // хотя должен оставаться, так как у одного из его детей есть чекбокс
   const toggle = (nameOfCateg) => {
-    const hasCategory = categories.find((item) => item === nameOfCateg) || false;
-    if (hasCategory) {
-      setCategories(
-        [...categories.filter((item) => item !== nameOfCateg)],
-      );
-    } else {
-      setCategories([...categories, nameOfCateg]);
-    }
+    const hasParent = matchCategory(initialCategories, nameOfCateg) !== nameOfCateg;
+    const hasCategory = categories.find((item) => item === nameOfCateg);
+    const targetCategory = initialCategories.find((category) => category.Name === nameOfCateg);
+    const targetSubcategories = targetCategory && targetCategory.Subcategories?.reduce((acc, item) => [...acc, item.Name], []);
+    const listWithParent = hasParent
+      ? [matchCategory(initialCategories, nameOfCateg), nameOfCateg]
+      : [nameOfCateg];
+    const mainCategory = hasParent
+      ? initialCategories.find((item) => item.Name === matchCategory(initialCategories, nameOfCateg))
+      : initialCategories.find((item) => item.Name === nameOfCateg);
+    const isCategorysParentInList = hasCategoryInSubcategory(categories, mainCategory);
+    const withDefined = isCategorysParentInList
+      ? [nameOfCateg]
+      : listWithParent;
+    const listToCategories = targetSubcategories
+      ? [...targetSubcategories, nameOfCateg]
+      : listWithParent;
+    const result = hasCategory
+      ? [...categories.filter((item) => (!listToCategories.includes(item)))]
+      : [...categories, ...listToCategories];
+    setCategories(Array.from(new Set(result)));
   };
   useEffect(() => {
     clearErrors('category');
@@ -98,7 +116,7 @@ const Category = ({
                   { initialCategories.map((item) => (
                     <li>
                       <Checkbox
-                        checked={categories?.find((nameOfCateory) => item.Name === nameOfCateory)}
+                        checked={!!categories?.find((nameOfCateory) => item.Name === nameOfCateory)}
                         onChange={(e) => {
                           toggle(item.Name);
                         }}
@@ -110,11 +128,10 @@ const Category = ({
                     {item.Subcategories.map((test) => (
                       <li>
                         <Checkbox
-                          // checked={categories?.find((nameOfCateory) => item.Name === nameOfCateory)}
-                          onChange={(e) => {
-                            toggle(item.Name);
+                          checked={!!categories?.find((nameOfCateory) => test.Name === nameOfCateory)}
+                          onChange={() => {
+                            toggle(test.Name);
                           }}
-
                         />
                         {test.Name}
                       </li>

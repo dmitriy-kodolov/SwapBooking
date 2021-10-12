@@ -12,10 +12,11 @@ import { makeStyles } from '@material-ui/styles';
 import { useForm } from 'react-hook-form';
 import { Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+// import { fetchProfileInfo } from 'store/slices/userProfileSlice';
+// import { fetchCategories } from 'store/slices/categoriesSlice';
+import { Link } from 'react-router-dom';
 import Category from '../Category';
-import { fetchCategories } from '../../store/slices/categoriesSlice';
 import Exchange from './Exchange';
-import Receive from './Receive';
 import Delivery from './Delivery/Delivery';
 
 const useStyle = makeStyles({
@@ -78,6 +79,7 @@ const mockCategor = {
 };
 
 export default function ExchangeForm() {
+  const dispatch = useDispatch();
   const style = useStyle();
   const isLogin = useSelector((state) => state.login);
   const userID = isLogin ? -1 : true;
@@ -88,19 +90,17 @@ export default function ExchangeForm() {
       id_user: userID,
     },
   });
-
   const {
     handleSubmit, control, setValue, setError, formState: { errors },
     clearErrors,
   } = propsFrom;
   // TODO   запрос на получение данных с сервака
   // useEffect(() => {
-  //   getCategoriesOfBook().data
-  //   .then(setInitialCategories(data))
+    // dispatch(fetchProfileInfo());
+    // dispatch(fetchCategories());
   // }, []);
-
+  let isPostForm = false;
   const formValues = propsFrom?.getValues();
-
   const [step, setStep] = useState(1);
   const [categorFromRecive, setCategorFromRecive] = useState([]);
   const [categorFromExchange, setCategorFromExchange] = useState([]);
@@ -112,18 +112,19 @@ export default function ExchangeForm() {
     setValue('category_wish', categorFromRecive);
   }, [categorFromRecive]);
 
-  const onSubmitForm = (data) => {
+  const onSubmitForm = () => {
     setStep((prevState) => prevState + 1);
     console.log('Все значение полей в форме', formValues);
     if (step === 3) {
-      // TODO отправку формы на серв
-      // const postForm = restPost('/order', {
-      // formValues,
-      // });
+      // поменять урлу на рабочую и baseUrl
+      const result = restPost('/post', formValues)
+        .then(() => {
+          isPostForm = true;
+          return isPostForm;
+        })
+        .catch((err) => alert('Не валидные поля'));
     }
   };
-  // console.log('Категории в форме с 1 шага', categorFromExchange);
-  // console.log('Категории в форме с 2 шага', categorFromRecive);
 
   const Next = () => (
     <Button
@@ -200,7 +201,7 @@ export default function ExchangeForm() {
         </div>
       </div>
       )}
-      {step === 3
+      {isLogin && step === 3
       && (
       <div>
         <Delivery control={control} />
@@ -210,9 +211,19 @@ export default function ExchangeForm() {
         </div>
       </div>
       )}
-      {step === 4
+      {(step === 4 && isPostForm)
       && (
-      <p>Данные успешно отправлены</p>
+        <div>
+          <p>Данные успешно отправлены</p>
+          <Link className={style.root} to="/main">На главную</Link>
+        </div>
+      )}
+      {(step === 4 && !isPostForm)
+      && (
+        <div>
+          <p>Данные не отправились, попробуйте еще раз</p>
+          <Link className={style.root} to="/main">На главную</Link>
+        </div>
       )}
     </form>
   );
