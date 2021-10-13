@@ -2,7 +2,7 @@ import React from 'react';
 
 const QuestionTab = () => (
   <div>
-    afafaf
+    Question Tab container
   </div>
 );
 export default QuestionTab;

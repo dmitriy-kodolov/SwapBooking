@@ -1,5 +1,3 @@
-/* eslint-disable import/no-named-as-default */
-/* eslint-disable import/extensions */
 import * as React from 'react';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
@@ -12,7 +10,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { logIn } from '../../store/slices/loginSlice';
+import { logIn } from '../../store/slice/loginSlice';
 
 const style = {
   position: 'absolute',
@@ -29,11 +27,15 @@ const style = {
 };
 
 const regExpCyrillic = new RegExp(/^[а-яА-Я]+$/);
-// const regExpNumberHome = new RegExp(/^[0-9]+[а-яА-Я]?$/);
-// const regExpDistrict = new RegExp(/^[а-яА-Я]?[0-9]{0,2}$/);
+const regExpCyrillicAndLatinic = new RegExp(/^[а-яА-Яa-zA-Z]+$/);
+const regExpNumber = new RegExp(/^[0-9]/);
+const regExpStreet = new RegExp(/^[а-яА-Я0-9-]{0,25}$/);
+const regExpNumberHome = new RegExp(/^[0-9]+[а-яА-Я]?$/);
+const regExpDistrict = new RegExp(/^[а-яА-Я]?[0-9]{0,2}$/);
+const regExpPassword = new RegExp(/^[a-zA-Z0-9]{8,30}$/);
 const regExpEmail = new RegExp(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]{2,5}$/);
 
-export default function Registered({ close, isOpen }) {
+export default function Registered({ close, isOpen, toggleModal }) {
   const [login, setLogin] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [name, setName] = React.useState('');
@@ -47,12 +49,23 @@ export default function Registered({ close, isOpen }) {
   const [district, setDistrict] = React.useState('');
   const [numberRoom, setNumberRoom] = React.useState('');
   const dispatch = useDispatch();
-  const submit = () => {
+
+  const submit = React.useCallback(() => {
     dispatch(logIn());
     close();
-  };
+  }, [dispatch, logIn, close]);
 
   const [errors, setErrors] = React.useState({});
+
+  const isSubmit = login
+    && password
+    && name
+    && lastname
+    && email
+    && index
+    && city
+    && street
+    && numberHome;
 
   return (
     <Modal
@@ -103,18 +116,40 @@ export default function Registered({ close, isOpen }) {
                 />
                 <TextField
                   required
+                  error={errors?.lastname}
                   id="lastname"
                   label="Фамилия"
                   value={lastname}
-                  onChange={(e) => setLastname(e.target.value)}
-                  helperText="Incorrect entry."
+                  onChange={(e) => {
+                    if (e.target.value.length > 25) {
+                      setErrors((prevState) => ({ ...prevState, lastname: 'Ограничение 50 символов' }));
+                    } else if (!regExpCyrillic.test(e.target.value)) {
+                      setErrors((prevState) => ({ ...prevState, lastname: 'Только буквы кириллицы' }));
+                    } else {
+                      setErrors((prevState) => ({ ...prevState, lastname: null }));
+                    }
+
+                    setLastname(e.target.value);
+                  }}
+                  helperText={errors?.lastname || 'Только буквы кириллицы до 50 символов'}
                 />
                 <TextField
+                  error={errors?.fatherName}
                   id="father-name"
                   label="Отчество"
                   value={fatherName}
-                  onChange={(e) => setFatherName(e.target.value)}
-                  helperText="Incorrect entry."
+                  onChange={(e) => {
+                    if (e.target.value.length > 25) {
+                      setErrors((prevState) => ({ ...prevState, fatherName: 'Ограничение 25 символов' }));
+                    } else if (!regExpCyrillic.test(e.target.value)) {
+                      setErrors((prevState) => ({ ...prevState, fatherName: 'Только буквы кириллицы' }));
+                    } else {
+                      setErrors((prevState) => ({ ...prevState, fatherName: null }));
+                    }
+
+                    setFatherName(e.target.value);
+                  }}
+                  helperText={errors?.fathername || 'Необязательно'}
                 />
               </div>
               <div>
@@ -135,24 +170,46 @@ export default function Registered({ close, isOpen }) {
                       setErrors((prevState) => ({ ...prevState, email: null }));
                     }
                   }}
-                  helperText={errors?.email || 'Incorrect entry.'}
+                  helperText={errors?.email || 'Пример : example@simbirsoft.com'}
                 />
                 <TextField
                   required
+                  error={errors?.login}
                   id="login"
                   label="Логин"
                   value={login}
-                  onChange={(e) => setLogin(e.target.value)}
-                  helperText="Incorrect entry."
+                  onChange={(e) => {
+                    if (e.target.value.length > 10) {
+                      setErrors((prevState) => ({ ...prevState, login: 'Ограничение 10 символов' }));
+                    } else if (!regExpCyrillicAndLatinic.test(e.target.value)) {
+                      setErrors((prevState) => ({ ...prevState, login: 'Только буквы кириллицы и латинницы' }));
+                    } else {
+                      setErrors((prevState) => ({ ...prevState, login: null }));
+                    }
+
+                    setLogin(e.target.value);
+                  }}
+                  helperText={errors?.login || 'Только буквы Кириллицы и Латинницы'}
                 />
                 <TextField
                   required
+                  error={errors?.password}
                   id="password"
                   label="Пароль"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  helperText="Incorrect entry."
+                  onChange={(e) => {
+                    if (e.target.value.length < 8) {
+                      setErrors((prevState) => ({ ...prevState, password: 'Минимум 8 символов' }));
+                    } else if (!regExpPassword.test(e.target.value)) {
+                      setErrors((prevState) => ({ ...prevState, password: 'Длинна не меньше 8 символов, должна быть одна заглавная и одна прописная буква,а так же одна цифри, не должно быть спецсимволов' }));
+                    } else {
+                      setErrors((prevState) => ({ ...prevState, password: null }));
+                    }
+
+                    setPassword(e.target.value);
+                  }}
+                  helperText={errors?.password || 'Длинна не меньше 8 символов, должна быть одна заглавная и одна прописная буква,а так же одна цифри, не должно быть спецсимволов'}
                 />
               </div>
             </div>
@@ -160,51 +217,117 @@ export default function Registered({ close, isOpen }) {
               <div>
                 <TextField
                   required
+                  error={errors?.index}
                   id="index"
                   label="Индекс"
                   value={index}
-                  onChange={(e) => setIndex(e.target.value)}
-                  helperText="Incorrect entry."
+                  onChange={(e) => {
+                    if (e.target.value.length > 6) {
+                      setErrors((prevState) => ({ ...prevState, index: 'Ограничение 6 символов' }));
+                    } else if (!regExpNumber.test(e.target.value)) {
+                      setErrors((prevState) => ({ ...prevState, index: 'Только цифры' }));
+                    } else {
+                      setErrors((prevState) => ({ ...prevState, index: null }));
+                    }
+
+                    setIndex(e.target.value);
+                  }}
+                  helperText={errors?.index || 'Только 6 цифр'}
                 />
                 <TextField
                   required
+                  error={errors?.city}
                   id="city"
                   label="Город"
                   value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  helperText="Incorrect entry."
+                  onChange={(e) => {
+                    if (e.target.value.length > 15) {
+                      setErrors((prevState) => ({ ...prevState, city: 'Ограничение 15 символов' }));
+                    } else if (!regExpCyrillic.test(e.target.value)) {
+                      setErrors((prevState) => ({ ...prevState, city: 'Только буквы кириллицы' }));
+                    } else {
+                      setErrors((prevState) => ({ ...prevState, city: null }));
+                    }
+
+                    setCity(e.target.value);
+                  }}
+                  helperText={errors?.city || 'Ограничение в 15 букв кириллицы'}
                 />
                 <TextField
                   required
+                  error={errors?.street}
                   id="street"
                   label="Улица"
                   value={street}
-                  onChange={(e) => setStreet(e.target.value)}
-                  helperText="Incorrect entry."
+                  onChange={(e) => {
+                    if (e.target.value.length > 15) {
+                      setErrors((prevState) => ({ ...prevState, street: 'Ограничение 25 символов' }));
+                    } else if (!regExpStreet.test(e.target.value)) {
+                      setErrors((prevState) => ({ ...prevState, street: 'Только цифры ,буквы кириллицы и знак - ' }));
+                    } else {
+                      setErrors((prevState) => ({ ...prevState, street: null }));
+                    }
+
+                    setStreet(e.target.value);
+                  }}
+                  helperText={errors?.city || 'Обязательно, ограничение в 25 символов'}
                 />
               </div>
               <div>
                 <TextField
                   required
+                  error={errors?.numberHome}
                   id="number-home"
                   label="Номер дома"
                   value={numberHome}
-                  onChange={(e) => setNumberHome(e.target.value)}
-                  helperText="Incorrect entry."
+                  onChange={(e) => {
+                    if (e.target.value.length > 5) {
+                      setErrors((prevState) => ({ ...prevState, numberHome: 'Ограничение в 5 символов' }));
+                    } else if (!regExpNumberHome.test(e.target.value)) {
+                      setErrors((prevState) => ({ ...prevState, numberHome: 'Только цифры , и 1 буква' }));
+                    } else {
+                      setErrors((prevState) => ({ ...prevState, numberHome: null }));
+                    }
+
+                    setNumberHome(e.target.value);
+                  }}
+                  helperText={errors?.numberHome || 'Обязательно, ограничение в 5 символов'}
                 />
                 <TextField
+                  error={errors?.district}
                   id="district"
                   label="Номер строения"
                   value={district}
-                  onChange={(e) => setDistrict(e.target.value)}
-                  helperText="Incorrect entry."
+                  onChange={(e) => {
+                    if (e.target.value.length > 5) {
+                      setErrors((prevState) => ({ ...prevState, district: 'буква или число до 2 знаков' }));
+                    } else if (!regExpDistrict.test(e.target.value)) {
+                      setErrors((prevState) => ({ ...prevState, district: 'буква или число до 2 знаков' }));
+                    } else {
+                      setErrors((prevState) => ({ ...prevState, district: null }));
+                    }
+
+                    setDistrict(e.target.value);
+                  }}
+                  helperText={errors?.numberHome || 'Обязательно, буква и число до 2 знаков'}
                 />
                 <TextField
+                  error={errors?.numberRoom}
                   id="number-room"
                   label="Номер квартиры"
                   value={numberRoom}
-                  onChange={(e) => setNumberRoom(e.target.value)}
-                  helperText="Incorrect entry."
+                  onChange={(e) => {
+                    if (e.target.value.length > 3) {
+                      setErrors((prevState) => ({ ...prevState, numberRoom: 'Ограничение 3 символа' }));
+                    } else if (!regExpNumber.test(e.target.value)) {
+                      setErrors((prevState) => ({ ...prevState, numberRoom: 'Только цифры' }));
+                    } else {
+                      setErrors((prevState) => ({ ...prevState, numberRoom: null }));
+                    }
+
+                    setNumberRoom(e.target.value);
+                  }}
+                  helperText={errors?.numberRoom || 'Только 3 цифры'}
                 />
               </div>
             </div>
@@ -230,11 +353,11 @@ export default function Registered({ close, isOpen }) {
               size="small"
               variant="contained"
               onClick={submit}
-              disabled={!login || !password}
+              disabled={!isSubmit}
             >
               Регистрация
             </Button>
-            <Button size="small">Войти</Button>
+            <Button size="small" onClick={toggleModal}>Войти</Button>
           </CardActions>
         </Card>
       </Fade>
@@ -245,4 +368,10 @@ export default function Registered({ close, isOpen }) {
 Registered.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
+  toggleModal: PropTypes.func.isRequired,
 };
+// Registered.propTypes = {
+//   isOpen: PropTypes.bool.isRequired,
+//   close: PropTypes.func.isRequired,
+//   toggleModal: PropTypes.func.isRequired,
+// }
