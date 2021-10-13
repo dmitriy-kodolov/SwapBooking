@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable max-len */
 /* eslint-disable react/prop-types */
@@ -12,10 +13,11 @@ import { makeStyles } from '@material-ui/styles';
 import { useForm } from 'react-hook-form';
 import { Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+// import { fetchProfileInfo } from 'store/slices/userProfileSlice';
+import { fetchCategories } from 'store/slices/categoriesSlice';
+import { Link } from 'react-router-dom';
 import Category from '../Category';
-import { fetchCategories } from '../../store/slices/categoriesSlice';
 import Exchange from './Exchange';
-import Receive from './Receive';
 import Delivery from './Delivery/Delivery';
 
 const useStyle = makeStyles({
@@ -78,6 +80,7 @@ const mockCategor = {
 };
 
 export default function ExchangeForm() {
+  const dispatch = useDispatch();
   const style = useStyle();
   const isLogin = useSelector((state) => state.login);
   const userID = isLogin ? -1 : true;
@@ -86,21 +89,48 @@ export default function ExchangeForm() {
       category_offer: [],
       category_wish: [],
       id_user: userID,
+      addr_index: 1,
+      addr_city: 'Тест',
+      addr_street: 'Тест',
+      addr_house: '1',
+      addr_structure: '2а',
+      addr_appart: '2',
+      FirstName: 'Тест',
+      LastName: 'Тест',
+      SecondName: 'Тесты',
     },
   });
-
   const {
     handleSubmit, control, setValue, setError, formState: { errors },
     clearErrors,
   } = propsFrom;
-  // TODO   запрос на получение данных с сервака
+  // запрос на получение данных с сервака
   // useEffect(() => {
-  //   getCategoriesOfBook().data
-  //   .then(setInitialCategories(data))
+  // dispatch(fetchProfileInfo());
+  // dispatch(fetchCategories());
   // }, []);
-
+  // const firstName = useSelector(state => (state.profile.UserName));
+  // const lastName = useSelector(state => (state.profile.LastName));
+  // const secondName = useSelector(state => (state.profile.SecondName));
+  // const addrCity = useSelector(state => (state.profile.AddrCity))
+  // const addrIndex = useSelector(state => (state.profile.AddrIndex));
+  // const addrStreet = useSelector(state => (state.profile.AddrStreet));
+  // const addrHouse = useSelector(state => (state.profile.AddrHouse));
+  // const addrStructure = useSelector(state => (state.profile.AddrStructure));
+  // const addrAppart = useSelector(state => (state.profile.AddrAppart));
+  // useEffect(() => {
+  //   setValue('addr_index', addrIndex);
+  //   setValue('addr_city', addrCity);
+  //   setValue('addr_street', addrStreet);
+  //   setValue('addr_house', addrHouse );
+  //   setValue('addr_structure', addrStructure);
+  //   setValue('addr_appart', addrAppart);
+  //   setValue('FirstName',firstName);
+  //   setValue('LastName', lastName);
+  //   setValue('SecondName', secondName);
+  // });
+  let isPostForm = false;
   const formValues = propsFrom?.getValues();
-
   const [step, setStep] = useState(1);
   const [categorFromRecive, setCategorFromRecive] = useState([]);
   const [categorFromExchange, setCategorFromExchange] = useState([]);
@@ -112,18 +142,19 @@ export default function ExchangeForm() {
     setValue('category_wish', categorFromRecive);
   }, [categorFromRecive]);
 
-  const onSubmitForm = (data) => {
+  const onSubmitForm = () => {
     setStep((prevState) => prevState + 1);
     console.log('Все значение полей в форме', formValues);
     if (step === 3) {
-      // TODO отправку формы на серв
-      // const postForm = restPost('/order', {
-      // formValues,
-      // });
+      // поменять урлу на рабочую и baseUrl
+      const result = restPost('/post', formValues)
+        .then(() => {
+          isPostForm = true;
+          return isPostForm;
+        })
+        .catch((err) => alert('Не валидные поля'));
     }
   };
-  // console.log('Категории в форме с 1 шага', categorFromExchange);
-  // console.log('Категории в форме с 2 шага', categorFromRecive);
 
   const Next = () => (
     <Button
@@ -148,6 +179,7 @@ export default function ExchangeForm() {
       Назад
     </Button>
   );
+  console.log(formValues.addr_index);
 
   return (
     <form className={style.root} onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}>
@@ -200,19 +232,40 @@ export default function ExchangeForm() {
         </div>
       </div>
       )}
-      {step === 3
+      {isLogin && step === 3
       && (
       <div>
-        <Delivery control={control} />
+        <Delivery
+          control={control}
+          addr_index={formValues.addr_index}
+          addr_city={formValues.addr_index}
+          addr_street={formValues.addr_index}
+          addr_house={formValues.addr_index}
+          addr_structure={formValues.addr_index}
+          addr_appart={formValues.addr_index}
+          FirstName={formValues.FirstName}
+          LastName={formValues.LastName}
+          SecondName={formValues.SecondName}
+        />
         <div className={style.delivery}>
           <Back />
           <Next />
         </div>
       </div>
       )}
-      {step === 4
+      {(step === 4 && isPostForm)
       && (
-      <p>Данные успешно отправлены</p>
+        <div>
+          <p>Данные успешно отправлены</p>
+          <Link className={style.root} to="/main">На главную</Link>
+        </div>
+      )}
+      {(step === 4 && !isPostForm)
+      && (
+        <div>
+          <p>Данные не отправились, попробуйте еще раз</p>
+          <Link className={style.root} to="/main">На главную</Link>
+        </div>
       )}
     </form>
   );
