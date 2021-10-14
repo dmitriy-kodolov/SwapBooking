@@ -8,11 +8,13 @@ export default [
     id: 2,
     label: 'Начать обмен',
     path: '/startExchange',
+    isLogin: true,
   },
   {
     id: 3,
     label: 'Мои обмены',
     path: '/myExchanges',
+    isLogin: true,
   },
   {
     id: 4,

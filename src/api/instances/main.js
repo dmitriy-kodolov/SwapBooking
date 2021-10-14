@@ -40,4 +40,5 @@ export const restPatch = (url, data, config) => instance.patch(url, data, {
 
   },
 });
+
 export default instance;

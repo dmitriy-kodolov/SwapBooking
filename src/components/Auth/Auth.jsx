@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { logIn } from '../../store/slice/loginSlice';
+import { logIn } from '../../store/slices/loginSlice';
 
 const style = {
   position: 'absolute',
