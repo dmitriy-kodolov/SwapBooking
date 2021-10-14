@@ -21,6 +21,8 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: '68ch',
+  maxHeight: '75vh',
+  overflow: 'scroll',
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 4,

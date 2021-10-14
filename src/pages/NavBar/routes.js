@@ -3,6 +3,7 @@ export default [
     id: 1,
     label: 'Главная',
     path: '/main',
+    isLogin: false,
   },
   {
     id: 2,
@@ -20,5 +21,6 @@ export default [
     id: 4,
     label: 'Задать вопрос',
     path: '/questionTab',
+    isLogin: false,
   },
 ];
