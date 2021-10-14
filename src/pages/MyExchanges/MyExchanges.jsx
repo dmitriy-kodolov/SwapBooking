@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import WantsExchange from 'components/WantsExchange';
 import WantsRecive from 'components/WantsRecive/WantsRecive';
+import CoincidencesList from './components/CoincidencesList/CoincidencesList';
 
 function TabPanel(props) {
   const {
