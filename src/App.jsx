@@ -4,7 +4,6 @@ import {
 } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import LogoTab from './pages/LogoTab';
-import NavBar from './pages/NavBar';
 import MainPage from './pages/MainPage';
 import StartExchange from './pages/StartExchange';
 import MyExchange from './pages/MyExchanges';
@@ -20,10 +19,7 @@ function App() {
   return (
     <>
       <Router>
-        <div>
-          <LogoTab />
-          <NavBar />
-        </div>
+        <LogoTab />
         <Switch>
           <Route exact path="/main" component={MainPage} />
           <Route path="/startExchange" component={StartExchange} />

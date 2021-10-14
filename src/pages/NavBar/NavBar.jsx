@@ -24,13 +24,13 @@ export default function NavBar() {
   const isLogin = useSelector((state) => state.login.isLogin);
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '800px' }}>
       <Tabs
         centered
         value={value}
         onChange={handleChange}
-        textColor="primary"
-        indicatorColor="primary"
+        textColor="inherit"
+        indicatorColor="secondary"
         aria-label="secondary tabs example"
       >
         {NavBarRoutes.map((route) => (
