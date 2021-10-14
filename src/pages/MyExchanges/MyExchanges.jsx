@@ -67,45 +67,40 @@ function MyExchange() {
         onChange={handleChange}
         aria-label="Vertical tabs example"
         scrollButtons={false}
-        sx={{ borderRight: 1, borderColor: 'divider', height: 'max-content' }}
+        sx={{
+          borderRight: 1,
+          borderColor: 'divider',
+          height: 'max-content',
+          minWidth: 300,
+        }}
       >
         <Box
           sx={{
             width: 300,
             height: 100,
             bgcolor: 'white',
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'column',
             '&:hover': {
               backgroundColor: 'primary.main',
               opacity: [0.9, 0.8, 0.7],
             },
           }}
+          onClick={(e) => handleChange(e, 0)}
         >
-          <Box
-            sx={{
-              flexGrow: 1,
-              bgcolor: 'background.paper',
-              display: 'flex',
-              height: 224,
-              justifyContent: 'center',
-            }}
-          >
-            <Typography align="center">
-              {user}
-            </Typography>
-          </Box>
+          <Typography align="center">
+            {user}
+          </Typography>
         </Box>
         <Tab label="Предложения для обмена" {...a11yProps(0)} />
         <Tab label="Хочу обменять" {...a11yProps(1)} />
         <Tab label="Хочу получить" {...a11yProps(2)} />
         <Tab label="Активные обмены" {...a11yProps(3)} />
-        <Tab label="Отзывы на книги" {...a11yProps(4)} />
-        <Tab label="Личные данные" {...a11yProps(5)} />
-        <Tab label="Сообщения" {...a11yProps(6)} />
-        <Tab label="Архив" {...a11yProps(7)} />
-        <Tab label="Выход" {...a11yProps(8)} />
+        <Tab label="Личные данные" {...a11yProps(4)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        Item One
+        <CoincidencesList />
       </TabPanel>
       <TabPanel value={value} index={1}>
         Item Two
@@ -121,15 +116,6 @@ function MyExchange() {
       </TabPanel>
       <TabPanel value={value} index={5}>
         Item Six
-      </TabPanel>
-      <TabPanel value={value} index={6}>
-        Item Seven
-      </TabPanel>
-      <TabPanel value={value} index={7}>
-        Item 8
-      </TabPanel>
-      <TabPanel value={value} index={8}>
-        Item 9
       </TabPanel>
     </Box>
   );

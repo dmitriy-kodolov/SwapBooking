@@ -9,17 +9,31 @@ import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
 import Auth from '../../components/Auth';
 import Registered from '../../components/Registered';
-import { logOut } from '../../store/slices/loginSlice';
+import { logOut, authOpen, authClose } from '../../store/slices/loginSlice';
 
 export default function ButtonAppBar() {
   const dispatch = useDispatch();
   const [isOpenAuth, setOpenAuth] = useState(false);
-  const handleAuthOpen = useCallback(() => setOpenAuth(true), []);
+  const isAuthModalOpen = useSelector((state) => state.login.isAuthModalOpen);
+
+  const handleAuthOpen = useCallback(() => {
+    setOpenAuth(true);
+    if (!isAuthModalOpen) {
+      dispatch(authOpen());
+    }
+  }, [isAuthModalOpen]);
+
   const handleAuthClose = useCallback(() => setOpenAuth(false), []);
 
   const [isOpenRegistered, setOpenRegistered] = useState(false);
   const handleRegisteredOpen = useCallback(() => setOpenRegistered(true), []);
   const handleRegisteredClose = useCallback(() => setOpenRegistered(false), []);
+
+  const closeModal = useCallback(() => {
+    handleAuthClose();
+    handleRegisteredClose();
+    dispatch(authClose());
+  }, []);
 
   const toggleModal = useCallback(() => {
     if (isOpenRegistered) {
@@ -63,15 +77,18 @@ export default function ButtonAppBar() {
             )
               : (
                 <>
-                  <Button color="inherit" onClick={handleAuthOpen}>Авторизоваться</Button>
-                  <Button color="inherit" onClick={handleRegisteredOpen}>Зарегистрироваться</Button>
+                  <Button variant="contained" color="info" onClick={handleAuthOpen}>Sign in</Button>
                 </>
               )
           }
-          <Auth close={handleAuthClose} isOpen={isOpenAuth} toggleModal={toggleModal} />
+          <Auth
+            close={closeModal}
+            isOpen={isAuthModalOpen || (isOpenAuth && !isOpenRegistered)}
+            toggleModal={toggleModal}
+          />
           <Registered
-            close={handleRegisteredClose}
-            isOpen={isOpenRegistered}
+            close={closeModal}
+            isOpen={isAuthModalOpen && isOpenRegistered}
             toggleModal={toggleModal}
           />
         </Toolbar>

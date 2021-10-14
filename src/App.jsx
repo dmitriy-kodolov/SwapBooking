@@ -11,10 +11,6 @@ import MyExchange from './pages/MyExchanges';
 import QuestionTab from './pages/QuestionTab';
 
 function App() {
-  const AuthRoutes = [
-    <Route path="/myExchanges" component={MyExchange} key="myExchanges" />,
-  ];
-
   const isLogin = useSelector((state) => state.login.isLogin);
 
   return (
@@ -26,9 +22,9 @@ function App() {
         </div>
         <Switch>
           <Route exact path="/main" component={MainPage} />
-          <Route path="/startExchange" component={StartExchange} />
+          <Route path="/startExchange" component={isLogin ? StartExchange : () => null} />
           <Route path="/questionTab" component={QuestionTab} />
-          {isLogin && AuthRoutes}
+          <Route path="/myExchanges" component={isLogin ? MyExchange : () => null} key="myExchanges" />
           <Redirect to="/main" />
         </Switch>
       </Router>

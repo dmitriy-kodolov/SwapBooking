@@ -5,10 +5,12 @@ import Box from '@mui/material/Box';
 import {
   Link, useLocation,
 } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import NavBarRoutes from './routes';
+import { authOpen } from '../../store/slices/loginSlice';
 
 export default function NavBar() {
+  const dispatch = useDispatch();
   const [value, setValue] = React.useState(1);
 
   const handleChange = (event, newValue) => {
@@ -22,6 +24,12 @@ export default function NavBar() {
     }
   }, []);
   const isLogin = useSelector((state) => state.login.isLogin);
+
+  useEffect(() => {
+    if (!isLogin && NavBarRoutes.find((v) => v.id === value)?.isLogin !== isLogin) {
+      dispatch(authOpen());
+    }
+  }, [value, isLogin]);
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -40,7 +48,6 @@ export default function NavBar() {
             to={route.path}
             key={route.id}
             value={route.id}
-            disabled={route.isLogin && route.isLogin !== isLogin}
           />
         ))}
       </Tabs>
