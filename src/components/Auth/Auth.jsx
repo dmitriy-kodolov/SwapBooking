@@ -9,8 +9,10 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
-import { logIn } from '../../store/slices/loginSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { LoadingButton } from '@mui/lab';
+import { logIn, loginStart } from '../../store/slices/loginSlice';
+import { restPost } from '../../api/instances/main';
 
 const style = {
   position: 'absolute',
@@ -30,10 +32,38 @@ export default function Auth({ close, isOpen, toggleModal }) {
   const [login, setLogin] = React.useState('');
   const [password, setPassword] = React.useState('');
   const dispatch = useDispatch();
-  const submit = () => {
-    dispatch(logIn());
-    close();
-  };
+
+  const isLoading = useSelector((state) => state.login.isLoading);
+
+  const submit = React.useCallback(() => {
+    dispatch(loginStart());
+    restPost('http://localhost/user', { login, password })
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch(logIn(response.data));
+          close();
+        }
+      }).catch((error) => {
+        console.log(error);
+        setTimeout(() => {
+          dispatch(logIn({
+            login,
+            password,
+            name: 'name',
+            lastname: 'lastname',
+            fatherName: 'fatherName',
+            email: 'email',
+            index: 'index',
+            city: 'city',
+            street: 'street',
+            numberHome: 'numberHome',
+            district: 'district',
+            numberRoom: 'numberRoom',
+          }));
+          close();
+        }, 2000);
+      });
+  }, [dispatch, login, password]);
 
   return (
     <Modal
@@ -75,14 +105,15 @@ export default function Auth({ close, isOpen, toggleModal }) {
 
           </CardContent>
           <CardActions>
-            <Button
+            <LoadingButton
               size="small"
               variant="contained"
               onClick={submit}
               disabled={!login || !password}
+              loading={isLoading}
             >
               Войти
-            </Button>
+            </LoadingButton>
             <Button size="small" onClick={toggleModal}>Регистрация</Button>
           </CardActions>
         </Card>
