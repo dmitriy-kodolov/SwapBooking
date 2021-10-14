@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -6,7 +7,8 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import CoincidencesList from './components/CoincidencesList/CoincidencesList';
+import WantsExchange from 'components/WantsExchange';
+import WantsRecive from 'components/WantsRecive/WantsRecive';
 
 function TabPanel(props) {
   const {
@@ -104,10 +106,10 @@ function MyExchange() {
         Item Two
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Item Three
+        <WantsRecive />
       </TabPanel>
       <TabPanel value={value} index={3}>
-        Item Four
+        <WantsExchange />
       </TabPanel>
       <TabPanel value={value} index={4}>
         Item Five

@@ -41,4 +41,14 @@ export const restPatch = (url, data, config) => instance.patch(url, data, {
   },
 });
 
+export const restDelete = (url, config) => instance.delete(
+  url,
+  {
+    ...config,
+    headers: {
+      ...getHeader(config && config.headers),
+    },
+  },
+);
+
 export default instance;
