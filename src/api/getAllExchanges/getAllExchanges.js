@@ -3,8 +3,8 @@ import { restGet } from '../instances/main';
 // здесь надо уточнять как сделает миша
 // const userId = useSelector((state) => state.user.userId);
 const userId = 1;
-const getProfileInfo = async () => {
-  const response = await restGet(`/profile/${userId}`);
+const getCategoriesOfBook = async () => {
+  const response = await restGet(`/wishes/all/${userId}`);
   return response;
 };
-export default getProfileInfo;
+export default getCategoriesOfBook;
