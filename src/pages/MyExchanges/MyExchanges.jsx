@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -48,6 +49,8 @@ function MyExchange() {
     setValue(newValue);
   };
 
+  const user = useSelector((state) => state.login.profile?.name);
+
   return (
     <Box
       sx={{
@@ -63,15 +66,40 @@ function MyExchange() {
         scrollButtons={false}
         sx={{ borderRight: 1, borderColor: 'divider', height: 'max-content' }}
       >
-        <Tab label="Item One" {...a11yProps(0)} />
-        <Tab label="Item Two" {...a11yProps(1)} />
-        <Tab label="Item Three" {...a11yProps(2)} />
-        <Tab label="Item Four" {...a11yProps(3)} />
-        <Tab label="Item Five" {...a11yProps(4)} />
-        <Tab label="Item Six" {...a11yProps(5)} />
-        <Tab label="Item Seven" {...a11yProps(6)} />
-        <Tab label="Item Seven" {...a11yProps(7)} />
-        <Tab label="Item Seven" {...a11yProps(8)} />
+        <Box
+          sx={{
+            width: 300,
+            height: 100,
+            bgcolor: 'white',
+            '&:hover': {
+              backgroundColor: 'primary.main',
+              opacity: [0.9, 0.8, 0.7],
+            },
+          }}
+        >
+          <Box
+            sx={{
+              flexGrow: 1,
+              bgcolor: 'background.paper',
+              display: 'flex',
+              height: 224,
+              justifyContent: 'center',
+            }}
+          >
+            <Typography align="center">
+              {user}
+            </Typography>
+          </Box>
+        </Box>
+        <Tab label="Предложения для обмена" {...a11yProps(0)} />
+        <Tab label="Хочу обменять" {...a11yProps(1)} />
+        <Tab label="Хочу получить" {...a11yProps(2)} />
+        <Tab label="Активные обмены" {...a11yProps(3)} />
+        <Tab label="Отзывы на книги" {...a11yProps(4)} />
+        <Tab label="Личные данные" {...a11yProps(5)} />
+        <Tab label="Сообщения" {...a11yProps(6)} />
+        <Tab label="Архив" {...a11yProps(7)} />
+        <Tab label="Выход" {...a11yProps(8)} />
       </Tabs>
       <TabPanel value={value} index={0}>
         Item One
@@ -93,6 +121,12 @@ function MyExchange() {
       </TabPanel>
       <TabPanel value={value} index={6}>
         Item Seven
+      </TabPanel>
+      <TabPanel value={value} index={7}>
+        Item 8
+      </TabPanel>
+      <TabPanel value={value} index={8}>
+        Item 9
       </TabPanel>
     </Box>
   );

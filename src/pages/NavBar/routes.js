@@ -8,6 +8,7 @@ export default [
     id: 2,
     label: 'Начать обмен',
     path: '/startExchange',
+    isLogin: true,
   },
   {
     id: 3,

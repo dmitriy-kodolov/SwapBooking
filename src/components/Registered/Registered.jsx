@@ -10,6 +10,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
+// eslint-disable-next-line import/no-unresolved
 import { LoadingButton } from '@mui/lab';
 import { logIn, loginStart } from '../../store/slices/loginSlice';
 import { restPost } from '../../api/instances/main';
