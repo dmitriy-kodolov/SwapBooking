@@ -104,12 +104,12 @@ export default function ExchangeForm() {
     handleSubmit, control, setValue, setError, formState: { errors },
     clearErrors,
   } = propsFrom;
-  useEffect(() => {
-    (async () => {
-      console.log('Запрос');
-      await getCategoriesOfBook();
-    });
-  }, []);
+  // useEffect(() => {
+    // (async () => {
+  // console.log('Запрос');
+  // await getCategoriesOfBook();
+    // });
+  // }, []);
 
   // запрос на получение данных с сервака
   useEffect(() => {

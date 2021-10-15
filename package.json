@@ -56,5 +56,6 @@
     "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "prettier": "2.4.1"
-  }
+  },
+  "proxy": "http://swap-booking.autumn-training-2021.simbirsoft1.com"
 }
