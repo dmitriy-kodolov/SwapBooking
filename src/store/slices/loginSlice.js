@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+  userId: 101,
   isLogin: false,
   profile: {},
   isLoading: false,
   isAuthModalOpen: false,
 };
-// сделал юзабельную кнопку войти с любыми параметрами для входа(так как нету сейчас бэка)
 const loginSlice = createSlice({
   name: 'login',
   initialState,

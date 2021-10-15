@@ -104,7 +104,7 @@ function MyExchange() {
         <CoincidencesList />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Item Two
+        Последнее подтверждение
       </TabPanel>
       <TabPanel value={value} index={2}>
         <WantsRecive />
