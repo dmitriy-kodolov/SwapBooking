@@ -1,13 +1,14 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable no-unused-vars */
 import { makeStyles } from '@material-ui/styles';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { restDelete } from 'api/instances/main';
+import { useSelector } from 'react-redux';
 import getAllExchanges from '../../api/getAllExchanges/getAllExchanges';
 
 const useStyle = makeStyles({
@@ -68,18 +69,21 @@ const mockList = [
   },
 ];
 const WantsExchange = () => {
-  const initialCard = getAllExchanges; // начальные карточки с хотелками
-  const [card, setCard] = useState(mockList); // здесь надо менять на initialCard
+  const userId = useSelector((state) => state.login.userId);
+  const [card, setCard] = useState(mockList);
+  // Получение хателок и установка состоятния
+  // useEffect(() => {
+  // setCard(getAllExchanges(userId));
+  // }, []);
+  //  здесь реализация удалении карточки как с сервака так и с состояния компоненты
   const removeCard = (id) => {
     setCard((prevState) => prevState.filter((el) => el.id_wish_list !== id));
   };
-  //  здесь реализация удалении карточки как с сервака так и с состояния компоненты
-  let isDeleteCard = false;
+  const [isDeleteCard, setIsDeleteCard] = useState(false);
   const deleteCard = (wishId) => { // удаление карточки с базы данных
-    restDelete(`/wishes/${wishId}`)
+    restDelete(`/api/wishes/${wishId}`)
       .then(() => {
-        isDeleteCard = true;
-        return isDeleteCard;
+        setIsDeleteCard(true);
       })
       .catch((e) => alert('Не удалось удалить карточку, попробуйте позже'));
   };
@@ -124,6 +128,9 @@ const WantsExchange = () => {
           </CardContent>
           <CardActions>
             <Button onClick={() => onSumbit(item.id_wish_list)} size="small">Убрать из желаемого</Button>
+            {/* На кнопку подробнее надо повесить запрос получения данных
+            более подробной информации хотелки */}
+            <Button>Подробнее</Button>
           </CardActions>
         </Card>
       ))}

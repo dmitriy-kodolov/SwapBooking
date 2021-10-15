@@ -97,6 +97,9 @@ const WantsRecive = () => {
             </Typography>
           </CardContent>
           <CardActions>
+            {/* На кнопку подробнее надо повесить запрос получения данных
+            более подробной информации хотелки */}
+            <Button size="small">Подробнее</Button>
             <Button size="small">Убрать</Button>
           </CardActions>
         </Card>

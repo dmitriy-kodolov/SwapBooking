@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable camelcase */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable max-len */
@@ -13,9 +14,10 @@ import { makeStyles } from '@material-ui/styles';
 import { useForm } from 'react-hook-form';
 import { Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-// import { fetchProfileInfo } from 'store/slices/userProfileSlice';
+import { fetchProfileInfo } from 'store/slices/userProfileSlice';
 import { fetchCategories } from 'store/slices/categoriesSlice';
 import { Link } from 'react-router-dom';
+import getCategoriesOfBook from 'api/categoriesOfBook/getCategoriesOfBook';
 import Category from '../Category';
 import Exchange from './Exchange';
 import Delivery from './Delivery/Delivery';
@@ -82,13 +84,11 @@ const mockCategor = {
 export default function ExchangeForm() {
   const dispatch = useDispatch();
   const style = useStyle();
-  const isLogin = useSelector((state) => state.login);
-  const userID = isLogin ? -1 : true;
+  const userId = useSelector(((state) => state.login.userId));
   const propsFrom = useForm({
     defaultValues: {
       category_offer: [],
       category_wish: [],
-      id_user: userID,
       addr_index: 1,
       addr_city: 'Тест',
       addr_street: 'Тест',
@@ -104,32 +104,39 @@ export default function ExchangeForm() {
     handleSubmit, control, setValue, setError, formState: { errors },
     clearErrors,
   } = propsFrom;
-  // запрос на получение данных с сервака
   // useEffect(() => {
-  // dispatch(fetchProfileInfo());
-  // dispatch(fetchCategories());
+    // (async () => {
+  // console.log('Запрос');
+  // await getCategoriesOfBook();
+    // });
   // }, []);
-  // const firstName = useSelector(state => (state.profile.UserName));
-  // const lastName = useSelector(state => (state.profile.LastName));
-  // const secondName = useSelector(state => (state.profile.SecondName));
-  // const addrCity = useSelector(state => (state.profile.AddrCity))
-  // const addrIndex = useSelector(state => (state.profile.AddrIndex));
-  // const addrStreet = useSelector(state => (state.profile.AddrStreet));
-  // const addrHouse = useSelector(state => (state.profile.AddrHouse));
-  // const addrStructure = useSelector(state => (state.profile.AddrStructure));
-  // const addrAppart = useSelector(state => (state.profile.AddrAppart));
+
+  // запрос на получение данных с сервака
+  useEffect(() => {
+    dispatch(fetchProfileInfo(userId));
+    dispatch(fetchCategories());
+  }, []);
+  // const firstName = useSelector((state) => (state.profile.UserName));
+  // const lastName = useSelector((state) => (state.profile.LastName));
+  // const secondName = useSelector((state) => (state.profile.SecondName));
+  // const addrCity = useSelector((state) => (state.profile.AddrCity));
+  // const addrIndex = useSelector((state) => (state.profile.AddrIndex));
+  // const addrStreet = useSelector((state) => (state.profile.AddrStreet));
+  // const addrHouse = useSelector((state) => (state.profile.AddrHouse));
+  // const addrStructure = useSelector((state) => (state.profile.AddrStructure));
+  // const addrAppart = useSelector((state) => (state.profile.AddrAppart));
   // useEffect(() => {
-  //   setValue('addr_index', addrIndex);
-  //   setValue('addr_city', addrCity);
-  //   setValue('addr_street', addrStreet);
-  //   setValue('addr_house', addrHouse );
-  //   setValue('addr_structure', addrStructure);
-  //   setValue('addr_appart', addrAppart);
-  //   setValue('FirstName',firstName);
-  //   setValue('LastName', lastName);
-  //   setValue('SecondName', secondName);
+  // setValue('addr_index', addrIndex);
+  // setValue('addr_city', addrCity);
+  // setValue('addr_street', addrStreet);
+  // setValue('addr_house', addrHouse);
+  // setValue('addr_structure', addrStructure);
+  // setValue('addr_appart', addrAppart);
+  // setValue('FirstName', firstName);
+  // setValue('LastName', lastName);
+  // setValue('SecondName', secondName);
   // });
-  let isPostForm = false;
+
   const formValues = propsFrom?.getValues();
   const [step, setStep] = useState(1);
   const [categorFromRecive, setCategorFromRecive] = useState([]);
@@ -141,18 +148,19 @@ export default function ExchangeForm() {
   useEffect(() => {
     setValue('category_wish', categorFromRecive);
   }, [categorFromRecive]);
-
+  // отправка формы
+  const [isPostForm, setIsPostForm] = useState(false);
   const onSubmitForm = () => {
     setStep((prevState) => prevState + 1);
-    console.log('Все значение полей в форме', formValues);
     if (step === 3) {
-      // поменять урлу на рабочую и baseUrl
-      const result = restPost('/post', formValues)
+      const result = restPost(`/api/order/${userId}`, formValues)
         .then(() => {
-          isPostForm = true;
-          return isPostForm;
+          setIsPostForm(true);
         })
-        .catch((err) => alert('Не валидные поля'));
+        .catch((err) => {
+          console.error(err);
+          alert('Не валидные поля');
+        });
     }
   };
 
@@ -179,7 +187,6 @@ export default function ExchangeForm() {
       Назад
     </Button>
   );
-  console.log(formValues.addr_index);
 
   return (
     <form className={style.root} onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}>
@@ -232,7 +239,7 @@ export default function ExchangeForm() {
         </div>
       </div>
       )}
-      {isLogin && step === 3
+      {step === 3
       && (
       <div>
         <Delivery
