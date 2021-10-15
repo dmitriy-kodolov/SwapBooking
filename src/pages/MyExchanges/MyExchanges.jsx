@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable import/order */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
@@ -9,8 +11,9 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import WantsExchange from 'components/WantsExchange';
 import WantsRecive from 'components/WantsRecive/WantsRecive';
-import ActiveOffers from 'components/ActiveOffers';
 import CoincidencesList from './components/CoincidencesList/CoincidencesList';
+import ActiveOffers from 'components/ActiveOffers';
+import OffersForExchange from 'components/OffersForExchange';
 
 function TabPanel(props) {
   const {
@@ -102,10 +105,12 @@ function MyExchange() {
         <Tab label="Личные данные" {...a11yProps(4)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        <CoincidencesList />
+        Инфо о пользователе
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Item Two
+        {/* <OffersForExchange /> */}
+        <CoincidencesList />
+
       </TabPanel>
       <TabPanel value={value} index={2}>
         <WantsRecive />
