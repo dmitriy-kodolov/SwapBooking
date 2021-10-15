@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import WantsExchange from 'components/WantsExchange';
 import WantsRecive from 'components/WantsRecive/WantsRecive';
+import ActiveOffers from 'components/ActiveOffers';
 import CoincidencesList from './components/CoincidencesList/CoincidencesList';
 
 function TabPanel(props) {
@@ -113,7 +114,7 @@ function MyExchange() {
         <WantsExchange />
       </TabPanel>
       <TabPanel value={value} index={4}>
-        Item Five
+        <ActiveOffers />
       </TabPanel>
       <TabPanel value={value} index={5}>
         Item Six
