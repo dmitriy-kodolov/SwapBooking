@@ -1,9 +1,11 @@
-/* eslint-disable react/prop-types */
+/* eslint-disable import/no-unresolved */
 /* eslint-disable no-unused-vars */
-import { makeStyles } from '@material-ui/styles';
 import React from 'react';
-import { Paper } from '@mui/material';
-import Input from '../../Input/Input';
+import { makeStyles } from '@material-ui/styles';
+import { Paper, Button } from '@mui/material';
+import Input from 'components/Input/Input';
+import { useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
 
 const useStyle = makeStyles(() => ({
   test: {
@@ -15,8 +17,8 @@ const useStyle = makeStyles(() => ({
     flexDirection: 'row',
   },
   paper: {
-    padding: '15px',
-    height: '350px',
+    padding: '15px 15px 45px 15px',
+    height: 'auto',
     margin: '15px',
     width: '450px',
   },
@@ -29,26 +31,43 @@ const useStyle = makeStyles(() => ({
   },
   container: {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
+    marginBottom: '35px',
+  },
+  btn: {
+    width: '480px',
+    padding: '15px',
   },
 }));
-
-const Delivery = ({ control }) => {
+const Profile = () => {
+  const propsFrom = useForm({
+    defaultValues: {
+      addr_index: '',
+      addr_city: '',
+      addr_street: '',
+      addr_house: '',
+      addr_structure: '',
+      addr_appart: '',
+      first_name_user: '',
+      last_name_user: '',
+      second_name_user: '',
+    },
+  });
+  // const userId = useSelector(((state) => state.login.userId));
+  const {
+    handleSubmit, control, setValue, formState: { errors },
+  } = propsFrom;
+  // const formValues = propsFrom?.getValues();
   const style = useStyle();
   return (
-    <div className={style.container}>
+    <form className={style.container}>
       <Paper className={style.paper} elevation={4}>
         <div className={style.root}>
           <Input
             className={style.test}
             rules={
                   {
-                    required: {
-                      value: true,
-                      message: 'Поле обязательно',
-                    },
-
                     maxLength: {
                       value: 15,
                       message: 'Не больше 15-ти символов',
@@ -67,10 +86,6 @@ const Delivery = ({ control }) => {
             className={style.test}
             rules={
                   {
-                    required: {
-                      value: true,
-                      message: 'Поле обязательно',
-                    },
                     maxLength: {
                       value: 25,
                       message: 'Не больше 25-ти символов',
@@ -109,10 +124,6 @@ const Delivery = ({ control }) => {
               className={style.test}
               rules={
                   {
-                    required: {
-                      value: true,
-                      message: 'Поле обязательно',
-                    },
                     maxLength: {
                       value: 5,
                       message: 'Не больше 5-ти символов',
@@ -151,10 +162,6 @@ const Delivery = ({ control }) => {
             defaultValue=""
             rules={
                   {
-                    required: {
-                      value: true,
-                      message: 'Поле обязательно',
-                    },
                     maxLength: {
                       value: 6,
                       message: 'Не больше 6-ти символов',
@@ -170,17 +177,11 @@ const Delivery = ({ control }) => {
             name="addr_index"
           />
         </div>
-      </Paper>
-      <Paper className={style.paper} elevation={4}>
         <div className={style.root}>
           <Input
             className={style.test}
             rules={
                   {
-                    required: {
-                      value: true,
-                      message: 'Поле обязательно',
-                    },
                     maxLength: {
                       value: 50,
                       message: 'Не больше 25-ти символов',
@@ -199,10 +200,6 @@ const Delivery = ({ control }) => {
             className={style.test}
             rules={
                   {
-                    required: {
-                      value: true,
-                      message: 'Поле обязательно',
-                    },
                     maxLength: {
                       value: 25,
                       message: 'Не больше 25-ти символов',
@@ -238,7 +235,15 @@ const Delivery = ({ control }) => {
           />
         </div>
       </Paper>
-    </div>
+      <Button
+        className={style.btn}
+        variant="outlined"
+        type="submit"
+      >
+        Подтвердить изменения
+
+      </Button>
+    </form>
   );
 };
-export default Delivery;
+export default Profile;

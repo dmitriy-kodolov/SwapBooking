@@ -17,7 +17,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfileInfo } from 'store/slices/userProfileSlice';
 import { fetchCategories } from 'store/slices/categoriesSlice';
 import { Link } from 'react-router-dom';
-import getCategoriesOfBook from 'api/categoriesOfBook/getCategoriesOfBook';
 import Category from '../Category';
 import Exchange from './Exchange';
 import Delivery from './Delivery/Delivery';
@@ -64,6 +63,10 @@ export default function ExchangeForm() {
       second_name_user: '',
     },
   });
+  const {
+    handleSubmit, control, setValue, setError, formState: { errors },
+    clearErrors,
+  } = propsFrom;
   const formValues = propsFrom?.getValues();
   const [step, setStep] = useState(1);
   const [categorFromRecive, setCategorFromRecive] = useState([]);
@@ -74,11 +77,6 @@ export default function ExchangeForm() {
   const [profileInformation, setProfileInformation] = useState([]);
 
   const [isPostForm, setIsPostForm] = useState(false);
-
-  const {
-    handleSubmit, control, setValue, setError, formState: { errors },
-    clearErrors,
-  } = propsFrom;
 
   // запрос на получение данных с сервака
   useEffect(() => {
