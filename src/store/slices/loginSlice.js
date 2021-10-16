@@ -6,6 +6,8 @@ const initialState = {
   profile: {},
   isLoading: false,
   isAuthModalOpen: false,
+  isError: false,
+  error: null,
 };
 const loginSlice = createSlice({
   name: 'login',
@@ -13,6 +15,8 @@ const loginSlice = createSlice({
   reducers: {
     loginStart(state) {
       state.isLoading = true;
+      state.isError = false;
+      state.error = null;
     },
     logIn(state, { payload = { name: 'Vasilii' } }) {
       state.isLogin = true;
@@ -29,9 +33,14 @@ const loginSlice = createSlice({
     authClose(state) {
       state.isAuthModalOpen = false;
     },
+    loginError(state, { payload }) {
+      state.isLoading = false;
+      state.isError = true;
+      state.error = payload;
+    },
   },
 });
 export const {
-  logIn, logOut, loginStart, authOpen, authClose,
+  logIn, logOut, loginStart, authOpen, authClose, loginError,
 } = loginSlice.actions;
 export default loginSlice.reducer;
