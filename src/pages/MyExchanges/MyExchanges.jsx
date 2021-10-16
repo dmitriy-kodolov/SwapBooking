@@ -13,6 +13,7 @@ import WantsExchange from 'components/WantsExchange';
 import WantsRecive from 'components/WantsRecive/WantsRecive';
 import CoincidencesList from './components/CoincidencesList/CoincidencesList';
 import ActiveOffers from 'components/ActiveOffers';
+import Profile from 'components/Profile';
 
 function TabPanel(props) {
   const {
@@ -119,7 +120,7 @@ function MyExchange() {
         <ActiveOffers />
       </TabPanel>
       <TabPanel value={value} index={5}>
-        Item Six
+        <Profile />
       </TabPanel>
     </Box>
   );
