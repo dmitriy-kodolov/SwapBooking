@@ -13,7 +13,6 @@ import WantsExchange from 'components/WantsExchange';
 import WantsRecive from 'components/WantsRecive/WantsRecive';
 import CoincidencesList from './components/CoincidencesList/CoincidencesList';
 import ActiveOffers from 'components/ActiveOffers';
-import OffersForExchange from 'components/OffersForExchange';
 
 function TabPanel(props) {
   const {
@@ -108,9 +107,7 @@ function MyExchange() {
         Инфо о пользователе
       </TabPanel>
       <TabPanel value={value} index={1}>
-        {/* <OffersForExchange /> */}
         <CoincidencesList />
-
       </TabPanel>
       <TabPanel value={value} index={2}>
         <WantsRecive />
