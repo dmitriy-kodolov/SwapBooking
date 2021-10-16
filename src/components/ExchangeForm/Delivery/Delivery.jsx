@@ -97,7 +97,7 @@ const Delivery = ({ control }) => {
                     },
                     pattern: {
                       // TODO сделать правильную регулярку на букву и цифру
-                      value: /^[0-9]{1,2}[а-яА-Я]{1}/,
+                      value: /^[а-яА-Я]?[0-9]{0,2}$/,
                       message: 'Только буква и цифры',
                     },
                   }
@@ -194,7 +194,7 @@ const Delivery = ({ control }) => {
                 }
             control={control}
             label="Фамилия*"
-            name="LastName"
+            name="last_name_user"
           />
           <Input
             className={style.test}
@@ -216,7 +216,7 @@ const Delivery = ({ control }) => {
                 }
             control={control}
             label="Имя*"
-            name="FirstName"
+            name="first_name_user"
           />
           <Input
             className={style.test}
@@ -235,7 +235,7 @@ const Delivery = ({ control }) => {
                 }
             control={control}
             label="Отчество"
-            name="SecondName"
+            name="second_name_user"
           />
         </div>
       </Paper>

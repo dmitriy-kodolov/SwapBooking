@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable no-lonely-if */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable comma-dangle */
@@ -42,7 +41,10 @@ const useStyle = makeStyles({
     margin: '15px',
     width: '450px',
   },
-
+  error: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
 });
 const Category = ({
   setError,
@@ -51,7 +53,7 @@ const Category = ({
   initialCategories,
   selectedCategories,
   isLoading = false,
-  isErrorLoading = false
+  isError
 }) => {
   const style = useStyle();
   const [categories, setCategories] = useState([]);
@@ -82,6 +84,7 @@ const Category = ({
       : [...categories, ...listToCategories];
     setCategories(Array.from(new Set(result)));
   };
+  console.log('kal', categories);
   useEffect(() => {
     clearErrors('category');
     setCategoriesForm(categories);
@@ -89,12 +92,15 @@ const Category = ({
       setError('category', { type: 'required' });
     }
   }, [categories]);
-
   return (
     <div className={style.container}>
       <Paper className={style.paper} elevation={4}>
         {isLoading && <p>Загрузка...</p>}
-        {isErrorLoading && <p>Ошибка сервера</p>}
+        <div className={style.error}>
+          {isError && <p className={style.required}>Ошибка при загрузки категорий, попробуйте повторить позже</p>}
+          {!categories?.length
+                && <p className={style.required}>Выберите хотябы один жанр</p>}
+        </div>
         {initialCategories
                 && (
                 <ul className={style.root}>
@@ -127,8 +133,6 @@ const Category = ({
                   ))}
                 </ul>
                 )}
-        {!categories?.length
-                && <p className={style.required}>Выберите хотябы один жанр</p>}
       </Paper>
     </div>
   );
