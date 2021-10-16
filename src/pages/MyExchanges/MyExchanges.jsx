@@ -102,10 +102,10 @@ function MyExchange() {
         <Tab label="Хочу обменять" {...a11yProps(1)} />
         <Tab label="Хочу получить" {...a11yProps(2)} />
         <Tab label="Активные обмены" {...a11yProps(3)} />
-        <Tab label="Личные данные" {...a11yProps(4)} />
+        <Tab label="Архив" {...a11yProps(4)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        Инфо о пользователе
+        <Profile />
       </TabPanel>
       <TabPanel value={value} index={1}>
         <CoincidencesList />
@@ -120,7 +120,7 @@ function MyExchange() {
         <ActiveOffers />
       </TabPanel>
       <TabPanel value={value} index={5}>
-        <Profile />
+        тут будет архив
       </TabPanel>
     </Box>
   );
