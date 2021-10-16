@@ -1,6 +1,7 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import getCategoriesOfBook from '../../api/categoriesOfBook/categoriesOfBook';
+import getCategoriesOfBook from '../../api/categoriesOfBook/getCategoriesOfBook';
 
 const initialState = {
   categories: null,

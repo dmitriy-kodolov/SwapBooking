@@ -71,7 +71,7 @@ const Exchange = ({
                 }
               control={control}
               label="Имя автора*"
-              name="FirstNameAutor"
+              name="first_name"
             />
             <Input
               className={style.test}
@@ -93,7 +93,7 @@ const Exchange = ({
                 }
               control={control}
               label="Фамилия автора*"
-              name="LastNameAutor"
+              name="last_name"
             />
           </div>
           <Input
@@ -109,7 +109,7 @@ const Exchange = ({
                       message: 'Не больше 50-ти символов',
                     },
                     pattern: {
-                      value: /^[a-zа-я0-9"'-.,\n?!;)]+$/,
+                      value: /^[a-zа-я0-9"'-.,\n?!;)]+$/i,
                       message: 'Неправильное имя',
                     },
                   }

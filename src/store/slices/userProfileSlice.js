@@ -4,15 +4,15 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import getProfileInfo from 'api/getProfileInfo/getProfileInfo';
 
 const initialState = {
-  profile: null,
+  userProfile: null,
   isLoading: null,
   error: null,
 };
 
 export const fetchProfileInfo = createAsyncThunk(
   'fetchProfileInfo',
-  async () => {
-    const profileInfo = await getProfileInfo();
+  async (userId) => {
+    const profileInfo = await getProfileInfo(userId);
     return profileInfo.data;
   },
 );
@@ -27,7 +27,7 @@ const profileInfoSlice = createSlice({
     },
     [fetchProfileInfo.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.profile = action.payload;
+      state.userProfile = action.payload;
     },
     [fetchProfileInfo.rejected]: (state) => {
       state.isLoading = false;

@@ -37,6 +37,7 @@ export default function Auth({ close, isOpen, toggleModal }) {
 
   const submit = React.useCallback(() => {
     dispatch(loginStart());
+    // менять урлу
     restPost('http://localhost/user', { login, password })
       .then((response) => {
         if (response.status === 200) {
