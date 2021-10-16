@@ -48,7 +48,6 @@ const Delivery = ({ control }) => {
                       value: true,
                       message: 'Поле обязательно',
                     },
-
                     maxLength: {
                       value: 15,
                       message: 'Не больше 15-ти символов',
