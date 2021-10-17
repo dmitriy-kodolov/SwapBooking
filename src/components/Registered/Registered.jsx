@@ -12,7 +12,8 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 // eslint-disable-next-line import/no-unresolved
 import { LoadingButton } from '@mui/lab';
-import { logIn, loginStart } from '../../store/slices/loginSlice';
+import { fetchProfileInfo } from '../../store/slices/userProfileSlice';
+import { logIn, loginError, loginStart } from '../../store/slices/loginSlice';
 import { restPost } from '../../api/instances/main';
 
 const style = {
@@ -57,42 +58,37 @@ export default function Registered({ close, isOpen, toggleModal }) {
 
   const submit = React.useCallback(() => {
     dispatch(loginStart());
-    restPost('http://localhost/user', {
-      login,
-      password,
-      name,
-      lastname,
-      fatherName,
-      email,
-      index,
-      city,
-      street,
-      numberHome,
-      district,
-      numberRoom,
+    restPost('/api/profile/', {
+      user_name: login,
+      first_name: name,
+      last_name: lastname,
+      e_mail: email,
+      password_user: password,
+      addr_index: index,
+      addr_city: city,
+      addr_street: street,
+      addr_house: numberHome,
+      addr_structure: district,
+      addr_appart: numberRoom,
     }).then((response) => {
       if (response.status === 200) {
-        dispatch(logIn(response.data));
+        restPost('/api/auth', { user_name: login, password_user: password })
+          .then((_response) => {
+            if (_response.status === 200) {
+              dispatch(fetchProfileInfo(_response.data));
+              dispatch(logIn(_response.data));
+              close();
+            } else {
+              throw _response;
+            }
+          }).catch((error) => {
+            dispatch(loginError(error));
+          });
+      } else {
+        throw response;
       }
     }).catch((error) => {
-      console.log(error);
-      setTimeout(() => {
-        dispatch(logIn({
-          login,
-          password,
-          name,
-          lastname,
-          fatherName,
-          email,
-          index,
-          city,
-          street,
-          numberHome,
-          district,
-          numberRoom,
-        }));
-        close();
-      }, 5000);
+      dispatch(loginError(error));
     });
   }, [
     dispatch,
