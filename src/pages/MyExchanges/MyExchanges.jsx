@@ -57,7 +57,7 @@ function MyExchange() {
     setValue(newValue);
   };
 
-  const user = useSelector((state) => state.login.profile?.name);
+  const user = useSelector((state) => state.profileInfo.userProfile?.[0]?.user_name);
 
   return (
     <Box

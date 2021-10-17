@@ -11,8 +11,9 @@ import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { LoadingButton } from '@mui/lab';
-import { logIn, loginStart } from '../../store/slices/loginSlice';
+import { logIn, loginError, loginStart } from '../../store/slices/loginSlice';
 import { restPost } from '../../api/instances/main';
+import { fetchProfileInfo } from '../../store/slices/userProfileSlice';
 
 const style = {
   position: 'absolute',
@@ -34,35 +35,23 @@ export default function Auth({ close, isOpen, toggleModal }) {
   const dispatch = useDispatch();
 
   const isLoading = useSelector((state) => state.login.isLoading);
+  const isError = useSelector((state) => state.login.isError);
 
   const submit = React.useCallback(() => {
     dispatch(loginStart());
     // менять урлу
-    restPost('http://localhost/user', { login, password })
+    restPost('/api/auth', { user_name: login, password_user: password })
       .then((response) => {
         if (response.status === 200) {
+          dispatch(fetchProfileInfo(response.data));
           dispatch(logIn(response.data));
           close();
+        } else {
+          throw response;
         }
       }).catch((error) => {
+        dispatch(loginError(error));
         console.log(error);
-        setTimeout(() => {
-          dispatch(logIn({
-            login,
-            password,
-            name: 'name',
-            lastname: 'lastname',
-            fatherName: 'fatherName',
-            email: 'email',
-            index: 'index',
-            city: 'city',
-            street: 'street',
-            numberHome: 'numberHome',
-            district: 'district',
-            numberRoom: 'numberRoom',
-          }));
-          close();
-        }, 2000);
       });
   }, [dispatch, login, password]);
 
@@ -103,7 +92,11 @@ export default function Auth({ close, isOpen, toggleModal }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-
+            {isError ? (
+              <Typography component="div">
+                Ошибка авторизации
+              </Typography>
+            ) : null}
           </CardContent>
           <CardActions>
             <LoadingButton

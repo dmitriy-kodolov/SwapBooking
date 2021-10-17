@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  userId: 101,
+  userId: undefined,
   isLogin: false,
-  profile: {},
   isLoading: false,
   isAuthModalOpen: false,
+  isError: false,
+  error: null,
 };
 const loginSlice = createSlice({
   name: 'login',
@@ -13,15 +14,17 @@ const loginSlice = createSlice({
   reducers: {
     loginStart(state) {
       state.isLoading = true;
+      state.isError = false;
+      state.error = null;
     },
-    logIn(state, { payload = { name: 'Vasilii' } }) {
+    logIn(state, { payload }) {
       state.isLogin = true;
-      state.profile = payload;
+      state.userId = payload;
       state.isLoading = false;
     },
     logOut(state) {
       state.isLogin = false;
-      state.profile = {};
+      state.isLoading = false;
     },
     authOpen(state) {
       state.isAuthModalOpen = true;
@@ -29,9 +32,14 @@ const loginSlice = createSlice({
     authClose(state) {
       state.isAuthModalOpen = false;
     },
+    loginError(state, { payload }) {
+      state.isLoading = false;
+      state.isError = true;
+      state.error = payload;
+    },
   },
 });
 export const {
-  logIn, logOut, loginStart, authOpen, authClose,
+  logIn, logOut, loginStart, authOpen, authClose, loginError,
 } = loginSlice.actions;
 export default loginSlice.reducer;
