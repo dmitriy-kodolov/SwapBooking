@@ -56,9 +56,9 @@ const Profile = () => {
       addr_house: '',
       addr_structure: '',
       addr_appart: '',
-      first_name_user: '',
-      last_name_user: '',
-      second_name_user: '',
+      first_name: '',
+      last_name: '',
+      second_name: '',
     },
   });
   const [profileInformation, setProfileInformation] = useState([]);
@@ -93,9 +93,11 @@ const Profile = () => {
     setValue('addr_house', profileInformation?.addr_house);
     setValue('addr_structure', profileInformation?.addr_structure);
     setValue('addr_appart', profileInformation?.addr_appart);
-    setValue('first_name_user', profileInformation?.first_name);
-    setValue('last_name_user', profileInformation?.last_name);
-    setValue('second_name_user', profileInformation?.second_name);
+    setValue('first_name', profileInformation?.first_name);
+    setValue('last_name', profileInformation?.last_name);
+    setValue('second_name', profileInformation?.second_name);
+    setValue('e_mail', profileInformation?.e_mail);
+    setValue('user_name', profileInformation?.user_name);
   }, [profileInformation]);
 
   return (
@@ -262,7 +264,7 @@ const Profile = () => {
                 }
               control={control}
               label="Фамилия*"
-              name="last_name_user"
+              name="last_name"
             />
             <Input
               className={style.test}
@@ -284,7 +286,7 @@ const Profile = () => {
                 }
               control={control}
               label="Имя*"
-              name="first_name_user"
+              name="first_name"
             />
             <Input
               className={style.test}
@@ -303,7 +305,61 @@ const Profile = () => {
                 }
               control={control}
               label="Отчество"
-              name="second_name_user"
+              name="second_name"
+            />
+            <Input
+              className={style.test}
+              rules={
+                  {
+                    maxLength: {
+                      value: 25,
+                      message: 'Не больше 25-ти символов',
+                    },
+                    pattern: {
+                      value: /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]{2,5}$/,
+                      message: 'Не правильно',
+                    },
+                  }
+                }
+              control={control}
+              label="e-mail*"
+              name="e_mail"
+            />
+            <Input
+              className={style.test}
+              rules={
+                  {
+                    maxLength: {
+                      value: 12,
+                      message: 'Не больше 12-ти символов',
+                    },
+                    pattern: {
+                      value: /^[а-яА-Яa-zA-Z0-9]+$/,
+                      message: 'Только кириллица, латинница, цифры',
+                    },
+                  }
+                }
+              control={control}
+              label="Логин"
+              name="user_name"
+            />
+            <Input
+              className={style.test}
+              rules={
+                  {
+                    maxLength: {
+                      value: 25,
+                      message: 'Не больше 25-ти символов',
+                    },
+                    pattern: {
+                      value: /^[a-zA-Z0-9]{8,30}$/,
+                      message: 'Длинна не меньше 8 символов, должна быть одна заглавная и одна прописная буква,а так же одна цифра, не должно быть спецсимволов',
+                    },
+                  }
+                }
+              control={control}
+              label="Пароль"
+              name="password"
             />
           </div>
         </Paper>
@@ -324,7 +380,6 @@ const Profile = () => {
       </div>
       )}
     </div>
-
   );
 };
 export default Profile;
