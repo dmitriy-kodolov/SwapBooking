@@ -1,9 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  userId: 101,
+  userId: undefined,
   isLogin: false,
-  profile: {},
   isLoading: false,
   isAuthModalOpen: false,
   isError: false,
@@ -18,14 +17,14 @@ const loginSlice = createSlice({
       state.isError = false;
       state.error = null;
     },
-    logIn(state, { payload = { name: 'Vasilii' } }) {
+    logIn(state, { payload }) {
       state.isLogin = true;
-      state.profile = payload;
+      state.userId = payload;
       state.isLoading = false;
     },
     logOut(state) {
       state.isLogin = false;
-      state.profile = {};
+      state.isLoading = false;
     },
     authOpen(state) {
       state.isAuthModalOpen = true;

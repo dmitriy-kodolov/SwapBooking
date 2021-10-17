@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LoadingButton } from '@mui/lab';
 import { logIn, loginError, loginStart } from '../../store/slices/loginSlice';
 import { restPost } from '../../api/instances/main';
+import { fetchProfileInfo } from '../../store/slices/userProfileSlice';
 
 const style = {
   position: 'absolute',
@@ -39,13 +40,15 @@ export default function Auth({ close, isOpen, toggleModal }) {
   const submit = React.useCallback(() => {
     dispatch(loginStart());
     // менять урлу
-    restPost('/api/user/authenticate', { user_name: login, password_user: password })
+    restPost('/api/auth', { user_name: login, password_user: password })
       .then((response) => {
         if (response.status === 200) {
+          dispatch(fetchProfileInfo(response.data));
           dispatch(logIn(response.data));
           close();
+        } else {
+          throw response;
         }
-        throw response;
       }).catch((error) => {
         dispatch(loginError(error));
         console.log(error);

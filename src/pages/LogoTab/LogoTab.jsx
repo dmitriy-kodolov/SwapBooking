@@ -7,9 +7,16 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { useSelector, useDispatch } from 'react-redux';
+import { restGet } from '../../api/instances/main';
 import Auth from '../../components/Auth';
 import Registered from '../../components/Registered';
-import { logOut, authOpen, authClose } from '../../store/slices/loginSlice';
+import {
+  logOut,
+  authOpen,
+  authClose,
+  loginError,
+  loginStart,
+} from '../../store/slices/loginSlice';
 
 export default function ButtonAppBar() {
   const dispatch = useDispatch();
@@ -28,6 +35,20 @@ export default function ButtonAppBar() {
   const [isOpenRegistered, setOpenRegistered] = useState(false);
   const handleRegisteredOpen = useCallback(() => setOpenRegistered(true), []);
   const handleRegisteredClose = useCallback(() => setOpenRegistered(false), []);
+
+  const hangleLogOut = React.useCallback(() => {
+    dispatch(loginStart());
+    restGet('/api/logout')
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch(logOut());
+        } else {
+          throw response;
+        }
+      }).catch((error) => {
+        dispatch(loginError(error));
+      });
+  }, [dispatch]);
 
   const closeModal = useCallback(() => {
     handleAuthClose();
@@ -48,7 +69,7 @@ export default function ButtonAppBar() {
   }, [isOpenRegistered, isOpenAuth]);
 
   const isLogin = useSelector((state) => state.login.isLogin);
-  const name = useSelector((state) => state.login.profile?.name);
+  const name = useSelector((state) => state.profileInfo.userProfile?.[0]?.user_name);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -68,12 +89,12 @@ export default function ButtonAppBar() {
           </Typography>
           {
             isLogin ? (
-              <div>
-                Привет
-                {' '}
-                {name}
-                <Button color="inherit" onClick={() => dispatch(logOut())}>Exit</Button>
-              </div>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography variant="span" sx={{ paddingX: 2 }}>
+                  {`Привет ${name}`}
+                </Typography>
+                <Button variant="contained" color="info" onClick={hangleLogOut}>Exit</Button>
+              </Box>
             )
               : (
                 <>
