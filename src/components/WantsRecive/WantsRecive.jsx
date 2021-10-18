@@ -1,11 +1,15 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable no-unused-vars */
 import { makeStyles } from '@material-ui/styles';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { useSelector } from 'react-redux';
+import { restDelete } from 'api/instances/main';
+import { restGet } from '../../api/instances/main';
 
 const useStyle = makeStyles({
   container: {
@@ -13,62 +17,80 @@ const useStyle = makeStyles({
     flexDirection: 'column',
     flexWrap: 'wrap',
   },
+  listCategory: {
+    paddingLeft: '25px',
+  },
 });
 const mockList = [
   {
-    id_wish_list: 12, // id строки  = уникальный номер хотелки
-    id_user: 37,
-    create_at: '2021-10-11T21:12:25.622002', // дата создания
-    update_at: '2021-10-11T21:12:25.622002', // дата редактирования
-    id_status: 3, // статус заявки
-    id_user_address: 31,
+    wish_data: {
+      id_wish_list: 13,
+      create_at: '2021-10-14T20:34:28.440651',
+      update_at: '2021-10-14T20:34:28.440651',
+      id_status: 3,
+    },
+    categories: [
+      'документальная',
+      'проза',
+      'боевик',
+      'детектив',
+      'исторический роман',
+    ],
   },
   {
-    id_wish_list: 13, // id строки  = уникальный номер хотелки
-    id_user: 38,
-    create_at: '2021-11-11T21:12:25.622002', // дата создания
-    update_at: '2021-11-11T21:12:25.622002', // дата редактирования
-    id_status: 4, // статус заявки
-    id_user_address: 32,
-  },
-  {
-    id_wish_list: 13, // id строки  = уникальный номер хотелки
-    id_user: 38,
-    create_at: '2021-11-11T21:12:25.622002', // дата создания
-    update_at: '2021-11-11T21:12:25.622002', // дата редактирования
-    id_status: 4, // статус заявки
-    id_user_address: 32,
-  },
-  {
-    id_wish_list: 13, // id строки  = уникальный номер хотелки
-    id_user: 38,
-    create_at: '2021-11-11T21:12:25.622002', // дата создания
-    update_at: '2021-11-11T21:12:25.622002', // дата редактирования
-    id_status: 4, // статус заявки
-    id_user_address: 32,
-  },
-  {
-    id_wish_list: 13, // id строки  = уникальный номер хотелки
-    id_user: 38,
-    create_at: '2021-11-11T21:12:25.622002', // дата создания
-    update_at: '2021-11-11T21:12:25.622002', // дата редактирования
-    id_status: 4, // статус заявки
-    id_user_address: 32,
-  },
-  {
-    id_wish_list: 13, // id строки  = уникальный номер хотелки
-    id_user: 38,
-    create_at: '2021-11-11T21:12:25.622002', // дата создания
-    update_at: '2021-11-11T21:12:25.622002', // дата редактирования
-    id_status: 4, // статус заявки
-    id_user_address: 32,
+    wish_data: {
+      id_wish_list: 14,
+      create_at: '2021-10-14T20:34:28.440651',
+      update_at: '2021-10-14T20:34:28.440651',
+      id_status: 3,
+    },
+    categories: [
+      'документальная',
+      'проза',
+      'боевик',
+      'детектив',
+      'исторический роман',
+    ],
   },
 ];
 const WantsRecive = () => {
+  const userId = useSelector((state) => state.login.userId);
   const style = useStyle();
+  const [initialWishes, setInitialWishes] = useState(mockList);
+  const [isDeleteCard, setIsDeleteCard] = useState(false);
+
+  useEffect(() => {
+    restGet(`/api/wishes/all/${userId}`)
+      .then((result) => setInitialWishes(result))
+      .catch((error) => alert(`Не удалось загрузить список', ${error.message}`));
+  }, []);
+
+  const removeCard = (id) => {
+    setInitialWishes((prevState) => prevState.filter((el) => el.wish_data.id_wish_list !== id));
+  };
+
+  const deleteCard = (wishId) => { // удаление карточки с базы данных
+    restDelete(`/api/wishes/${wishId}`)
+      .then(() => {
+        setIsDeleteCard(true);
+      })
+      .catch((error) => alert(`Не удалось удалить карточку, попробуйте позже, ${error.message}`));
+  };
+
+  const onSumbit = (wishId) => {
+    deleteCard(wishId);
+    if (isDeleteCard) {
+      removeCard(wishId);
+    }
+  };
+  if (!initialWishes.length) {
+    return (
+      <p>У вас нету списка того, что вы хотите получить</p>
+    );
+  }
   return (
     <div className={style.container}>
-      {mockList.map((item) => (
+      {initialWishes.map((item) => (
         <Card sx={{
           minWidth: 400,
           m: 2,
@@ -78,29 +100,32 @@ const WantsRecive = () => {
             <Typography variant="h6" component="div">
               Номер заявки -
               {' '}
-              {item.id_wish_list}
+              {item.wish_data.id_wish_list}
             </Typography>
             <Typography variant="body2">
               Дата создания -
               {' '}
-              {new Date(item.create_at).toLocaleString()}
+              {new Date(item.wish_data.create_at).toLocaleString()}
             </Typography>
             <Typography variant="body2">
               Дата редактирования -
               {' '}
-              {new Date(item.update_at).toLocaleString()}
+              {new Date(item.wish_data.update_at).toLocaleString()}
             </Typography>
             <Typography variant="body2">
               Статус заявки -
               {' '}
-              {item.id_status}
+              {item.wish_data.id_status}
+            </Typography>
+            <Typography variant="body2">
+              <p>Категории:</p>
+              <ul className={style.listCategory}>
+                {item.categories.map((category) => <li>{category}</li>)}
+              </ul>
             </Typography>
           </CardContent>
           <CardActions>
-            {/* На кнопку подробнее надо повесить запрос получения данных
-            более подробной информации хотелки */}
-            <Button size="small">Подробнее</Button>
-            <Button size="small">Убрать</Button>
+            <Button onClick={() => onSumbit(item.wish_data.id_wish_list)} size="small">Убрать из желаемого</Button>
           </CardActions>
         </Card>
       ))}

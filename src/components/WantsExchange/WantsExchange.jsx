@@ -7,9 +7,8 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { restDelete } from 'api/instances/main';
+import { restDelete, restGet } from 'api/instances/main';
 import { useSelector } from 'react-redux';
-import getAllExchanges from '../../api/getAllExchanges/getAllExchanges';
 
 const useStyle = makeStyles({
   container: {
@@ -20,80 +19,66 @@ const useStyle = makeStyles({
 });
 const mockList = [
   {
-    id_wish_list: 12, // id строки  = уникальный номер хотелки
-    id_user: 37,
-    create_at: '2021-10-11T21:12:25.622002', // дата создания
-    update_at: '2021-10-11T21:12:25.622002', // дата редактирования
-    id_status: 3, // статус заявки
-    id_user_address: 31,
+    id_offer_list: 21,
+    create_at: '2021-10-14T20:34:28.326104',
+    update_at: '2021-10-14T20:34:28.326104',
+    id_status: '',
+    book_name: 'Название книги',
+    note: 'no note',
+    last_name: 'Фамилия Автора',
+    first_name: 'Имя Атора',
+    isbn: 'ISBN книги',
+    year_publishing: '2000-01-01',
   },
   {
-    id_wish_list: 13, // id строки  = уникальный номер хотелки
-    id_user: 38,
-    create_at: '2021-11-11T21:12:25.622002', // дата создания
-    update_at: '2021-11-11T21:12:25.622002', // дата редактирования
-    id_status: 4, // статус заявки
-    id_user_address: 32,
-  },
-  {
-    id_wish_list: 14, // id строки  = уникальный номер хотелки
-    id_user: 38,
-    create_at: '2021-11-11T21:12:25.622002', // дата создания
-    update_at: '2021-11-11T21:12:25.622002', // дата редактирования
-    id_status: 4, // статус заявки
-    id_user_address: 32,
-  },
-  {
-    id_wish_list: 15, // id строки  = уникальный номер хотелки
-    id_user: 38,
-    create_at: '2021-11-11T21:12:25.622002', // дата создания
-    update_at: '2021-11-11T21:12:25.622002', // дата редактирования
-    id_status: 4, // статус заявки
-    id_user_address: 32,
-  },
-  {
-    id_wish_list: 16, // id строки  = уникальный номер хотелки
-    id_user: 38,
-    create_at: '2021-11-11T21:12:25.622002', // дата создания
-    update_at: '2021-11-11T21:12:25.622002', // дата редактирования
-    id_status: 4, // статус заявки
-    id_user_address: 32,
-  },
-  {
-    id_wish_list: 17, // id строки  = уникальный номер хотелки
-    id_user: 38,
-    create_at: '2021-11-11T21:12:25.622002', // дата создания
-    update_at: '2021-11-11T21:12:25.622002', // дата редактирования
-    id_status: 4, // статус заявки
-    id_user_address: 32,
+    id_status: '',
+    create_at: '2021-10-14T20:34:28.326104',
+    update_at: '2021-10-14T20:34:28.326104',
+    id_offer_list: 22,
+    book_name: 'Название книги',
+    note: 'no note',
+    last_name: 'Фамилия Автора',
+    first_name: 'Имя Атора',
+    isbn: '',
+    year_publishing: '2000-01-01',
   },
 ];
 const WantsExchange = () => {
   const userId = useSelector((state) => state.login.userId);
+  const style = useStyle();
   const [card, setCard] = useState(mockList);
-  // Получение хателок и установка состоятния
-  // useEffect(() => {
-  // setCard(getAllExchanges(userId));
-  // }, []);
-  //  здесь реализация удалении карточки как с сервака так и с состояния компоненты
-  const removeCard = (id) => {
-    setCard((prevState) => prevState.filter((el) => el.id_wish_list !== id));
-  };
   const [isDeleteCard, setIsDeleteCard] = useState(false);
+
+  // Получение хателок и установка состоятния
+  useEffect(() => {
+    restGet(`/myoffers/all/${userId}`)
+      .then((result) => setCard(result))
+      .catch((error) => alert(`Не удалось загрузить список', ${error.message}`));
+  }, []);
+
+  const removeCard = (id) => {
+    setCard((prevState) => prevState.filter((el) => el.id_offer_list !== id));
+  };
+
   const deleteCard = (wishId) => { // удаление карточки с базы данных
-    restDelete(`/api/wishes/${wishId}`)
+    restDelete(`/myoffers/${wishId}`) // здесь надо точно узнавать как будет выглядить путь у бэка
       .then(() => {
         setIsDeleteCard(true);
       })
       .catch((e) => alert('Не удалось удалить карточку, попробуйте позже'));
   };
+
   const onSumbit = (wishId) => {
     deleteCard(wishId);
     if (isDeleteCard) {
       removeCard(wishId);
     }
   };
-  const style = useStyle();
+  if (!card.length) {
+    return (
+      <p>У вас нету списка того, что вы хотите отдать</p>
+    );
+  }
   return (
     <div className={style.container}>
       {card.map((item) => (
@@ -108,7 +93,7 @@ const WantsExchange = () => {
             <Typography variant="h6" component="div">
               Номер заявки -
               {' '}
-              {item.id_wish_list}
+              {item.id_offer_list}
             </Typography>
             <Typography variant="body2">
               Дата создания -
@@ -125,12 +110,29 @@ const WantsExchange = () => {
               {' '}
               {item.id_status}
             </Typography>
+            <Typography variant="body2">
+              Название книги -
+              {' '}
+              {item.book_name}
+            </Typography>
+            <Typography variant="body2">
+              Автор -
+              {' '}
+              {`${item.last_name} ${item.first_name}`}
+            </Typography>
+            <Typography variant="body2">
+              ISBN -
+              {' '}
+              {item.isbn || 'отсутствует'}
+            </Typography>
+            <Typography variant="body2">
+              Год публикации -
+              {' '}
+              {item.year_publishing}
+            </Typography>
           </CardContent>
           <CardActions>
-            <Button onClick={() => onSumbit(item.id_wish_list)} size="small">Убрать из желаемого</Button>
-            {/* На кнопку подробнее надо повесить запрос получения данных
-            более подробной информации хотелки */}
-            <Button>Подробнее</Button>
+            <Button onClick={() => onSumbit(item.id_offer_list)} size="small">Убрать из желаемого</Button>
           </CardActions>
         </Card>
       ))}

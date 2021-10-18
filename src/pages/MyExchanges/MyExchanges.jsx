@@ -111,10 +111,10 @@ function MyExchange() {
         <CoincidencesList />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <WantsRecive />
+        <WantsExchange />
       </TabPanel>
       <TabPanel value={value} index={3}>
-        <WantsExchange />
+        <WantsRecive />
       </TabPanel>
       <TabPanel value={value} index={4}>
         <ActiveOffers />
