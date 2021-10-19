@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable no-unused-vars */
 import { makeStyles } from '@material-ui/styles';
@@ -7,6 +8,10 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import Input from 'components/Input/Input';
+import { useForm } from 'react-hook-form';
+import { useSelector, useDispatch } from 'react-redux';
+import { restPost } from 'api/instances/main';
 
 const useStyle = makeStyles({
   root: {
@@ -15,14 +20,44 @@ const useStyle = makeStyles({
     alignItems: 'center',
   },
   container: {
-    width: '800px',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
+  btn: {
+    margin: '15px',
+  },
 });
 const ActiveOffers = () => {
+  const userId = useSelector(((state) => state.login.userId));
   const style = useStyle();
+  const [isPostForm, setIsPostForm] = useState(false);
+  const [step, setStep] = useState(3);
+  const [isAcceptUserStepOne, setIsAcceptUserStepOne] = useState(false);
+  const [isAcceptUserStepTwo, setIsAcceptUserStepTwo] = useState(false);
+  const [isAcceptUserStepThree, setIsAcceptUserStepThree] = useState(false);
+  const [isAcceptContrUserStepOne, setIsAcceptContrUserStepOne] = useState(false);
+  const [isAcceptContrUserStepTwo, setIsAcceptContrUserStepTwo] = useState(false);
+  const [isAcceptContrUserStepThree, setIsAcceptContrUserStepThree] = useState(false);
+
+  const propsFrom = useForm();
+  const {
+    handleSubmit, control, setValue, formState: { errors },
+  } = propsFrom;
+  const formValues = propsFrom?.getValues();
+
+  const onSubmitForm = () => {
+    console.log('Все данные с формы', formValues);
+    restPost('тут норм звпрос', formValues)
+      .then(() => {
+        setIsPostForm(true);
+        setStep((prev) => prev + 1);
+      })
+      .catch((err) => {
+        // alert('Ошибка при отправки данных, попробуйте позже');
+      });
+  };
+
   return (
     <div className={style.root}>
       <p>Карточка обмена</p>
@@ -40,7 +75,6 @@ const ActiveOffers = () => {
               Мне
             </Typography>
             <br />
-            <br />
             <Typography align="center" variant="body2">
               Тут должна быть хотелка какая-то
             </Typography>
@@ -49,7 +83,24 @@ const ActiveOffers = () => {
             <br />
             <br />
             <Typography align="center" variant="body2">
-              Здесь  будет инофрмауция что обмен подтвержден, либо нет
+              {isAcceptContrUserStepOne && <p>Обмен подтвержден</p> }
+              {!isAcceptContrUserStepOne && <p>Обмен не подтвержден</p> }
+              <br />
+              {isAcceptContrUserStepTwo && step === 2 && (
+                <>
+                  <p>Номер отправления</p>
+                  <p>1234567891011</p>
+                </>
+              )}
+              {!isAcceptContrUserStepTwo && step === 2 && (
+                <p>Книга пока не отправлена</p>
+              )}
+              {isAcceptContrUserStepThree && step === 3 && (
+                <p>Книга получена</p>
+              )}
+              {!isAcceptContrUserStepThree && step === 3 && (
+                <p>Книга не получена</p>
+              )}
             </Typography>
           </CardContent>
         </Card>
@@ -66,22 +117,84 @@ const ActiveOffers = () => {
               Я
             </Typography>
             <br />
-            <br />
             <Typography align="center" variant="body2">
-              Здесь то что пользователь будет менять
+              Здесь то что пользователь будет менять:
             </Typography>
             <br />
             <br />
             <br />
             <br />
             <Typography align="center" variant="body2">
-              Здесь будет информация что обмен подтвержден, либо нет.
-              Если нет, то будет кнопка подтвердить у пользователя
+              {isAcceptUserStepOne && <p>Обмен подтвержден</p>}
+              <br />
+              {!isAcceptUserStepOne
+              && step === 1 && (
+              <Button variant="contained" size="small">Подтвердить</Button>
+              )}
+              {!isAcceptUserStepTwo && step === 2
+              && (
+              <form
+                onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}
+                className={style.root}
+              >
+                <Input
+                  rules={
+                  {
+                    required: {
+                      value: true,
+                      message: 'Поле обязательно',
+                    },
+                    maxLength: {
+                      value: 14,
+                      message: 'Не больше 14-ти символов',
+                    },
+                    minLength: {
+                      value: 14,
+                      message: 'Не менее 14-ти символов',
+                    },
+                    pattern: {
+                      value: /^[0-9]+$/,
+                      message: 'Только цифры',
+                    },
+                  }
+                }
+                  control={control}
+                  label="Номер отправления*"
+                  name="number_order"
+                />
+                <Button
+                  className={style.btn}
+                  variant="contained"
+                  type="submit"
+                >
+                  Отправил
+                </Button>
+              </form>
+              )}
+              {isAcceptUserStepTwo && step === 2 && (
+              <>
+                <p>Номер отправления</p>
+                <p>1234567891011</p>
+              </>
+              )}
+              {!isAcceptUserStepThree && step === 3 && (
+              <>
+                <p>Номер отправления</p>
+                <p>1234567891011</p>
+                <Button
+                  className={style.btn}
+                  variant="contained"
+                >
+                  Поулчил
+                </Button>
+              </>
+              )}
+              {isAcceptUserStepThree && step === 3 && (
+                <p>Книга получена</p>
+              )}
             </Typography>
           </CardContent>
-          <CardActions style={{ justifyContent: 'center' }}>
-            <Button variant="contained" size="small">Подтвердить</Button>
-          </CardActions>
+          {/* <CardActions style={{ justifyContent: 'center' }} /> */}
         </Card>
       </div>
     </div>

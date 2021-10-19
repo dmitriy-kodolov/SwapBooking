@@ -72,7 +72,7 @@ const Profile = () => {
   const style = useStyle();
   const onSubmitForm = () => {
     console.log('Все данные с формы', formValues);
-    const result = restPost(`/api/profile/${userId}`, formValues)
+    restPost(`/api/profile/${userId}`, formValues)
       .then(() => {
         setIsPostForm(true);
       })
