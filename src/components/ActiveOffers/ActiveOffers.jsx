@@ -2,8 +2,9 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable no-unused-vars */
 import { makeStyles } from '@material-ui/styles';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import Card from '@mui/material/Card';
+import Box from '@mui/material/Box';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
@@ -12,12 +13,14 @@ import Input from 'components/Input/Input';
 import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import { restPost } from 'api/instances/main';
+import { setBook } from '../../store/slices/exchangesSlice';
 
 const useStyle = makeStyles({
   root: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    position: 'relative',
   },
   container: {
     display: 'flex',
@@ -29,6 +32,7 @@ const useStyle = makeStyles({
   },
 });
 const ActiveOffers = () => {
+  const dispatch = useDispatch();
   const userId = useSelector(((state) => state.login.userId));
   const style = useStyle();
   const [isPostForm, setIsPostForm] = useState(false);
@@ -58,9 +62,18 @@ const ActiveOffers = () => {
       });
   };
 
+  const book = useSelector((state) => state.exchanges.selectedBook);
+
+  const handleCancel = useCallback(() => {
+    dispatch(setBook());
+  });
+
   return (
     <div className={style.root}>
-      <p>Карточка обмена</p>
+      <Box sx={{ position: 'absolute', left: 16 }}>
+        <Button variant="contained" color="info" onClick={handleCancel}>Отмена</Button>
+      </Box>
+      <Typography variant="h6">{`Карточка обмена ${book ? book.BookName : ''}`}</Typography>
       <div className={style.container}>
         <Card
           elevation={4}
