@@ -4,14 +4,13 @@
 import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Input from 'components/Input/Input';
 import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
-import { restPost } from 'api/instances/main';
+import { restPost, restGet } from 'api/instances/main';
 
 const useStyle = makeStyles({
   root: {
@@ -31,8 +30,7 @@ const useStyle = makeStyles({
 const ActiveOffers = () => {
   const userId = useSelector(((state) => state.login.userId));
   const style = useStyle();
-  const [isPostForm, setIsPostForm] = useState(false);
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(2);
   const [isAcceptUserStepOne, setIsAcceptUserStepOne] = useState(false);
   const [isAcceptUserStepTwo, setIsAcceptUserStepTwo] = useState(false);
   const [isAcceptUserStepThree, setIsAcceptUserStepThree] = useState(false);
@@ -40,21 +38,26 @@ const ActiveOffers = () => {
   const [isAcceptContrUserStepTwo, setIsAcceptContrUserStepTwo] = useState(false);
   const [isAcceptContrUserStepThree, setIsAcceptContrUserStepThree] = useState(false);
 
+  (async () => {
+    await restGet();
+  })();
   const propsFrom = useForm();
   const {
-    handleSubmit, control, setValue, formState: { errors },
+    handleSubmit, control,
   } = propsFrom;
   const formValues = propsFrom?.getValues();
 
   const onSubmitForm = () => {
-    console.log('Все данные с формы', formValues);
-    restPost('тут норм звпрос', formValues)
+    console.log(formValues);
+    restPost(`/api/exchange/send/${userId}/${'exchangeId'}`, formValues) // надо изменить на exchangeId
       .then(() => {
-        setIsPostForm(true);
-        setStep((prev) => prev + 1);
+        setIsAcceptUserStepTwo(true);
+        if (isAcceptContrUserStepTwo) {
+          setStep((prev) => prev + 1);
+        }
       })
       .catch((err) => {
-        // alert('Ошибка при отправки данных, попробуйте позже');
+        alert(`Ошибка при отправки данных, попробуйте позже ${err.message}`);
       });
   };
 
@@ -129,10 +132,27 @@ const ActiveOffers = () => {
               <br />
               {!isAcceptUserStepOne
               && step === 1 && (
-              <Button variant="contained" size="small">Подтвердить</Button>
+              <Button
+                variant="contained"
+                // здесь отправка подтверждения обмена
+                onClick={() => {
+                  restPost(`/api/exchange/agree/${userId}/${'exchangeId'}`) // здесь надо менять на Id обмена
+                    .then(() => {
+                      setIsAcceptUserStepOne(true);
+                      if (isAcceptContrUserStepOne) {
+                        setStep((prev) => prev + 1);
+                      }
+                    })
+                    .catch((err) => alert('Не удалось подтвердить обмен'));
+                }}
+                size="small"
+              >
+                Подтвердить
+              </Button>
               )}
               {!isAcceptUserStepTwo && step === 2
               && (
+              // здесь отправка трек номера
               <form
                 onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}
                 className={style.root}
@@ -184,6 +204,13 @@ const ActiveOffers = () => {
                 <Button
                   className={style.btn}
                   variant="contained"
+                  onClick={() => {
+                    restPost(`/api/exchange/receive/${userId}/${'exchangeId'}`) // exchangeId надо менять
+                      .then(() => {
+                        setIsAcceptUserStepThree(true);
+                      })
+                      .catch((err) => alert(`Не удалось подтвердить получение, попробуйте позже ${err.message}`));
+                  }}
                 >
                   Поулчил
                 </Button>
