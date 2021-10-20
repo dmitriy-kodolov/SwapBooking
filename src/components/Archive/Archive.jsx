@@ -24,6 +24,14 @@ const useStyle = makeStyles({
     listStyle: 'none',
     paddingLeft: '0',
   },
+  reciveUser: {
+    position: 'relative',
+    top: '130px',
+  },
+  reciveContrUser: {
+    position: 'relative',
+    top: '70px',
+  },
 });
 const mockItem = {
   MyBook: {
@@ -43,71 +51,114 @@ const mockItem = {
     Rating: 5,
   },
 };
+const mockItemTwo = {
+  MyBook: {
+    BookName: 'Название sdsa',
+    Note: 'Инфа о sds',
+    AuthorFirstName: 'Имя sds',
+    AuthorLastName: 'Фамилия sds',
+  },
+  OtherBook: {
+    BookName: 'Название sdsa',
+    Note: 'Инфа о sds',
+    AuthorFirstName: 'Имя sds',
+    AuthorLastName: 'Фамилия sds',
+  },
+  OtherUser: {
+    CityName: 'Название dsds',
+    Rating: 5,
+  },
+};
+const testList = [];
+testList.push(mockItem);
+testList.push(mockItemTwo);
 const Archive = () => {
   const style = useStyle();
-  const [initialCard, setInitialCard] = useState(mockItem);
+  const [masOfId, setMasOfId] = useState([]);
+  const [initialCard, setInitialCard] = useState(testList); // здесь надо менять на [] когда встанет бэк
   const userId = useSelector(((state) => state.login.userId));
-  //   useEffect(() => {
-  // restGet(`/api/archive/${userId}/all`);
-  //   }, []);
+
+  useEffect(() => {
+    restGet(`/api/archive/${userId}/all`)
+      .then((result) => {
+        setMasOfId(result);
+      })
+      .catch((err) => alert(`Не удалось загрузить архив ${err.message}`));
+  }, []);
+  // если нету архива
+  if (!masOfId?.length) {
+    return (<p>У вас нет завершенных обменов</p>);
+  }
+
+  // запросы на получение архивных заявок
+  useEffect(() => {
+    masOfId.forEach((id) => {
+      restGet(`/api/archive/${userId}/${id}`)
+        .then((res) => {
+          setInitialCard((prev) => prev.push(res));
+        })
+        .catch((err) => alert(`Не удалось загрузить заявку ${err.message}`));
+    });
+  }, [masOfId]);
+
   return (
     <div className={style.root}>
-      <div className={style.container}>
-        <Card
-          elevation={4}
-          sx={{
-            width: 370,
-            minHeight: 400,
-            m: 2,
-          }}
-        >
-          <CardContent>
-            <Typography align="center" variant="h6" component="div">
-              Я
-            </Typography>
-            <br />
-            <Typography align="center" variant="body2">
-              <ul className={style.listCategory}>
-                {Object.values(initialCard.MyBook).map((item) => <li>{item}</li>)}
-              </ul>
-            </Typography>
-            <br />
-            <br />
-            <br />
-            <br />
-          </CardContent>
-        </Card>
-        <Card
-          elevation={4}
-          sx={{
-            width: 370,
-            minHeight: 400,
-            m: 2,
-          }}
-        >
-          <CardContent>
-            <Typography align="center" variant="h6" component="div">
-              Мне
-            </Typography>
-            <br />
-            <Typography align="center" variant="body2">
-              <ul className={style.listCategory}>
-                {Object.values(initialCard.OtherBook).map((item) => <li>{item}</li>)}
-              </ul>
-            </Typography>
-            <br />
-            <br />
-            <br />
-            <Typography align="center" variant="body2">
-              <ul className={style.listCategory}>
-                {Object.values(initialCard.OtherUser).map((item) => (
-                  <li>{item}</li>
-                ))}
-              </ul>
-            </Typography>
-          </CardContent>
-        </Card>
-      </div>
+      {initialCard.map((card) => (
+        <div className={style.container}>
+          <Card
+            elevation={4}
+            sx={{
+              width: 370,
+              minHeight: 400,
+              m: 2,
+            }}
+          >
+            <CardContent>
+              <Typography align="center" variant="h6">
+                Я
+              </Typography>
+              <Typography align="center" variant="body3">
+                <ul className={style.listCategory}>
+                  {Object.values(card.MyBook).map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </Typography>
+              <Typography className={style.reciveUser} align="center" variant="body3" component="div">
+                Книга поулчена
+              </Typography>
+            </CardContent>
+          </Card>
+          <Card
+            elevation={4}
+            sx={{
+              width: 370,
+              minHeight: 400,
+              m: 2,
+            }}
+          >
+            <CardContent>
+              <Typography align="center" variant="h6" component="div">
+                Мне
+              </Typography>
+              <Typography align="center" variant="body3">
+                <ul className={style.listCategory}>
+                  {Object.values(card.OtherBook).map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </Typography>
+              <Typography align="center" variant="body3">
+                <ul className={style.listCategory}>
+                  {Object.values(card.OtherUser).map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </Typography>
+              <Typography className={style.reciveContrUser} align="center" variant="body3" component="div">
+                Книга поулчена
+              </Typography>
+            </CardContent>
+          </Card>
+        </div>
+      ))}
+
     </div>
   );
 };
