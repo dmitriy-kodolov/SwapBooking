@@ -41,20 +41,20 @@ const ActiveOffers = () => {
   const [isAcceptContrUserStepOne, setIsAcceptContrUserStepOne] = useState(false);
   const [isAcceptContrUserStepTwo, setIsAcceptContrUserStepTwo] = useState(false);
   const [isAcceptContrUserStepThree, setIsAcceptContrUserStepThree] = useState(false);
-  // TODO надо добавить изменения шагов контр-агента после доработки бэка
-  // switch (exchange?.OtherBook?.StatusText) {
-  //   case 'Подтверждена. Ожидает трек-номера':
-  //     setIsAcceptContrUserStepOne(true);
-  //     break;
-  //   case 'Книга доставляется. Ожидаем трек-номер':
-  //     setIsAcceptContrUserStepTwo(true);
-  //     break;
-  //   case `Книга ${'dsadsa'} доставлена`:
-  //     setIsAcceptContrUserStepThree(false);
-  //     break;
-  //   default:
-  //     break;
-  // }
+
+  switch (exchange?.OtherBook?.StatusID) {
+    case 2:
+      setIsAcceptContrUserStepOne(true);
+      break;
+    case 3:
+      setIsAcceptContrUserStepTwo(true);
+      break;
+    case 4:
+      setIsAcceptContrUserStepThree(true);
+      break;
+    default:
+      break;
+  }
 
   // (async () => {
   // await restGet(`/api/exchange/${userId}/all`);
@@ -72,22 +72,22 @@ const ActiveOffers = () => {
       })
       .catch((err) => alert(`Не удалось загрузить список, ${err.message}`));
   }, []);
-  if (!masOfIdExchange?.length) {
-    return (<p>У вас нет активного обмена</p>);
-  }
+  // if (!masOfIdExchange?.length) {
+  // return (<p>У вас нет активного обмена</p>);
+  // }
   // получение конкретного обмена
-  useEffect(() => {
-    restGet(`/api/exchange/${userId}/${'exchangeId'}`)
-      .then(({ data }) => setExchange(data))
-      .catch((err) => alert(`Не удалось получить активный обмен ${err.message}`));
-  }, [masOfIdExchange]);
+  // useEffect(() => {
+  // restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
+  // .then(({ data }) => setExchange(data))
+  // .catch((err) => alert(`Не удалось получить активный обмен ${err.message}`));
+  // }, [masOfIdExchange]);
   // отпарвка трек номера
   const onSubmitForm = () => {
     console.log(formValues);
-    restPost(`/api/exchange/send/${userId}/${'exchangeId'}`, formValues) // надо изменить на exchangeId
-      .then(() => {
+    restPost(`/api/exchange/send/${userId}/${masOfIdExchange[0]}`, formValues)
+      .then(async () => {
         setIsAcceptUserStepTwo(true);
-        restGet(`/api/exchange/${userId}/${'exchangeId'}`)
+        await restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
           .then(({ data }) => setExchange(data))
           .catch((err) => alert(`Не удалось получить статус обмена ${err.message}`));
         if (isAcceptContrUserStepTwo) {
@@ -134,7 +134,7 @@ const ActiveOffers = () => {
               {isAcceptContrUserStepTwo && step === 2 && (
                 <>
                   <p>Номер отправления</p>
-                  <p>1234567891011</p>
+                  <p>{exchange?.OtherBook?.TrackNumber}</p>
                 </>
               )}
               {!isAcceptContrUserStepTwo && step === 2 && (
@@ -144,7 +144,11 @@ const ActiveOffers = () => {
                 <p>Книга получена</p>
               )}
               {!isAcceptContrUserStepThree && step === 3 && (
+              <>
+                <p>Номер отправления</p>
+                <p>{exchange?.OtherBook?.TrackNumber}</p>
                 <p>Книга не получена</p>
+              </>
               )}
             </Typography>
           </CardContent>
@@ -182,10 +186,10 @@ const ActiveOffers = () => {
                 variant="contained"
                 // здесь отправка подтверждения обмена
                 onClick={() => {
-                  restPost(`/api/exchange/agree/${userId}/${'exchangeId'}`) // здесь надо менять на Id обмена
+                  restPost(`/api/exchange/agree/${userId}/${masOfIdExchange[0]}`)
                     .then(async () => {
                       setIsAcceptUserStepOne(true);
-                      await restGet(`/api/exchange/${userId}/${'exchangeId'}`) // здесь надо менять на Id обмена
+                      await restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
                         .then(({ data }) => setExchange(data))
                         .catch((err) => alert(`Не удалось получить активный обмен ${err.message}`));
                       if (isAcceptContrUserStepOne) {
@@ -243,18 +247,18 @@ const ActiveOffers = () => {
               {isAcceptUserStepTwo && step === 2 && (
               <>
                 <p>Номер отправления</p>
-                <p>1234567891011</p>
+                <p>{exchange?.MyBook?.TrackNumber}</p>
               </>
               )}
               {!isAcceptUserStepThree && step === 3 && (
               <>
                 <p>Номер отправления</p>
-                <p>1234567891011</p>
+                <p>{exchange?.MyBook?.TrackNumber}</p>
                 <Button
                   className={style.btn}
                   variant="contained"
                   onClick={() => {
-                    restPost(`/api/exchange/receive/${userId}/${'exchangeId'}`) // exchangeId надо менять
+                    restPost(`/api/exchange/receive/${userId}/${masOfIdExchange[0]}`)
                       .then(() => {
                         setIsAcceptUserStepThree(true);
                       })
@@ -270,13 +274,12 @@ const ActiveOffers = () => {
               )}
             </Typography>
           </CardContent>
-          {/* <CardActions style={{ justifyContent: 'center' }} /> */}
         </Card>
       </div>
       <Button
         variant="contained"
         onClick={() => {
-          restGet(`/api/exchange/${userId}/${[...masOfIdExchange]}`) // здесь надо менять на Id обмена
+          restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
             .then(({ data }) => setExchange(data))
             .catch((err) => alert(`Не удалось получить активный обмен ${err.message}`));
         }}
