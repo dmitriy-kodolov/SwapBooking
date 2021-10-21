@@ -12,7 +12,11 @@ import { makeStyles } from '@material-ui/styles';
 import Checkbox from '@mui/material/Checkbox';
 import { Paper } from '@mui/material';
 import {
-  isMainCategoryInList, findSourceCategory, getNamesListFromSubcategories, isSourceCategoryInListWithAllChildren
+  isMainCategoryInList,
+  findSourceCategory,
+  getNamesListFromSubcategories,
+  isSourceCategoryInListWithAllChildren,
+  isSourceCategoryInListWithOneChildren,
 } from '../utils/categories';
 
 const useStyle = makeStyles({
@@ -71,9 +75,10 @@ const Category = ({
       : initialCategories.find((categiry) => categiry.Name === targetCategory);
     const isTargetCategoryParentInList = isCategoryHaveParent && isMainCategoryInList(categories, sourceCategory.Name);
     const isMainCategoryInListWithAllChildren = isCategoryHaveParent && isSourceCategoryInListWithAllChildren(categories, sourceCategory);
+    const isMainCategoryInListWithOneChildren = isCategoryHaveParent && isSourceCategoryInListWithOneChildren(categories, sourceCategory);
     const defineListToCategoriesWithParent = isCategoryHaveParent
       ? [...(isTargetCategoryParentInList
-        ? [...(isMainCategoryInListWithAllChildren ? [targetCategory] : [findSourceCategory(initialCategories, targetCategory), targetCategory])]
+        ? [...(isMainCategoryInListWithAllChildren ? [targetCategory] : [!isMainCategoryInListWithOneChildren ? targetCategory : findSourceCategory(initialCategories, targetCategory), targetCategory])]
         : [findSourceCategory(initialCategories, targetCategory), targetCategory])]
       : [targetCategory];
     const listToCategories = clickedTargetInSubcategories
@@ -91,6 +96,7 @@ const Category = ({
       setError('category', { type: 'required' });
     }
   }, [categories]);
+  const isChecked = (categoryName) => categories.some((category) => category === categoryName);
   return (
     <div className={style.container}>
       <Paper className={style.paper} elevation={4}>
@@ -106,7 +112,7 @@ const Category = ({
                   { initialCategories.map((item) => (
                     <li>
                       <Checkbox
-                        checked={!!categories?.find((nameOfCateory) => item.Name === nameOfCateory)}
+                        checked={isChecked(item.Name)}
                         onChange={(e) => {
                           toggle(item.Name);
                         }}
@@ -118,7 +124,7 @@ const Category = ({
                     {item.Subcategories.map((test) => (
                       <li>
                         <Checkbox
-                          checked={!!categories?.find((nameOfCateory) => test.Name === nameOfCateory)}
+                          checked={isChecked(test.Name)}
                           onChange={() => {
                             toggle(test.Name);
                           }}

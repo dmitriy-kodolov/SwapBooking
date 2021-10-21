@@ -31,3 +31,20 @@ export const isSourceCategoryInListWithAllChildren = (allCategories, sourceCateg
   const allCategoriesNamesWithParent = [...categoriesListFromSource, sourceCategory.Name];
   return allCategoriesNamesWithParent.every((category) => allCategories.includes(category));
 };
+
+export const isSourceCategoryInListWithOneChildren = (allCategories, sourceCategory) => {
+  const categoriesListFromSource = getNamesListFromSubcategories(sourceCategory);
+  if (!categoriesListFromSource) {
+    return false;
+  }
+  let counter = 0;
+  categoriesListFromSource.forEach((category) => {
+    if (allCategories.includes(category)) {
+      counter += 1;
+    }
+  });
+  if (counter === 1) {
+    return true;
+  }
+  return false;
+};

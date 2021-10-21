@@ -61,6 +61,7 @@ export default function ExchangeForm() {
       first_name_user: '',
       last_name_user: '',
       second_name_user: '',
+      is_default: 'false',
     },
   });
   const {
@@ -75,7 +76,7 @@ export default function ExchangeForm() {
   const initialProfile = useSelector((state) => state?.profileInfo?.userProfile?.[0]);
   const [initialCategory, setInitialCategory] = useState(null);
   const [profileInformation, setProfileInformation] = useState([]);
-
+  const [isDefaultAddr, setIsDefaultAddr] = useState(false);
   const [isPostForm, setIsPostForm] = useState(false);
 
   // запрос на получение данных с сервака
@@ -110,6 +111,12 @@ export default function ExchangeForm() {
   useEffect(() => {
     setValue('category_wish', categorFromRecive);
   }, [categorFromRecive]);
+
+  useEffect(() => {
+    console.log('do изменения', formValues.is_default);
+    setValue('is_default', isDefaultAddr);
+    console.log('после изменения', formValues.is_default);
+  }, [isDefaultAddr]);
   // отправка формы
   const onSubmitForm = () => {
     setStep((prevState) => prevState + 1);
@@ -148,7 +155,7 @@ export default function ExchangeForm() {
       Назад
     </Button>
   );
-
+  // console.log('forma', formValues.is_default);
   return (
     <form className={style.root} onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}>
       <Box sx={{ width: '100%' }}>
@@ -207,6 +214,9 @@ export default function ExchangeForm() {
       <div>
         <Delivery
           control={control}
+          setIsDefaultAddr={setIsDefaultAddr}
+          isDefaultAddr={isDefaultAddr}
+          setValue={setValue}
         />
         <div className={style.delivery}>
           <Back />

@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { makeStyles } from '@material-ui/styles';
-import React from 'react';
-import { Paper } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Checkbox, Paper } from '@mui/material';
 import Input from '../../Input/Input';
 
 const useStyle = makeStyles(() => ({
@@ -34,8 +34,19 @@ const useStyle = makeStyles(() => ({
   },
 }));
 
-const Delivery = ({ control }) => {
+const Delivery = ({ control, setIsDefaultAddr, isDefaultAddr }) => {
   const style = useStyle();
+  const [isDefault, setIsDefault] = useState('');
+  useEffect(() => {
+    setIsDefault(isDefaultAddr);
+  }, []);
+  const togle = (checked) => {
+    setIsDefault(!checked);
+    console.log('tgle', checked);
+  };
+  useEffect(() => {
+    setIsDefaultAddr(isDefault);
+  }, [isDefault]);
   return (
     <div className={style.container}>
       <Paper className={style.paper} elevation={4}>
@@ -235,6 +246,14 @@ const Delivery = ({ control }) => {
             label="Отчество"
             name="second_name_user"
           />
+          <p>
+            <Checkbox
+              onChange={(event) => {
+                togle(event.target.checked);
+              }}
+            />
+            Использовать этот адресс по умолчанию
+          </p>
         </div>
       </Paper>
     </div>
