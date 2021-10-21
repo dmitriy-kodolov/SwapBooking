@@ -72,15 +72,15 @@ const ActiveOffers = () => {
       })
       .catch((err) => alert(`Не удалось загрузить список, ${err.message}`));
   }, []);
-  // if (!masOfIdExchange?.length) {
-  // return (<p>У вас нет активного обмена</p>);
-  // }
+  if (!masOfIdExchange?.length) {
+    return (<p>У вас нет активного обмена</p>);
+  }
   // получение конкретного обмена
-  // useEffect(() => {
-  // restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
-  // .then(({ data }) => setExchange(data))
-  // .catch((err) => alert(`Не удалось получить активный обмен ${err.message}`));
-  // }, [masOfIdExchange]);
+  useEffect(() => {
+    restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
+      .then(({ data }) => setExchange(data))
+      .catch((err) => alert(`Не удалось получить активный обмен ${err.message}`));
+  }, [masOfIdExchange]);
   // отпарвка трек номера
   const onSubmitForm = () => {
     console.log(formValues);
