@@ -1,3 +1,6 @@
+/* eslint-disable max-len */
+/* eslint-disable no-shadow */
+/* eslint-disable no-alert */
 /* eslint-disable no-duplicate-case */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable import/no-unresolved */
@@ -42,52 +45,34 @@ const ActiveOffers = () => {
   const [isAcceptContrUserStepTwo, setIsAcceptContrUserStepTwo] = useState(false);
   const [isAcceptContrUserStepThree, setIsAcceptContrUserStepThree] = useState(false);
 
-  switch (exchange?.OtherBook?.StatusID) {
-    case 2:
-      setIsAcceptContrUserStepOne(true);
-      break;
-    case 3:
-      setIsAcceptContrUserStepTwo(true);
-      break;
-    case 4:
-      setIsAcceptContrUserStepThree(true);
-      break;
-    default:
-      break;
-  }
-
-  // (async () => {
-  // await restGet(`/api/exchange/${userId}/all`);
-  // })();
   const propsFrom = useForm();
   const {
     handleSubmit, control,
   } = propsFrom;
   const formValues = propsFrom?.getValues();
-  // получение  id активных обменов
+  // получение   активных обменов
   useEffect(() => {
-    restGet(`/api/exchange/${userId}/all`)
-      .then(({ data }) => {
-        setMasOfIdExchange(data);
-      })
-      .catch((err) => alert(`Не удалось загрузить список, ${err.message}`));
+    if (!masOfIdExchange.length) {
+      restGet(`/api/exchange/${userId}/all`)
+        .then(({ data }) => {
+          setMasOfIdExchange(data);
+          restGet(`/api/exchange/${userId}/${data[0]}`)
+            .then(({ data }) => {
+              setExchange(data);
+            })
+            .catch((err) => alert(`не удалось получить данные об обмене ${err.message}`));
+        })
+        .catch((err) => alert(`Не удалось загрузить список, ${err.message}`));
+    }
   }, []);
-  if (!masOfIdExchange?.length) {
-    return (<p>У вас нет активного обмена</p>);
-  }
-  // получение конкретного обмена
-  useEffect(() => {
-    restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
-      .then(({ data }) => setExchange(data))
-      .catch((err) => alert(`Не удалось получить активный обмен ${err.message}`));
-  }, [masOfIdExchange]);
+
   // отпарвка трек номера
   const onSubmitForm = () => {
     console.log(formValues);
     restPost(`/api/exchange/send/${userId}/${masOfIdExchange[0]}`, formValues)
-      .then(async () => {
+      .then(() => {
         setIsAcceptUserStepTwo(true);
-        await restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
+        restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
           .then(({ data }) => setExchange(data))
           .catch((err) => alert(`Не удалось получить статус обмена ${err.message}`));
         if (isAcceptContrUserStepTwo) {
@@ -98,7 +83,49 @@ const ActiveOffers = () => {
         alert(`Ошибка при отправки данных, попробуйте позже ${err.message}`);
       });
   };
-
+  // if (!masOfIdExchange?.length) {
+    // return (<p>У вас нет активного обмена</p>);
+  // }
+  const isTrue = (StatusID) => {
+    switch (StatusID) {
+      case 2:
+        setIsAcceptContrUserStepOne(true);
+        setIsAcceptUserStepOne(true);
+        break;
+      case 3:
+        setIsAcceptUserStepTwo(true);
+        setIsAcceptContrUserStepTwo(true);
+        break;
+      case 4:
+        setIsAcceptUserStepThree(true);
+        setIsAcceptContrUserStepThree(true);
+        break;
+      default:
+        break;
+    }
+  };
+  useEffect(() => {
+    isTrue(exchange?.OtherBook?.StatusID);
+  }, [exchange]);
+  const isStep = (isAcceptMe, isAcceptOther) => {
+    switch (isAcceptMe && isAcceptOther) {
+      case true:
+        setStep(1);
+        break;
+      case true:
+        setStep(2);
+        break;
+      case true:
+        setStep(3);
+        break;
+      default:
+        break;
+    }
+  };
+  useEffect(() => {
+    isStep(isAcceptUserStepOne, isAcceptContrUserStepOne);
+  }, []);
+  console.log('test', exchange);
   return (
     <div className={style.root}>
       <p>Карточка обмена</p>
@@ -118,10 +145,10 @@ const ActiveOffers = () => {
             <br />
             <Typography align="center" variant="body2">
               Тут должна быть хотелка какая-то
-              {exchange?.OtherBook?.BookName}
-              {exchange?.OtherBook?.Note}
               {exchange?.OtherBook?.AuthorFirstName}
               {exchange?.OtherBook?.AuthorLastName}
+              {exchange?.OtherBook?.BookName}
+              {exchange?.OtherBook?.Note}
             </Typography>
             <br />
             <br />
@@ -187,14 +214,15 @@ const ActiveOffers = () => {
                 // здесь отправка подтверждения обмена
                 onClick={() => {
                   restPost(`/api/exchange/agree/${userId}/${masOfIdExchange[0]}`)
-                    .then(async () => {
+                    .then(() => {
                       setIsAcceptUserStepOne(true);
-                      await restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
+                      restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
                         .then(({ data }) => setExchange(data))
                         .catch((err) => alert(`Не удалось получить активный обмен ${err.message}`));
-                      if (isAcceptContrUserStepOne) {
-                        setStep((prev) => prev + 1);
-                      }
+                      // TODO  здесь надо вставлять функцию которая будет менять шаг взависимости от isAccept
+                      // if (isAcceptContrUserStepOne) {
+                      // setStep((prev) => prev + 1);
+                      // }
                     })
                     .catch((err) => alert('Не удалось подтвердить обмен'));
                 }}
@@ -233,7 +261,7 @@ const ActiveOffers = () => {
                 }
                   control={control}
                   label="Номер отправления*"
-                  name="number_order"
+                  name="Track_number"
                 />
                 <Button
                   className={style.btn}
@@ -261,6 +289,10 @@ const ActiveOffers = () => {
                     restPost(`/api/exchange/receive/${userId}/${masOfIdExchange[0]}`)
                       .then(() => {
                         setIsAcceptUserStepThree(true);
+                        // TODO  здесь надо вставлять функцию которая будет менять шаг взависимости от isAccept
+                        // if (isAcceptContrUserStepOne) {
+                        // setStep((prev) => prev + 1);
+                        // }
                       })
                       .catch((err) => alert(`Не удалось подтвердить получение, попробуйте позже ${err.message}`));
                   }}
