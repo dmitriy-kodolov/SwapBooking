@@ -34,19 +34,19 @@ const useStyle = makeStyles(() => ({
   },
 }));
 
-const Delivery = ({ control, setIsDefaultAddr, isDefaultAddr }) => {
-  const style = useStyle();
-  const [isDefault, setIsDefault] = useState('');
+const Delivery = ({
+  control, setIsDefaultAddr, isDefaultAddr, selectedDefault,
+}) => {
+  const [isDefault, setIsDefault] = useState(false);
+
   useEffect(() => {
-    setIsDefault(isDefaultAddr);
+    setIsDefault(selectedDefault);
   }, []);
-  const togle = (checked) => {
-    setIsDefault(!checked);
-    console.log('tgle', checked);
-  };
+
   useEffect(() => {
     setIsDefaultAddr(isDefault);
   }, [isDefault]);
+  const style = useStyle();
   return (
     <div className={style.container}>
       <Paper className={style.paper} elevation={4}>
@@ -248,9 +248,7 @@ const Delivery = ({ control, setIsDefaultAddr, isDefaultAddr }) => {
           />
           <p>
             <Checkbox
-              onChange={(event) => {
-                togle(event.target.checked);
-              }}
+              onChange={(event) => setIsDefault(event.target.checked)}
             />
             Использовать этот адресс по умолчанию
           </p>

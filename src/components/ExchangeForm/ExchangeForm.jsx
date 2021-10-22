@@ -61,7 +61,6 @@ export default function ExchangeForm() {
       first_name_user: '',
       last_name_user: '',
       second_name_user: '',
-      is_default: 'false',
     },
   });
   const {
@@ -72,7 +71,7 @@ export default function ExchangeForm() {
   const [step, setStep] = useState(1);
   const [categorFromRecive, setCategorFromRecive] = useState([]);
   const [categorFromExchange, setCategorFromExchange] = useState([]);
-  const categorFromApi = useSelector((state) => state?.category?.categories?.Categories?.Subcategories);
+  const categorFromApi = useSelector((state) => state?.category?.categories?.Categories);
   const initialProfile = useSelector((state) => state?.profileInfo?.userProfile?.[0]);
   const [initialCategory, setInitialCategory] = useState(null);
   const [profileInformation, setProfileInformation] = useState([]);
@@ -113,9 +112,9 @@ export default function ExchangeForm() {
   }, [categorFromRecive]);
 
   useEffect(() => {
-    console.log('do изменения', formValues.is_default);
+  // console.log('do изменения', formValues.is_default);
     setValue('is_default', isDefaultAddr);
-    console.log('после изменения', formValues.is_default);
+  // console.log('после изменения', formValues.is_default);
   }, [isDefaultAddr]);
   // отправка формы
   const onSubmitForm = () => {
@@ -131,7 +130,6 @@ export default function ExchangeForm() {
         });
     }
   };
-
   const Next = () => (
     <Button
       className={style.btn}
@@ -155,7 +153,8 @@ export default function ExchangeForm() {
       Назад
     </Button>
   );
-  // console.log('forma', formValues.is_default);
+  // console.log('lof', isDefaultAddr);
+  console.log('forma', formValues.is_default);
   return (
     <form className={style.root} onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}>
       <Box sx={{ width: '100%' }}>
@@ -216,7 +215,7 @@ export default function ExchangeForm() {
           control={control}
           setIsDefaultAddr={setIsDefaultAddr}
           isDefaultAddr={isDefaultAddr}
-          setValue={setValue}
+          selectedDefault={formValues?.is_default}
         />
         <div className={style.delivery}>
           <Back />
