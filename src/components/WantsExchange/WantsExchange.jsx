@@ -17,43 +17,26 @@ const useStyle = makeStyles({
     flexWrap: 'wrap',
   },
 });
-const mockList = [
-  {
-    id_offer_list: 21,
-    create_at: '2021-10-14T20:34:28.326104',
-    update_at: '2021-10-14T20:34:28.326104',
-    id_status: '',
-    book_name: 'Название книги',
-    note: 'no note',
-    last_name: 'Фамилия Автора',
-    first_name: 'Имя Атора',
-    isbn: 'ISBN книги',
-    year_publishing: '2000-01-01',
-  },
-  {
-    id_status: '',
-    create_at: '2021-10-14T20:34:28.326104',
-    update_at: '2021-10-14T20:34:28.326104',
-    id_offer_list: 22,
-    book_name: 'Название книги',
-    note: 'no note',
-    last_name: 'Фамилия Автора',
-    first_name: 'Имя Атора',
-    isbn: '',
-    year_publishing: '2000-01-01',
-  },
-];
+
 const WantsExchange = () => {
   const userId = useSelector((state) => state.login.userId);
   const style = useStyle();
-  const [card, setCard] = useState(mockList);
-  const [isDeleteCard, setIsDeleteCard] = useState(false);
+  const [card, setCard] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   // Получение хателок и установка состоятния
   useEffect(() => {
     restGet(`/api/myoffers/all/${userId}`)
-      .then(({ data }) => setCard(data))
-      .catch((error) => alert(`Не удалось загрузить список', ${error.message}`));
+      .then(({ data }) => {
+        setIsLoading(false);
+        setCard(data);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        setIsError(true);
+        alert(`Не удалось загрузить список', ${error.message}`);
+      });
   }, []);
 
   const removeCard = (id) => {
@@ -61,19 +44,23 @@ const WantsExchange = () => {
   };
 
   const deleteCard = (wishId) => { // удаление карточки с базы данных
-    restDelete(`/api/myoffers/${wishId}`) // здесь надо точно узнавать как будет выглядить путь у бэка
+    restDelete(`/api/myoffers/${wishId}`)
       .then(() => {
-        setIsDeleteCard(true);
+        removeCard(wishId);
       })
       .catch((e) => alert('Не удалось удалить карточку, попробуйте позже'));
   };
 
-  const onSumbit = (wishId) => {
-    deleteCard(wishId);
-    if (isDeleteCard) {
-      removeCard(wishId);
-    }
-  };
+  if (isLoading) {
+    return (
+      <p>Загрузка</p>
+    );
+  }
+  if (isError) {
+    return (
+      <p>Ошибка загрузки данных, попробуйте позже</p>
+    );
+  }
   if (!card.length) {
     return (
       <p>У вас нету списка того, что вы хотите отдать</p>
@@ -132,7 +119,7 @@ const WantsExchange = () => {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button onClick={() => onSumbit(item.id_offer_list)} size="small">Убрать из желаемого</Button>
+            <Button onClick={() => deleteCard(item.id_offer_list)} size="small">Убрать из желаемого</Button>
           </CardActions>
         </Card>
       ))}

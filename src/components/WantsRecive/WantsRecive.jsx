@@ -21,48 +21,24 @@ const useStyle = makeStyles({
     paddingLeft: '25px',
   },
 });
-const mockList = [
-  {
-    wish_data: {
-      id_wish_list: 13,
-      create_at: '2021-10-14T20:34:28.440651',
-      update_at: '2021-10-14T20:34:28.440651',
-      id_status: 3,
-    },
-    categories: [
-      'документальная',
-      'проза',
-      'боевик',
-      'детектив',
-      'исторический роман',
-    ],
-  },
-  {
-    wish_data: {
-      id_wish_list: 14,
-      create_at: '2021-10-14T20:34:28.440651',
-      update_at: '2021-10-14T20:34:28.440651',
-      id_status: 3,
-    },
-    categories: [
-      'документальная',
-      'проза',
-      'боевик',
-      'детектив',
-      'исторический роман',
-    ],
-  },
-];
+
 const WantsRecive = () => {
   const userId = useSelector((state) => state.login.userId);
   const style = useStyle();
-  const [initialWishes, setInitialWishes] = useState(mockList);
-  const [isDeleteCard, setIsDeleteCard] = useState(false);
-
+  const [initialWishes, setInitialWishes] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   useEffect(() => {
     restGet(`/api/wishes/all/${userId}`)
-      .then(({ data }) => setInitialWishes(data))
-      .catch((error) => alert(`Не удалось загрузить список', ${error.message}`));
+      .then(({ data }) => {
+        setIsLoading(false);
+        setInitialWishes(data);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        setIsError(true);
+        alert(`Не удалось загрузить список', ${error.message}`);
+      });
   }, []);
 
   const removeCard = (id) => {
@@ -70,19 +46,23 @@ const WantsRecive = () => {
   };
 
   const deleteCard = (wishId) => { // удаление карточки с базы данных
-    restDelete(`/api/wishes/${wishId}`)
+    restDelete(`/api/wish/${wishId}`)
       .then(() => {
-        setIsDeleteCard(true);
+        removeCard(wishId);
       })
       .catch((error) => alert(`Не удалось удалить карточку, попробуйте позже, ${error.message}`));
   };
 
-  const onSumbit = (wishId) => {
-    deleteCard(wishId);
-    if (isDeleteCard) {
-      removeCard(wishId);
-    }
-  };
+  if (isLoading) {
+    return (
+      <p>Загрузка</p>
+    );
+  }
+  if (isError) {
+    return (
+      <p>Ошибка загрузки данных, попробуйте позже</p>
+    );
+  }
   if (!initialWishes.length) {
     return (
       <p>У вас нету списка того, что вы хотите получить</p>
@@ -130,7 +110,7 @@ const WantsRecive = () => {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button onClick={() => onSumbit(item.wish_data.id_wish_list)} size="small">Убрать из желаемого</Button>
+            <Button onClick={() => deleteCard(item.wish_data.id_wish_list)} size="small">Убрать из желаемого</Button>
           </CardActions>
         </Card>
       ))}
