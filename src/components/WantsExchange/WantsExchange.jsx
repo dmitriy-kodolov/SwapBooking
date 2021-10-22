@@ -51,8 +51,8 @@ const WantsExchange = () => {
 
   // Получение хателок и установка состоятния
   useEffect(() => {
-    restGet(`/myoffers/all/${userId}`)
-      .then((result) => setCard(result))
+    restGet(`/api/myoffers/all/${userId}`)
+      .then(({ data }) => setCard(data))
       .catch((error) => alert(`Не удалось загрузить список', ${error.message}`));
   }, []);
 
@@ -61,7 +61,7 @@ const WantsExchange = () => {
   };
 
   const deleteCard = (wishId) => { // удаление карточки с базы данных
-    restDelete(`/myoffers/${wishId}`) // здесь надо точно узнавать как будет выглядить путь у бэка
+    restDelete(`/api/myoffers/${wishId}`) // здесь надо точно узнавать как будет выглядить путь у бэка
       .then(() => {
         setIsDeleteCard(true);
       })
