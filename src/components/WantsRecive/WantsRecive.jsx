@@ -61,7 +61,7 @@ const WantsRecive = () => {
 
   useEffect(() => {
     restGet(`/api/wishes/all/${userId}`)
-      .then((result) => setInitialWishes(result))
+      .then(({ data }) => setInitialWishes(data))
       .catch((error) => alert(`Не удалось загрузить список', ${error.message}`));
   }, []);
 
@@ -118,10 +118,15 @@ const WantsRecive = () => {
               {item.wish_data.id_status}
             </Typography>
             <Typography variant="body2">
-              <p>Категории:</p>
-              <ul className={style.listCategory}>
-                {item.categories.map((category) => <li>{category}</li>)}
-              </ul>
+              {item.categories?.length
+              && (
+              <>
+                <p>Категории:</p>
+                <ul className={style.listCategory}>
+                  {item.categories.map((category) => <li>{category}</li>)}
+                </ul>
+              </>
+              )}
             </Typography>
           </CardContent>
           <CardActions>
