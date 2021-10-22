@@ -3,24 +3,18 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable no-unused-vars */
 import { makeStyles } from '@material-ui/styles';
-<<<<<<< src/components/ActiveOffers/ActiveOffers.jsx
-=======
 import React, { useCallback, useState, useEffect } from 'react';
 import Card from '@mui/material/Card';
 import Box from '@mui/material/Box';
 import CardActions from '@mui/material/CardActions';
->>>>>>> src/components/ActiveOffers/ActiveOffers.jsx
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Input from 'components/Input/Input';
 import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
-<<<<<<< src/components/ActiveOffers/ActiveOffers.jsx
 import { restPost, restGet } from 'api/instances/main';
-=======
 import { setBook } from '../../store/slices/exchangesSlice';
->>>>>>> src/components/ActiveOffers/ActiveOffers.jsx
 
 const useStyle = makeStyles({
   root: {
