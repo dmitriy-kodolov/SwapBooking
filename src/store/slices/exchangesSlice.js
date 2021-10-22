@@ -43,7 +43,7 @@ const exchangesSlice = createSlice({
     },
     [fetchOffers.rejected]: (state) => {
       state.offerIsLoading = false;
-      state.offerError = 'ошибка';
+      state.offerError = 'Ошибка';
     },
   },
 });
