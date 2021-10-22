@@ -84,7 +84,6 @@ const Category = ({
       : [...categories, ...listToCategories];
     setCategories(Array.from(new Set(result)));
   };
-  console.log('kal', categories);
   useEffect(() => {
     clearErrors('category');
     setCategoriesForm(categories);

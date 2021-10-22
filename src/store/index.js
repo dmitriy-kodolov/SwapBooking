@@ -5,11 +5,13 @@ import { persistReducer } from 'redux-persist';
 import loginReducer from './slices/loginSlice';
 import categoryReducer from './slices/categoriesSlice';
 import profileInfoReducer from './slices/userProfileSlice';
+import exchangesReducer from './slices/exchangesSlice';
 
 const reducers = combineReducers({
   login: loginReducer,
   category: categoryReducer,
   profileInfo: profileInfoReducer,
+  exchanges: exchangesReducer,
 });
 
 const persistConfig = {

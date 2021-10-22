@@ -3,7 +3,7 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -14,6 +14,8 @@ import WantsRecive from 'components/WantsRecive/WantsRecive';
 import CoincidencesList from './components/CoincidencesList/CoincidencesList';
 import ActiveOffers from 'components/ActiveOffers';
 import Profile from 'components/Profile';
+import Archive from 'components/Archive';
+import { setTab } from '../../store/slices/exchangesSlice';
 
 function TabPanel(props) {
   const {
@@ -51,10 +53,11 @@ function a11yProps(index) {
 }
 
 function MyExchange() {
-  const [value, setValue] = React.useState(1);
+  const dispatch = useDispatch();
+  const { selectedTab, disabledTabs } = useSelector((state) => state.exchanges);
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    dispatch(setTab(newValue));
   };
 
   const user = useSelector((state) => state.profileInfo.userProfile?.[0]?.user_name);
@@ -68,7 +71,7 @@ function MyExchange() {
       <Tabs
         orientation="vertical"
         variant="scrollable"
-        value={value}
+        value={selectedTab}
         onChange={handleChange}
         aria-label="Vertical tabs example"
         scrollButtons={false}
@@ -98,29 +101,29 @@ function MyExchange() {
             {user}
           </Typography>
         </Box>
-        <Tab label="Предложения для обмена" {...a11yProps(0)} />
-        <Tab label="Хочу обменять" {...a11yProps(1)} />
-        <Tab label="Хочу получить" {...a11yProps(2)} />
+        <Tab label="Предложения для обмена" {...a11yProps(0)} disabled={disabledTabs?.includes(1)} />
+        <Tab label="Хочу обменять" {...a11yProps(1)} disabled={disabledTabs?.includes(2)} />
+        <Tab label="Хочу получить" {...a11yProps(2)} disabled={disabledTabs?.includes(3)} />
         <Tab label="Активные обмены" {...a11yProps(3)} />
         <Tab label="Архив" {...a11yProps(4)} />
       </Tabs>
-      <TabPanel value={value} index={0}>
+      <TabPanel value={selectedTab} index={0}>
         <Profile />
       </TabPanel>
-      <TabPanel value={value} index={1}>
+      <TabPanel value={selectedTab} index={1}>
         <CoincidencesList />
       </TabPanel>
-      <TabPanel value={value} index={2}>
+      <TabPanel value={selectedTab} index={2}>
         <WantsExchange />
       </TabPanel>
-      <TabPanel value={value} index={3}>
+      <TabPanel value={selectedTab} index={3}>
         <WantsRecive />
       </TabPanel>
-      <TabPanel value={value} index={4}>
+      <TabPanel value={selectedTab} index={4}>
         <ActiveOffers />
       </TabPanel>
-      <TabPanel value={value} index={5}>
-        тут будет архив
+      <TabPanel value={selectedTab} index={5}>
+        <Archive />
       </TabPanel>
     </Box>
   );
