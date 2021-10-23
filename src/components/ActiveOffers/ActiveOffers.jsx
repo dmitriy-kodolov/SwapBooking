@@ -80,7 +80,7 @@ const ActiveOffers = () => {
   // получение конкретного обмена
   useEffect(async () => {
     if (!activeOfferIsLoading
-      && !Object.keys(exchange || {}).length && masOfIdExchange.length) {
+      && !Object.keys(exchange || {})?.length && masOfIdExchange?.length) {
       try {
         await dispatch(fetchActiveOffer([userId, masOfIdExchange[0]])).unwrap();
       } catch (err) {

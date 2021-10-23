@@ -7,8 +7,9 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { restDelete } from 'api/instances/main';
+import { setAlert } from 'store/slices/alertSlice';
 import { restGet } from '../../api/instances/main';
 
 const useStyle = makeStyles({
@@ -23,6 +24,7 @@ const useStyle = makeStyles({
 });
 
 const WantsRecive = () => {
+  const dispatch = useDispatch();
   const userId = useSelector((state) => state.login.userId);
   const style = useStyle();
   const [initialWishes, setInitialWishes] = useState([]);
@@ -34,11 +36,19 @@ const WantsRecive = () => {
         setIsLoading(false);
         setInitialWishes(data);
       })
-      .catch((error) => {
+      .catch((e) => {
         setIsLoading(false);
         setIsError(true);
-        alert(`Не удалось загрузить список', ${error.message}`);
+        dispatch(setAlert({
+          text: 'Не удалось удалить карточку, попробуйте позже', severity: 'error',
+        }));
       });
+    // .catch((error) => {
+
+    // alert(()=>{dispatch(setAlert({
+    // text: 'Не удалось удалить карточку, попробуйте позже', severity: 'error',
+    // }))});
+    // });
   }, []);
 
   const removeCard = (id) => {
