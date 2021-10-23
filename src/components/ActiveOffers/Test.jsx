@@ -48,6 +48,7 @@ const Test = () => {
   } = propsFrom;
   const formValues = propsFrom?.getValues();
   // получение   активных обменов
+  console.log(exchange);
   useEffect(() => {
     (async () => {
       try {
@@ -81,8 +82,10 @@ const Test = () => {
   };
   // отпарвка трек номера
   const onSubmitForm = async () => {
+    console.log(formValues);
     try {
       await restPost(`/api/exchange/send/${userId}/${masOfIdExchange[0]}`, formValues);
+      console.log(formValues);
       const resultGet = await restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`);
       setExchange(resultGet.data);
     } catch (error) {
@@ -124,6 +127,9 @@ const Test = () => {
   if (!masOfIdExchange?.length) {
     return (<p>У вас нет списка активного обмена</p>);
   }
+  // if (mas) {
+  //
+  // }
   return (
     <div className={style.root}>
       <p>Карточка обмена</p>
@@ -246,12 +252,12 @@ const Test = () => {
                     message: 'Поле обязательно',
                   },
                   maxLength: {
-                    value: 14,
-                    message: 'Не больше 14-ти символов',
+                    value: 5,
+                    message: 'Не больше 5-ти символов',
                   },
                   minLength: {
-                    value: 14,
-                    message: 'Не менее 14-ти символов',
+                    value: 1,
+                    message: 'Не менее 1-го символов',
                   },
                   pattern: {
                     value: /^[0-9]+$/,
@@ -260,9 +266,8 @@ const Test = () => {
                 }
                 }
                     control={control}
-                    x
                     label="Номер отправления*"
-                    name="Track_number"
+                    name="TrackNumber"
                   />
                   <Button
                     className={style.btn}
@@ -287,12 +292,12 @@ const Test = () => {
                     message: 'Поле обязательно',
                   },
                   maxLength: {
-                    value: 14,
-                    message: 'Не больше 14-ти символов',
+                    value: 5,
+                    message: 'Не больше 5-ти символов',
                   },
                   minLength: {
-                    value: 14,
-                    message: 'Не менее 14-ти символов',
+                    value: 1,
+                    message: 'Не менее 1-ти символов',
                   },
                   pattern: {
                     value: /^[0-9]+$/,
@@ -301,9 +306,8 @@ const Test = () => {
                 }
                 }
                     control={control}
-                    x
                     label="Номер отправления*"
-                    name="Track_number"
+                    name="TrackNumber"
                   />
                   <Button
                     className={style.btn}
@@ -344,7 +348,6 @@ const Test = () => {
               </Button>
               )}
               {exchange?.MyBook?.StatusID === 4 && <p>{exchange?.MyBook?.StatusText}</p>}
-
             </Typography>
           </CardContent>
         </Card>
