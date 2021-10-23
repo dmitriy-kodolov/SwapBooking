@@ -47,14 +47,14 @@ const Test = () => {
     handleSubmit, control,
   } = propsFrom;
   const formValues = propsFrom?.getValues();
+
   // получение   активных обменов
-  console.log(exchange);
   useEffect(() => {
     (async () => {
       try {
         const resultGet = await restGet(`/api/exchange/${userId}/all`);
         setMasOfIdExchange(resultGet.data);
-        if (!masOfIdExchange.length) {
+        if (!masOfIdExchange?.length) {
           setIsLoading(false);
           return;
         }
@@ -81,18 +81,18 @@ const Test = () => {
     }
   };
   // отпарвка трек номера
-  const onSubmitForm = async () => {
-    console.log(formValues);
-    try {
-      await restPost(`/api/exchange/send/${userId}/${masOfIdExchange[0]}`, formValues);
-      console.log(formValues);
-      const resultGet = await restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`);
-      setExchange(resultGet.data);
-    } catch (error) {
-      alert(`Не удалось ${error.message}`);
-      setIsLoading(false);
-      setError(true);
-    }
+  const onSubmitForm = (values) => {
+    (async () => {
+      try {
+        await restPost(`/api/exchange/send/${userId}/${masOfIdExchange[0]}`, values);
+        const activeExchangeObjectResponse = await restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`);
+        setExchange(activeExchangeObjectResponse.data);
+      } catch (error) {
+        alert(`Не удалось ${error.message}`);
+        setIsLoading(false);
+        setError(true);
+      }
+    })();
   };
   // кнопка получить
   const acceptDelivery = async () => {
@@ -127,9 +127,6 @@ const Test = () => {
   if (!masOfIdExchange?.length) {
     return (<p>У вас нет списка активного обмена</p>);
   }
-  // if (mas) {
-  //
-  // }
   return (
     <div className={style.root}>
       <p>Карточка обмена</p>
@@ -229,7 +226,6 @@ const Test = () => {
                 <p>{exchange?.MyBook?.StatusText}</p>
                 <Button
                   variant="contained"
-               // здесь отправка подтверждения обмена */}
                   onClick={agreementHandler}
                   size="small"
                 >
@@ -238,14 +234,13 @@ const Test = () => {
               </>
               )}
               {exchange?.MyBook?.StatusID === 2 && <p>{exchange?.MyBook?.StatusText}</p>}
-              {exchange?.MyBook?.StatusID === 2 && exchange?.MyBook?.TrackNumber === ''
-              && (
-                <form
-                  onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}
-                  className={style.root}
-                >
-                  <Input
-                    rules={
+              {exchange?.MyBook?.StatusID === 2 && exchange?.MyBook?.TrackNumber === '' && (
+              <form
+                onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}
+                className={style.root}
+              >
+                <Input
+                  rules={
                 {
                   required: {
                     value: true,
@@ -265,18 +260,18 @@ const Test = () => {
                   },
                 }
                 }
-                    control={control}
-                    label="Номер отправления*"
-                    name="TrackNumber"
-                  />
-                  <Button
-                    className={style.btn}
-                    variant="contained"
-                    type="submit"
-                  >
-                    Отправил
-                  </Button>
-                </form>
+                  control={control}
+                  label="Номер отправления*"
+                  name="TrackNumber"
+                />
+                <Button
+                  className={style.btn}
+                  variant="contained"
+                  type="submit"
+                >
+                  Отправил
+                </Button>
+              </form>
               )}
               {exchange?.MyBook?.StatusID === 3 && exchange?.MyBook?.TrackNumber === ''
               && (
