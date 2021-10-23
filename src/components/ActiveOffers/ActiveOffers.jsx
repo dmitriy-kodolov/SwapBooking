@@ -52,80 +52,184 @@ const ActiveOffers = () => {
   const formValues = propsFrom?.getValues();
   // получение   активных обменов
   useEffect(() => {
-    if (!masOfIdExchange.length) {
-      restGet(`/api/exchange/${userId}/all`)
-        .then(({ data }) => {
-          setMasOfIdExchange(data);
-          restGet(`/api/exchange/${userId}/${data[0]}`)
-            .then(({ data }) => {
-              setExchange(data);
-            })
-            .catch((err) => alert(`не удалось получить данные об обмене ${err.message}`));
-        })
-        .catch((err) => alert(`Не удалось загрузить список, ${err.message}`));
-    }
-  }, []);
-
-  // отпарвка трек номера
-  const onSubmitForm = () => {
-    console.log(formValues);
-    restPost(`/api/exchange/send/${userId}/${masOfIdExchange[0]}`, formValues)
-      .then(() => {
-        setIsAcceptUserStepTwo(true);
-        restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
-          .then(({ data }) => setExchange(data))
-          .catch((err) => alert(`Не удалось получить статус обмена ${err.message}`));
-        if (isAcceptContrUserStepTwo) {
-          setStep((prev) => prev + 1);
+    (async () => {
+      try {
+        const resultGet = await restGet(`/api/exchange/${userId}/all`);
+        setMasOfIdExchange(resultGet.data);
+        const resultGetExchange = await restGet(`/api/exchange/${userId}/${resultGet.data[0]}`);
+        setExchange(resultGetExchange.data);
+        if (resultGetExchange.data.OtherBook.StatusID === 2) {
+          setIsAcceptContrUserStepOne(true);
         }
-      })
-      .catch((err) => {
-        alert(`Ошибка при отправки данных, попробуйте позже ${err.message}`);
-      });
-  };
-  // if (!masOfIdExchange?.length) {
-    // return (<p>У вас нет активного обмена</p>);
-  // }
-  const isTrue = (StatusID) => {
-    switch (StatusID) {
-      case 2:
-        setIsAcceptContrUserStepOne(true);
-        setIsAcceptUserStepOne(true);
-        break;
-      case 3:
-        setIsAcceptUserStepTwo(true);
-        setIsAcceptContrUserStepTwo(true);
-        break;
-      case 4:
-        setIsAcceptUserStepThree(true);
-        setIsAcceptContrUserStepThree(true);
-        break;
-      default:
-        break;
-    }
-  };
-  useEffect(() => {
-    isTrue(exchange?.OtherBook?.StatusID);
-  }, [exchange]);
-  const isStep = (isAcceptMe, isAcceptOther) => {
-    switch (isAcceptMe && isAcceptOther) {
-      case true:
-        setStep(1);
-        break;
-      case true:
-        setStep(2);
-        break;
-      case true:
-        setStep(3);
-        break;
-      default:
-        break;
-    }
-  };
-  useEffect(() => {
-    isStep(isAcceptUserStepOne, isAcceptContrUserStepOne);
+        if (resultGetExchange.data.OtherBook.StatusID === 3) {
+          setIsAcceptContrUserStepTwo(true);
+          setIsAcceptContrUserStepOne(true);
+        }
+        if (resultGetExchange.data.OtherBook.StatusID === 4) {
+          setIsAcceptContrUserStepThree(true);
+          setIsAcceptContrUserStepOne(true);
+          setIsAcceptContrUserStepTwo(true);
+        }
+        if (resultGetExchange.data.MyBook.StatusID === 2) {
+          setIsAcceptUserStepOne(true);
+        }
+        if (resultGetExchange.data.MyBook.StatusID === 3) {
+          setIsAcceptUserStepTwo(true);
+          setIsAcceptUserStepOne(true);
+        }
+        if (resultGetExchange.data.MyBook.StatusID === 4) {
+          setIsAcceptUserStepThree(true);
+          setIsAcceptUserStepTwo(true);
+          setIsAcceptUserStepOne(true);
+        }
+        if ((resultGetExchange.data?.OtherBook?.StatusID === 2 || 3) && (resultGetExchange.data?.MyBook?.StatusID === 2 || 3)) {
+          setStep(2);
+        }
+        if ((resultGetExchange.data?.OtherBook?.StatusID === 3) && (resultGetExchange.data?.MyBook?.StatusID === 3)) {
+          setStep(3);
+        }
+        if ((resultGetExchange.data?.OtherBook?.StatusID === 4) && (resultGetExchange.data?.MyBook?.StatusID === 4)) {
+          setStep(4);
+        }
+      } catch (error) {
+        alert(`Не удалось ${error.message}`);
+      }
+      // finally {
+      // if ((exchange?.OtherBook?.StatusID === (2 || 3)) && (exchange?.MyBook?.StatusID === (2 || 3))) {
+      // setStep(2);
+      // }
+      // if ((exchange?.OtherBook?.StatusID === 3) && (exchange?.MyBook?.StatusID === 3)) {
+      // setStep(3);
+      // }
+      // if ((exchange?.OtherBook?.StatusID === 4) && (exchange?.MyBook?.StatusID === 4)) {
+      // setStep(4);
+      // }
+      // }
+    })();
   }, []);
-  console.log('test', exchange);
+  // подтвердить
+  const agreementHandler = async () => {
+    try {
+      await restPost(`/api/exchange/agree/${userId}/${masOfIdExchange[0]}`);
+      setIsAcceptUserStepOne(true);
+      const resultGet = await restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`);
+      setExchange(resultGet.data);
+      if ((resultGet.OtherBook.StatusID === 2) && (resultGet.MyBook.StatusID === 2)) {
+        setStep(2);
+      }
+    } catch (error) {
+      alert(`Не удалось ${error.message}`);
+    }
+  };
+  // отпарвка трек номера
+  const onSubmitForm = async () => {
+    try {
+      await restPost(`/api/exchange/send/${userId}/${masOfIdExchange[0]}`, formValues);
+      setIsAcceptUserStepTwo(true);
+      const resultGet = await restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`);
+      setExchange(resultGet.data);
+      if ((resultGet.OtherBook.StatusID === 3) && (resultGet.MyBook.StatusID === 3)) {
+        setStep(3);
+      }
+    } catch (error) {
+      alert(`Не удалось ${error.message}`);
+    }
+  };
+  // кнопка получить
+  const acceptDelivery = async () => {
+    try {
+      await restPost(`/api/exchange/receive/${userId}/${masOfIdExchange[0]}`);
+      setIsAcceptUserStepThree(true);
+      const resultGet = await restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`);
+      setExchange(resultGet.data);
+      if ((resultGet.OtherBook.StatusID === 4) && (resultGet.MyBook.StatusID === 4)) {
+        setStep(4);
+      }
+    } catch (error) {
+      alert(`Не удалось ${error.message}`);
+    }
+  };
+
+  // кнопка обновить
+  const updateExchangeStatus = async () => {
+    try {
+      const resultGet = await restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`);
+      setExchange(resultGet.data);
+      if ((resultGet.data?.OtherBook?.StatusID === 2 || 3) && (resultGet.data?.MyBook?.StatusID === 2 || 3)) {
+        setStep(2);
+      }
+      if ((resultGet.data?.OtherBook?.StatusID === 3) && (resultGet.data?.MyBook?.StatusID === 3)) {
+        setStep(3);
+      }
+      if ((resultGet.data?.OtherBook?.StatusID === 4) && (resultGet.data?.MyBook?.StatusID === 4)) {
+        setStep(4);
+      }
+      if (resultGet.data?.OtherBook?.StatusID === 2) {
+        setIsAcceptContrUserStepOne(true);
+      }
+      if (resultGet.data?.OtherBook?.StatusID === 3) {
+        setIsAcceptContrUserStepTwo(true);
+        setIsAcceptContrUserStepOne(true);
+      }
+      if (resultGet.data?.OtherBook?.StatusID === 4) {
+        setIsAcceptContrUserStepThree(true);
+        setIsAcceptContrUserStepTwo(true);
+        setIsAcceptContrUserStepOne(true);
+      }
+      if (resultGet.data?.MyBook?.StatusID === 2) {
+        setIsAcceptUserStepOne(true);
+      }
+      if (resultGet.data?.MyBook?.StatusID === 3) {
+        setIsAcceptUserStepTwo(true);
+        setIsAcceptUserStepOne(true);
+      }
+      if (resultGet.data?.MyBook?.StatusID === 4) {
+        setIsAcceptUserStepThree(true);
+        setIsAcceptUserStepTwo(true);
+        setIsAcceptUserStepOne(true);
+      }
+    } catch (error) {
+      alert(`Не удалось ${error.message}`);
+    }
+    // finally {
+    // if ((exchange?.OtherBook?.StatusID === (2 || 3)) && (exchange?.MyBook?.StatusID === (2 || 3))) {
+    // setStep(2);
+    // }
+    // if ((exchange?.OtherBook?.StatusID === 3) && (exchange?.MyBook?.StatusID === 3)) {
+    // setStep(3);
+    // }
+    // if ((exchange?.OtherBook?.StatusID === 4) && (exchange?.MyBook?.StatusID === 4)) {
+    // setStep(4);
+    // }
+    // if (exchange?.OtherBook?.StatusID === 2) {
+    // setIsAcceptContrUserStepOne(true);
+    // }
+    // if (exchange?.OtherBook?.StatusID === 3) {
+    // setIsAcceptContrUserStepTwo(true);
+    // setIsAcceptContrUserStepOne(true);
+    // }
+    // if (exchange?.OtherBook?.StatusID === 4) {
+    // setIsAcceptContrUserStepThree(true);
+    // setIsAcceptContrUserStepTwo(true);
+    // setIsAcceptContrUserStepOne(true);
+    // }
+    // if (exchange?.MyBook?.StatusID === 2) {
+    // setIsAcceptUserStepOne(true);
+    // }
+    // if (exchange?.MyBook?.StatusID === 3) {
+    // setIsAcceptUserStepTwo(true);
+    // setIsAcceptUserStepOne(true);
+    // }
+    // if (exchange?.MyBook?.StatusID === 4) {
+    // setIsAcceptUserStepThree(true);
+    // setIsAcceptUserStepTwo(true);
+    // setIsAcceptUserStepOne(true);
+    // }
+    // }
+  };
+  console.log('сам обмен', exchange);
+  console.log('шаг обмена ', step);
+  console.log('dsadsa', isAcceptUserStepThree);
   return (
     <div className={style.root}>
       <p>Карточка обмена</p>
@@ -144,11 +248,19 @@ const ActiveOffers = () => {
             </Typography>
             <br />
             <Typography align="center" variant="body2">
-              Тут должна быть хотелка какая-то
-              {exchange?.OtherBook?.AuthorFirstName}
-              {exchange?.OtherBook?.AuthorLastName}
-              {exchange?.OtherBook?.BookName}
-              {exchange?.OtherBook?.Note}
+              <ul>
+                <li>
+                  {exchange?.OtherBook?.AuthorFirstName}
+                  {' '}
+                  {exchange?.OtherBook?.AuthorLastName}
+                </li>
+                <li>
+                  {exchange?.OtherBook?.BookName}
+                </li>
+                <li>
+                  {exchange?.OtherBook?.Note}
+                </li>
+              </ul>
             </Typography>
             <br />
             <br />
@@ -194,11 +306,19 @@ const ActiveOffers = () => {
             </Typography>
             <br />
             <Typography align="center" variant="body2">
-              Здесь то что пользователь будет менять:
-              {exchange?.MyBook?.BookName}
-              {exchange?.MyBook?.Note}
-              {exchange?.MyBook?.AuthorFirstName}
-              {exchange?.MyBook?.AuthorLastName}
+              <ul>
+                <li>
+                  {exchange?.MyBook?.AuthorFirstName}
+                  {' '}
+                  {exchange?.MyBook?.AuthorLastName}
+                </li>
+                <li>
+                  {exchange?.MyBook?.BookName}
+                </li>
+                <li>
+                  {exchange?.MyBook?.Note}
+                </li>
+              </ul>
             </Typography>
             <br />
             <br />
@@ -212,20 +332,7 @@ const ActiveOffers = () => {
               <Button
                 variant="contained"
                 // здесь отправка подтверждения обмена
-                onClick={() => {
-                  restPost(`/api/exchange/agree/${userId}/${masOfIdExchange[0]}`)
-                    .then(() => {
-                      setIsAcceptUserStepOne(true);
-                      restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
-                        .then(({ data }) => setExchange(data))
-                        .catch((err) => alert(`Не удалось получить активный обмен ${err.message}`));
-                      // TODO  здесь надо вставлять функцию которая будет менять шаг взависимости от isAccept
-                      // if (isAcceptContrUserStepOne) {
-                      // setStep((prev) => prev + 1);
-                      // }
-                    })
-                    .catch((err) => alert('Не удалось подтвердить обмен'));
-                }}
+                onClick={agreementHandler}
                 size="small"
               >
                 Подтвердить
@@ -272,12 +379,18 @@ const ActiveOffers = () => {
                 </Button>
               </form>
               )}
-              {isAcceptUserStepTwo && step === 2 && (
+              {isAcceptUserStepTwo && !isAcceptUserStepThree && step === 2 && (
               <>
                 <p>Номер отправления</p>
                 <p>{exchange?.MyBook?.TrackNumber}</p>
               </>
               )}
+              {isAcceptUserStepThree && step === 2 && (
+              <>
+                <p>Книга получена</p>
+              </>
+              )}
+
               {!isAcceptUserStepThree && step === 3 && (
               <>
                 <p>Номер отправления</p>
@@ -285,17 +398,7 @@ const ActiveOffers = () => {
                 <Button
                   className={style.btn}
                   variant="contained"
-                  onClick={() => {
-                    restPost(`/api/exchange/receive/${userId}/${masOfIdExchange[0]}`)
-                      .then(() => {
-                        setIsAcceptUserStepThree(true);
-                        // TODO  здесь надо вставлять функцию которая будет менять шаг взависимости от isAccept
-                        // if (isAcceptContrUserStepOne) {
-                        // setStep((prev) => prev + 1);
-                        // }
-                      })
-                      .catch((err) => alert(`Не удалось подтвердить получение, попробуйте позже ${err.message}`));
-                  }}
+                  onClick={acceptDelivery}
                 >
                   Поулчил
                 </Button>
@@ -310,11 +413,7 @@ const ActiveOffers = () => {
       </div>
       <Button
         variant="contained"
-        onClick={() => {
-          restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
-            .then(({ data }) => setExchange(data))
-            .catch((err) => alert(`Не удалось получить активный обмен ${err.message}`));
-        }}
+        onClick={updateExchangeStatus}
       >
         Обновить статус обмена
       </Button>
