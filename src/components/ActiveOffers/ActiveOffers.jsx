@@ -14,7 +14,8 @@ import Input from 'components/Input/Input';
 import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import { restPost, restGet } from 'api/instances/main';
-import { setBook } from '../../store/slices/exchangesSlice';
+import { fetchActiveOffer, setBook } from '../../store/slices/exchangesSlice';
+import { setAlert } from '../../store/slices/alertSlice';
 
 const useStyle = makeStyles({
   root: {
@@ -39,7 +40,8 @@ const ActiveOffers = () => {
   const style = useStyle();
   const [step, setStep] = useState(1);
   const [masOfIdExchange, setMasOfIdExchange] = useState([]);
-  const [exchange, setExchange] = useState([]);
+  const exchange = useSelector((state) => state.exchanges.activeOffer);
+  const activeOfferIsLoading = useSelector((state) => state.exchanges.activeOfferIsLoading);
   const [isAcceptUserStepOne, setIsAcceptUserStepOne] = useState(false);
   const [isAcceptUserStepTwo, setIsAcceptUserStepTwo] = useState(false);
   const [isAcceptUserStepThree, setIsAcceptUserStepThree] = useState(false);
@@ -61,9 +63,6 @@ const ActiveOffers = () => {
       break;
   }
 
-  // (async () => {
-  // await restGet(`/api/exchange/${userId}/all`);
-  // })();
   const propsFrom = useForm();
   const {
     handleSubmit, control,
@@ -75,40 +74,50 @@ const ActiveOffers = () => {
       .then(({ data }) => {
         setMasOfIdExchange(data);
       })
-      .catch((err) => alert(`Не удалось загрузить список, ${err.message}`));
+      .catch((err) => dispatch(setAlert({ text: `Не удалось загрузить список, ${err.message}`, severity: 'error' })));
   }, []);
-  // if (!masOfIdExchange?.length) {
-  // return (<p>У вас нет активного обмена</p>);
-  // }
+
   // получение конкретного обмена
-  // useEffect(() => {
-  // restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
-  // .then(({ data }) => setExchange(data))
-  // .catch((err) => alert(`Не удалось получить активный обмен ${err.message}`));
-  // }, [masOfIdExchange]);
+  useEffect(async () => {
+    if (!activeOfferIsLoading
+      && !Object.keys(exchange || {}).length && masOfIdExchange.length) {
+      try {
+        await dispatch(fetchActiveOffer([userId, masOfIdExchange[0]])).unwrap();
+      } catch (err) {
+        dispatch(setAlert({ text: `Не удалось получить активный обмен ${err.message}`, severity: 'error' }));
+      }
+    }
+  }, [masOfIdExchange, exchange, userId]);
+
   // отпарвка трек номера
-  const onSubmitForm = () => {
+  const onSubmitForm = useCallback(() => {
     console.log(formValues);
     restPost(`/api/exchange/send/${userId}/${masOfIdExchange[0]}`, formValues)
       .then(async () => {
         setIsAcceptUserStepTwo(true);
-        await restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
-          .then(({ data }) => setExchange(data))
-          .catch((err) => alert(`Не удалось получить статус обмена ${err.message}`));
+        try {
+          await dispatch(fetchActiveOffer([userId, masOfIdExchange[0]])).unwrap();
+        } catch (err) {
+          dispatch(setAlert({ text: `Не удалось получить статус обмена ${err.message}`, severity: 'error' }));
+        }
         if (isAcceptContrUserStepTwo) {
           setStep((prev) => prev + 1);
         }
       })
       .catch((err) => {
-        alert(`Ошибка при отправки данных, попробуйте позже ${err.message}`);
+        dispatch(setAlert({ text: `Ошибка при отправки данных, попробуйте позже ${err.message}`, severity: 'error' }));
       });
-  };
+  }, [formValues, userId, masOfIdExchange]);
 
   const book = useSelector((state) => state.exchanges.selectedBook);
 
   const handleCancel = useCallback(() => {
     dispatch(setBook());
   });
+
+  if (!masOfIdExchange?.length) {
+    return (<p>У вас нет активного обмена</p>);
+  }
 
   return (
     <div className={style.root}>
@@ -203,14 +212,16 @@ const ActiveOffers = () => {
                   restPost(`/api/exchange/agree/${userId}/${masOfIdExchange[0]}`)
                     .then(async () => {
                       setIsAcceptUserStepOne(true);
-                      await restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
-                        .then(({ data }) => setExchange(data))
-                        .catch((err) => alert(`Не удалось получить активный обмен ${err.message}`));
+                      try {
+                        await dispatch(fetchActiveOffer([userId, masOfIdExchange[0]])).unwrap();
+                      } catch (err) {
+                        dispatch(setAlert({ text: `Не удалось получить активный обмен ${err.message}`, severity: 'error' }));
+                      }
                       if (isAcceptContrUserStepOne) {
                         setStep((prev) => prev + 1);
                       }
                     })
-                    .catch((err) => alert('Не удалось подтвердить обмен'));
+                    .catch((err) => dispatch(setAlert({ text: 'Не удалось подтвердить обмен', severity: 'error' })));
                 }}
                 size="small"
               >
@@ -276,7 +287,7 @@ const ActiveOffers = () => {
                       .then(() => {
                         setIsAcceptUserStepThree(true);
                       })
-                      .catch((err) => alert(`Не удалось подтвердить получение, попробуйте позже ${err.message}`));
+                      .catch((err) => dispatch(setAlert({ text: `Не удалось подтвердить получение, попробуйте позже ${err.message}`, severity: 'error' })));
                   }}
                 >
                   Поулчил
@@ -292,10 +303,12 @@ const ActiveOffers = () => {
       </div>
       <Button
         variant="contained"
-        onClick={() => {
-          restGet(`/api/exchange/${userId}/${masOfIdExchange[0]}`)
-            .then(({ data }) => setExchange(data))
-            .catch((err) => alert(`Не удалось получить активный обмен ${err.message}`));
+        onClick={async () => {
+          try {
+            await dispatch(fetchActiveOffer([userId, masOfIdExchange[0]])).unwrap();
+          } catch (err) {
+            dispatch(setAlert({ text: `Не удалось получить активный обмен ${err.message}`, severity: 'error' }));
+          }
         }}
       >
         Обновить статус обмена

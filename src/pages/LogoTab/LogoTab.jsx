@@ -1,5 +1,5 @@
 import BookIcon from '@material-ui/icons/Book';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -22,6 +22,10 @@ export default function ButtonAppBar() {
   const dispatch = useDispatch();
   const [isOpenAuth, setOpenAuth] = useState(false);
   const isAuthModalOpen = useSelector((state) => state.login.isAuthModalOpen);
+
+  useEffect(() => {
+    setOpenAuth(isAuthModalOpen);
+  }, [isAuthModalOpen]);
 
   const handleAuthOpen = useCallback(() => {
     setOpenAuth(true);

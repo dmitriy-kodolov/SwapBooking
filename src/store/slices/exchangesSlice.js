@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getBooksOffers } from '../../api/books/books.api';
+import { getActiveOffer, getBooksOffers } from '../../api/books/books.api';
 
 const initialState = {
   selectedBook: undefined,
@@ -8,6 +8,9 @@ const initialState = {
   offers: {},
   offersIsLoading: false,
   offersError: null,
+  activeOffer: {},
+  activeOffersIsLoading: false,
+  activeOffersError: null,
 };
 
 export const fetchOffers = createAsyncThunk(
@@ -18,6 +21,26 @@ export const fetchOffers = createAsyncThunk(
   },
 );
 
+export function withToastForError(payloadCreator) {
+  return async (args, thunkAPI) => {
+    try {
+      return await payloadCreator(args, thunkAPI);
+    } catch (err) {
+      console.log(err);
+      // showToastForError(err);
+      throw err; // throw error so createAsyncThunk will dispatch '/rejected'-action
+    }
+  };
+}
+
+export const fetchActiveOffer = createAsyncThunk(
+  'fetchActiveOffer',
+  withToastForError(async (userId, offerId) => {
+    const offer = await getActiveOffer(userId, offerId);
+    return offer;
+  }),
+);
+
 const exchangesSlice = createSlice({
   name: 'exchanges',
   initialState,
@@ -26,6 +49,9 @@ const exchangesSlice = createSlice({
       state.selectedBook = payload;
       state.selectedTab = payload ? 4 : 1;
       state.disabledTabs = payload ? [1, 2, 3] : [];
+      if (!payload) {
+        state.activeOffer = {};
+      }
     },
     setTab(state, { payload }) {
       state.selectedTab = payload;
@@ -43,7 +69,21 @@ const exchangesSlice = createSlice({
     },
     [fetchOffers.rejected]: (state) => {
       state.offerIsLoading = false;
-      state.offerError = 'ошибка';
+      state.offerError = 'Ошибка';
+    },
+    [fetchActiveOffer.pending]: (state) => {
+      state.activeOfferIsLoading = true;
+      state.activeOffer = {};
+      state.activeOfferError = null;
+    },
+    [fetchActiveOffer.fulfilled]: (state, { payload }) => {
+      state.activeOfferIsLoading = false;
+      state.activeOffer = payload;
+      state.disabledTabs = payload ? [1, 2, 3] : [];
+    },
+    [fetchActiveOffer.rejected]: (state) => {
+      state.activeOfferIsLoading = false;
+      state.activeOfferError = 'Ошибка';
     },
   },
 });

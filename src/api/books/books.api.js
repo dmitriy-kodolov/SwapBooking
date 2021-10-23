@@ -13,4 +13,9 @@ export const getBooksOffers = async (userID) => {
   return { full: full.data, partial: partial.data, another: another.data };
 };
 
+export const getActiveOffer = async ([userId, offerId]) => {
+  const { data } = await restGet(`/api/exchange/${userId}/${offerId}`);
+  return data;
+};
+
 export const addPosts = async () => [];
