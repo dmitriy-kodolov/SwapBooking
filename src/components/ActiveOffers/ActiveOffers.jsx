@@ -53,7 +53,7 @@ const ActiveOffers = () => {
     } catch (err) {
       dispatch(setAlert({ text: `Не удалось загрузить список, ${err.message}`, severity: 'error' }));
     }
-  }, []);
+  }, [activeOfferIsLoading]);
   // получение конкретного обмена
   useEffect(async () => {
     if (!activeOfferIsLoading

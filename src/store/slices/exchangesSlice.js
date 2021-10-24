@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getActiveOffer, getAllOffersId, getBooksOffers } from '../../api/books/books.api';
+import {
+  exchangeConfirm, getActiveOffer, getAllOffersId, getBooksOffers,
+} from '../../api/books/books.api';
 
 const initialState = {
   selectedBook: undefined,
@@ -14,15 +16,10 @@ const initialState = {
   allOffersId: [],
   allOffersIdIsLoading: false,
   allOffersIdError: null,
+  exchangeConfirmIsLoading: false,
+  exchangeConfirm: {},
+  exchangeConfirmError: null,
 };
-
-export const fetchOffers = createAsyncThunk(
-  'fetchOffers',
-  async (userId) => {
-    const offers = await getBooksOffers(userId);
-    return offers;
-  },
-);
 
 export function withToastForError(payloadCreator) {
   return async (args, thunkAPI) => {
@@ -35,10 +32,26 @@ export function withToastForError(payloadCreator) {
   };
 }
 
+export const fetchOffers = createAsyncThunk(
+  'fetchOffers',
+  withToastForError(async (userId) => {
+    const offers = await getBooksOffers(userId);
+    return offers;
+  }),
+);
+
 export const fetchActiveOffer = createAsyncThunk(
   'fetchActiveOffer',
   withToastForError(async (userId, offerId) => {
     const offer = await getActiveOffer(userId, offerId);
+    return offer;
+  }),
+);
+
+export const fetchExchangeConfirm = createAsyncThunk(
+  'fetchExchangeConfirm',
+  withToastForError(async ([firstId, secondId]) => {
+    const offer = await exchangeConfirm(firstId, secondId);
     return offer;
   }),
 );
@@ -57,8 +70,7 @@ const exchangesSlice = createSlice({
   reducers: {
     setBook(state, { payload = undefined }) {
       state.selectedBook = payload;
-      state.selectedTab = payload ? 4 : 1;
-      state.disabledTabs = payload ? [1, 2, 3] : [];
+      state.selectedTab = payload ? 2 : 1;
       if (!payload) {
         state.activeOffer = {};
       }
@@ -96,16 +108,32 @@ const exchangesSlice = createSlice({
       state.activeOfferIsLoading = false;
       state.activeOfferError = 'Ошибка';
     },
+    [fetchExchangeConfirm.pending]: (state) => {
+      state.exchangeConfirmIsLoading = true;
+      state.exchangeConfirm = {};
+      state.exchangeConfirmError = null;
+    },
+    [fetchExchangeConfirm.fulfilled]: (state, { payload }) => {
+      state.exchangeConfirmIsLoading = false;
+      state.exchangeConfirm = payload;
+      state.disabledTabs = payload ? [1, 2, 3] : [];
+      state.selectedTab = payload ? 4 : 2;
+    },
+    [fetchExchangeConfirm.rejected]: (state) => {
+      state.exchangeConfirmIsLoading = false;
+      state.exchangeConfirmError = 'Ошибка';
+    },
     [fetchAllOffersId.pending]: (state) => {
       state.allOffersIdIsLoading = true;
       state.allOffersId = [];
       state.allOffersIdError = null;
       state.selectedBook = undefined;
-      state.disabledTabs = [];
     },
     [fetchAllOffersId.fulfilled]: (state, { payload }) => {
       state.allOffersIdIsLoading = false;
       state.allOffersId = payload;
+      state.disabledTabs = payload ? [1, 2, 3] : [];
+      state.selectedTab = payload ? 4 : state.selectedTab;
     },
     [fetchAllOffersId.rejected]: (state) => {
       state.allOffersIdIsLoading = false;
