@@ -17,10 +17,4 @@ export default [
     path: '/myExchanges',
     isLogin: true,
   },
-  {
-    id: 4,
-    label: 'Задать вопрос',
-    path: '/questionTab',
-    isLogin: false,
-  },
 ];
