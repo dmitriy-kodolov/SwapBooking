@@ -37,15 +37,11 @@ const useStyle = makeStyles(() => ({
 const Delivery = ({
   control, setIsDefaultAddr, isDefaultAddr, selectedDefault,
 }) => {
-  const [isDefault, setIsDefault] = useState(false);
+  // const [isDefault, setIsDefault] = useState(false);
 
-  useEffect(() => {
-    setIsDefault(selectedDefault);
-  }, []);
-
-  useEffect(() => {
-    setIsDefaultAddr(isDefault);
-  }, [isDefault]);
+  const togle = () => {
+    setIsDefaultAddr((prev) => !prev);
+  };
   const style = useStyle();
   return (
     <div className={style.container}>
@@ -248,7 +244,8 @@ const Delivery = ({
           />
           <p>
             <Checkbox
-              onChange={(event) => setIsDefault(event.target.checked)}
+              checked={isDefaultAddr}
+              onChange={togle}
             />
             Использовать этот адресс по умолчанию
           </p>
