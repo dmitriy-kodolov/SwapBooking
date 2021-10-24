@@ -12,9 +12,11 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 // eslint-disable-next-line import/no-unresolved
 import { LoadingButton } from '@mui/lab';
+import { useEffect } from 'react';
 import { fetchProfileInfo } from '../../store/slices/userProfileSlice';
 import { logIn, loginError, loginStart } from '../../store/slices/loginSlice';
 import { restPost } from '../../api/instances/main';
+import { setAlert } from '../../store/slices/alertSlice';
 
 const style = {
   position: 'absolute',
@@ -88,7 +90,9 @@ export default function Registered({ close, isOpen, toggleModal }) {
         throw response;
       }
     }).catch((error) => {
-      dispatch(loginError(error));
+      // eslint-disable-next-line no-underscore-dangle
+      dispatch(setAlert({ text: JSON.parse(error.response.request.response).error, severity: 'error' }));
+      dispatch(loginError(JSON.parse(error.response.request.response).error));
     });
   }, [
     dispatch,
@@ -109,6 +113,58 @@ export default function Registered({ close, isOpen, toggleModal }) {
   ]);
 
   const [errors, setErrors] = React.useState({});
+
+  const error = useSelector((state) => state.login.error);
+
+  useEffect(() => {
+    if (error) {
+      const [field, text] = error.split(': ');
+
+      let fieldName = '';
+
+      switch (field) {
+        case 'e_mail':
+          fieldName = 'email';
+          break;
+        case 'user_name':
+          fieldName = 'login';
+          break;
+        case 'first_name':
+          fieldName = 'name';
+          break;
+        case 'last_name':
+          fieldName = 'lastname';
+          break;
+        case 'password_user':
+          fieldName = 'password';
+          break;
+        case 'addr_index':
+          fieldName = 'index';
+          break;
+        case 'addr_city':
+          fieldName = 'city';
+          break;
+        case 'addr_street':
+          fieldName = 'street';
+          break;
+        case 'addr_house':
+          fieldName = 'numberHome';
+          break;
+        case 'addr_structure':
+          fieldName = 'district';
+          break;
+        case 'addr_appart':
+          fieldName = 'numberRoom';
+          break;
+        default:
+          fieldName = '';
+      }
+
+      if (fieldName) {
+        setErrors((prevState) => ({ ...prevState, [fieldName]: text }));
+      }
+    }
+  }, [error]);
 
   const isSubmit = login
     && password
