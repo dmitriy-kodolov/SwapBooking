@@ -115,10 +115,10 @@ export default function ExchangeForm() {
   useEffect(() => {
     setValue('is_default', isDefaultAddr);
   }, [isDefaultAddr]);
-  const onSubmitForm = () => {
+  const onSubmitForm = (value) => {
     setStep((prevState) => prevState + 1);
     if (step === 3) {
-      const result = restPost(`/api/order/${userId}`, formValues)
+      const result = restPost(`/api/order/${userId}`, value)
         .then(() => {
           setIsPostForm(true);
         })
