@@ -339,7 +339,7 @@ const ActiveOffers = () => {
   variant="contained"
   onClick={acceptDelivery}
 >
-  Поулчил
+  Получил
 </Button>
 )}
               {exchange?.MyBook?.StatusID === 3 && exchange?.MyBook?.TrackNumber !== ''
@@ -350,7 +350,7 @@ const ActiveOffers = () => {
   variant="contained"
   onClick={acceptDelivery}
 >
-  Поулчил
+  Получил
 </Button>
 )}
               {exchange?.MyBook?.StatusID === 4 && <p>{exchange?.MyBook?.StatusText}</p>}
