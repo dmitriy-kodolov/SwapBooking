@@ -14,7 +14,7 @@ import Input from 'components/Input/Input';
 import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import { restPost, restGet, restDelete } from 'api/instances/main';
-import { fetchActiveOffer, setBook } from '../../store/slices/exchangesSlice';
+import { fetchActiveOffer, setBook, fetchAllOffersId } from '../../store/slices/exchangesSlice';
 import { setAlert } from '../../store/slices/alertSlice';
 
 const useStyle = makeStyles({
@@ -38,24 +38,22 @@ const ActiveOffers = () => {
   const dispatch = useDispatch();
   const userId = useSelector(((state) => state.login.userId));
   const style = useStyle();
-  const [masOfIdExchange, setMasOfIdExchange] = useState([]);
   const exchange = useSelector((state) => state.exchanges.activeOffer);
   const activeOfferIsLoading = useSelector((state) => state.exchanges.activeOfferIsLoading);
-
+  const masOfIdExchange = useSelector((state) => state.exchanges.allOffersId);
   const propsFrom = useForm();
   const {
     handleSubmit, control,
   } = propsFrom;
   const formValues = propsFrom?.getValues();
   // получение  id активных обменов
-  useEffect(() => {
-    restGet(`/api/exchange/${userId}/all`)
-      .then(({ data }) => {
-        setMasOfIdExchange(data);
-      })
-      .catch((err) => dispatch(setAlert({ text: `Не удалось загрузить список, ${err.message}`, severity: 'error' })));
+  useEffect(async () => {
+    try {
+      await dispatch(fetchAllOffersId(userId)).unwrap();
+    } catch (err) {
+      dispatch(setAlert({ text: `Не удалось загрузить список, ${err.message}`, severity: 'error' }));
+    }
   }, []);
-
   // получение конкретного обмена
   useEffect(async () => {
     if (!activeOfferIsLoading

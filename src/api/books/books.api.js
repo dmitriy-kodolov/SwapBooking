@@ -8,13 +8,18 @@ export const getBooksAPi = async () => {
 
 export const getBooksOffers = async (userID) => {
   const full = await restGet(`/api/offers/full/${userID}`);
-  const partial = await restGet(`/api/offers/partial/${userID}`);
+  // const partial = await restGet(`/api/offers/partial/${userID}`);
   const another = await restGet(`/api/offers/other/${userID}`);
-  return { full: full.data, partial: partial.data, another: another.data };
+  return { full: full.data, partial: {}, another: another.data };
 };
 
 export const getActiveOffer = async ([userId, offerId]) => {
   const { data } = await restGet(`/api/exchange/${userId}/${offerId}`);
+  return data;
+};
+
+export const getAllOffersId = async (userId) => {
+  const { data } = await restGet(`/api/exchange/${userId}/all`);
   return data;
 };
 

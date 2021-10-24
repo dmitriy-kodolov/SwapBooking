@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getActiveOffer, getBooksOffers } from '../../api/books/books.api';
+import { getActiveOffer, getAllOffersId, getBooksOffers } from '../../api/books/books.api';
 
 const initialState = {
   selectedBook: undefined,
@@ -11,6 +11,9 @@ const initialState = {
   activeOffer: {},
   activeOffersIsLoading: false,
   activeOffersError: null,
+  allOffersId: [],
+  allOffersIdIsLoading: false,
+  allOffersIdError: null,
 };
 
 export const fetchOffers = createAsyncThunk(
@@ -27,7 +30,6 @@ export function withToastForError(payloadCreator) {
       return await payloadCreator(args, thunkAPI);
     } catch (err) {
       console.log(err);
-      // showToastForError(err);
       throw err; // throw error so createAsyncThunk will dispatch '/rejected'-action
     }
   };
@@ -37,6 +39,14 @@ export const fetchActiveOffer = createAsyncThunk(
   'fetchActiveOffer',
   withToastForError(async (userId, offerId) => {
     const offer = await getActiveOffer(userId, offerId);
+    return offer;
+  }),
+);
+
+export const fetchAllOffersId = createAsyncThunk(
+  'fetchAllOffersId',
+  withToastForError(async (userId) => {
+    const offer = await getAllOffersId(userId);
     return offer;
   }),
 );
@@ -75,6 +85,7 @@ const exchangesSlice = createSlice({
       state.activeOfferIsLoading = true;
       state.activeOffer = {};
       state.activeOfferError = null;
+      state.selectedBook = undefined;
     },
     [fetchActiveOffer.fulfilled]: (state, { payload }) => {
       state.activeOfferIsLoading = false;
@@ -84,6 +95,21 @@ const exchangesSlice = createSlice({
     [fetchActiveOffer.rejected]: (state) => {
       state.activeOfferIsLoading = false;
       state.activeOfferError = 'Ошибка';
+    },
+    [fetchAllOffersId.pending]: (state) => {
+      state.allOffersIdIsLoading = true;
+      state.allOffersId = [];
+      state.allOffersIdError = null;
+      state.selectedBook = undefined;
+      state.disabledTabs = [];
+    },
+    [fetchAllOffersId.fulfilled]: (state, { payload }) => {
+      state.allOffersIdIsLoading = false;
+      state.allOffersId = payload;
+    },
+    [fetchAllOffersId.rejected]: (state) => {
+      state.allOffersIdIsLoading = false;
+      state.allOffersIdError = 'Ошибка';
     },
   },
 });
