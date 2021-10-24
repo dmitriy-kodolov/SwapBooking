@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { restPost } from 'api/instances/main';
 import { fetchProfileInfo } from 'store/slices/userProfileSlice';
 import { Link } from 'react-router-dom';
+import { setAlert } from 'store/slices/alertSlice';
 
 const useStyle = makeStyles(() => ({
   test: {
@@ -71,13 +72,12 @@ const Profile = () => {
   } = propsFrom;
   const style = useStyle();
   const onSubmitForm = () => {
-    console.log('Все данные с формы', formValues);
     restPost(`/api/profile/${userId}`, formValues)
       .then(() => {
         setIsPostForm(true);
       })
       .catch((err) => {
-        alert('Ошибка при отправки данных, попробуйте позже');
+        dispatch(setAlert({ text: `Не удалось обновить данные, попробуйте позже', ${err.message}`, severity: 'error' }));
       });
   };
   useEffect(() => {

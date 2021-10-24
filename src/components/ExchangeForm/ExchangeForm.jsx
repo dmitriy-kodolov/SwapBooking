@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfileInfo } from 'store/slices/userProfileSlice';
 import { fetchCategories } from 'store/slices/categoriesSlice';
 import { Link } from 'react-router-dom';
+import { setAlert } from 'store/slices/alertSlice';
 import Category from '../Category';
 import Exchange from './Exchange';
 import Delivery from './Delivery/Delivery';
@@ -112,22 +113,16 @@ export default function ExchangeForm() {
   }, [categorFromRecive]);
 
   useEffect(() => {
-  // console.log('do изменения', formValues.is_default);
     setValue('is_default', isDefaultAddr);
-  // console.log('после изменения', formValues.is_default);
   }, [isDefaultAddr]);
-  // отправка формы
   const onSubmitForm = () => {
     setStep((prevState) => prevState + 1);
-    console.log('Все данные с формы', formValues);
     if (step === 3) {
       const result = restPost(`/api/order/${userId}`, formValues)
         .then(() => {
           setIsPostForm(true);
         })
-        .catch((err) => {
-          alert('Ошибка при отправки данных, попробуйте позже');
-        });
+        .catch((error) => dispatch(setAlert({ text: `Не удалось отправить форму', ${error.message}`, severity: 'error' })));
     }
   };
   const Next = () => (
@@ -153,8 +148,6 @@ export default function ExchangeForm() {
       Назад
     </Button>
   );
-  // console.log('lof', isDefaultAddr);
-  console.log('forma', formValues.is_default);
   return (
     <form className={style.root} onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}>
       <Box sx={{ width: '100%' }}>

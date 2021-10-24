@@ -6,8 +6,9 @@ import React, { useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { restGet } from 'api/instances/main';
+import { setAlert } from 'store/slices/alertSlice';
 
 const useStyle = makeStyles({
   root: {
@@ -33,77 +34,32 @@ const useStyle = makeStyles({
     top: '70px',
   },
 });
-const mockItem = {
-  MyBook: {
-    BookName: 'Название книги',
-    Note: 'Инфа о книге',
-    AuthorFirstName: 'Имя автора',
-    AuthorLastName: 'Фамилия автора',
-  },
-  OtherBook: {
-    BookName: 'Название книги',
-    Note: 'Инфа о книге',
-    AuthorFirstName: 'Имя автора',
-    AuthorLastName: 'Фамилия автора',
-  },
-  OtherUser: {
-    CityName: 'Название города',
-    Rating: 5,
-  },
-};
-const mockItemTwo = {
-  MyBook: {
-    BookName: 'Название sdsa',
-    Note: 'Инфа о sds',
-    AuthorFirstName: 'Имя sds',
-    AuthorLastName: 'Фамилия sds',
-  },
-  OtherBook: {
-    BookName: 'Название sdsa',
-    Note: 'Инфа о sds',
-    AuthorFirstName: 'Имя sds',
-    AuthorLastName: 'Фамилия sds',
-  },
-  OtherUser: {
-    CityName: 'Название dsds',
-    Rating: 5,
-  },
-};
-const testList = [];
-testList.push(mockItem);
-testList.push(mockItemTwo);
+
 const Archive = () => {
+  const dispatch = useDispatch();
   const style = useStyle();
   const [masOfId, setMasOfId] = useState([]);
-  const [initialCard, setInitialCard] = useState(testList); // здесь надо менять на [] когда встанет бэк
+  const [initialCard, setInitialCard] = useState([]);
   const userId = useSelector(((state) => state.login.userId));
 
   useEffect(() => {
-    restGet(`/api/archive/${userId}/all`)
-      .then((result) => {
-        setMasOfId(result);
-      })
-      .catch((err) => alert(`Не удалось загрузить архив ${err.message}`));
+    (async () => {
+      try {
+        const resultGet = await restGet(`/api/archive/${userId}/all`);
+        setMasOfId(resultGet.data);
+        const getCard = await restGet(`/api/exchange/${userId}/${resultGet.data[0]}`);
+        setInitialCard((prev) => [...prev, getCard.data]);
+      } catch (err) {
+        dispatch(setAlert({ text: `Не удалось получить архив ${err.message}`, severity: 'error' }));
+      }
+    })();
   }, []);
-  // если нету архива
   if (!masOfId?.length) {
     return (<p>У вас нет завершенных обменов</p>);
   }
-
-  // запросы на получение архивных заявок
-  useEffect(() => {
-    masOfId.forEach((id) => {
-      restGet(`/api/archive/${userId}/${id}`)
-        .then((res) => {
-          setInitialCard((prev) => prev.push(res));
-        })
-        .catch((err) => alert(`Не удалось загрузить заявку ${err.message}`));
-    });
-  }, [masOfId]);
-
   return (
     <div className={style.root}>
-      {initialCard.map((card) => (
+      {initialCard?.map((card) => (
         <div className={style.container}>
           <Card
             elevation={4}
@@ -119,7 +75,17 @@ const Archive = () => {
               </Typography>
               <Typography align="center" variant="body3">
                 <ul className={style.listCategory}>
-                  {Object.values(card.MyBook).map((item) => <li key={item}>{item}</li>)}
+                  <li>
+                    {card?.MyBook?.AuthorFirstName }
+                    {' '}
+                    {card?.MyBook?.AuthorLastName}
+                  </li>
+                  <li>
+                    {card?.MyBook?.BookName}
+                  </li>
+                  <li>
+                    {card?.MyBook?.Note}
+                  </li>
                 </ul>
               </Typography>
               <Typography className={style.reciveUser} align="center" variant="body3" component="div">
@@ -141,24 +107,27 @@ const Archive = () => {
               </Typography>
               <Typography align="center" variant="body3">
                 <ul className={style.listCategory}>
-                  {Object.values(card.OtherBook).map((item) => <li key={item}>{item}</li>)}
+                  <li>
+                    {card?.OtherBook?.AuthorFirstName }
+                    {' '}
+                    {card?.OtherBook?.AuthorLastName}
+                  </li>
+                  <li>
+                    {card?.OtherBook?.BookName}
+                  </li>
+                  <li>
+                    {card?.OtherBook?.Note}
+                  </li>
                 </ul>
               </Typography>
-              <Typography align="center" variant="body3">
-                <ul className={style.listCategory}>
-                  {Object.values(card.OtherUser).map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </Typography>
-              <Typography className={style.reciveContrUser} align="center" variant="body3" component="div">
+              <Typography align="center" variant="body3" />
+              <Typography className={style.reciveUser} align="center" variant="body3" component="div">
                 Книга поулчена
               </Typography>
             </CardContent>
           </Card>
         </div>
       ))}
-
     </div>
   );
 };
