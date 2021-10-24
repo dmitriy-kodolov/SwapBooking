@@ -1,17 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router, Route, Switch, Redirect,
 } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import LogoTab from './pages/LogoTab';
 import NavBar from './pages/NavBar';
 import MainPage from './pages/MainPage';
 import StartExchange from './pages/StartExchange';
 import MyExchange from './pages/MyExchanges';
 import QuestionTab from './pages/QuestionTab';
+import { fetchAllOffersId } from './store/slices/exchangesSlice';
+import { setAlert } from './store/slices/alertSlice';
 
 function App() {
+  const dispatch = useDispatch();
   const isLogin = useSelector((state) => state.login.isLogin);
+  const userId = useSelector(((state) => state.login.userId));
+
+  useEffect(async () => {
+    const intervalId = setInterval(async () => {
+      try {
+        await dispatch(fetchAllOffersId(userId)).unwrap();
+      } catch (err) {
+        dispatch(setAlert({ text: `Не удалось загрузить список, ${err.message}`, severity: 'error' }));
+      }
+    }, 10000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [dispatch, userId]);
 
   return (
     <>
