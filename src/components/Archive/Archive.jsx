@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography';
 import { useSelector, useDispatch } from 'react-redux';
 import { restGet } from 'api/instances/main';
 import { setAlert } from 'store/slices/alertSlice';
+import getArchive from 'api/getArchiveById/getArchive';
 
 const useStyle = makeStyles({
   root: {
@@ -47,8 +48,13 @@ const Archive = () => {
       try {
         const resultGet = await restGet(`/api/archive/${userId}/all`);
         setMasOfId(resultGet.data);
-        const getCard = await restGet(`/api/exchange/${userId}/${resultGet.data[0]}`);
-        setInitialCard((prev) => [...prev, getCard.data]);
+        const getForIdOffers = resultGet.data?.map((id) => getArchive(userId, id));
+        const fetchResultCards = await Promise.allSettled(getForIdOffers);
+        const resultCard = fetchResultCards
+          .filter((cardRes) => cardRes.status === 'fulfilled')
+          .filter((cardValue) => cardValue.value.status === 200)
+          .map((cardRes) => cardRes.value.data);
+        setInitialCard(resultCard);
       } catch (err) {
         dispatch(setAlert({ text: `Не удалось получить архив ${err.message}`, severity: 'error' }));
       }
