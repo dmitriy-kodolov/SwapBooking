@@ -40,15 +40,9 @@ const WantsRecive = () => {
         setIsLoading(false);
         setIsError(true);
         dispatch(setAlert({
-          text: 'Не удалось удалить карточку, попробуйте позже', severity: 'error',
+          text: 'Не удалось получить список, попробуйте позже', severity: 'error',
         }));
       });
-    // .catch((error) => {
-
-    // alert(()=>{dispatch(setAlert({
-    // text: 'Не удалось удалить карточку, попробуйте позже', severity: 'error',
-    // }))});
-    // });
   }, []);
 
   const removeCard = (id) => {
@@ -60,7 +54,9 @@ const WantsRecive = () => {
       .then(() => {
         removeCard(wishId);
       })
-      .catch((error) => alert(`Не удалось удалить карточку, попробуйте позже, ${error.message}`));
+      .catch((error) => dispatch(setAlert({
+        text: 'Не удалось удалить карточку, попробуйте позже', severity: 'error',
+      })));
   };
 
   if (isLoading) {
@@ -73,7 +69,7 @@ const WantsRecive = () => {
       <p>Ошибка загрузки данных, попробуйте позже</p>
     );
   }
-  if (!initialWishes.length) {
+  if (!initialWishes?.length) {
     return (
       <p>У вас нету списка того, что вы хотите получить</p>
     );

@@ -18,4 +18,9 @@ export const getActiveOffer = async ([userId, offerId]) => {
   return data;
 };
 
+export const getAllOffersId = async (userId) => {
+  const { data } = await restGet(`/api/exchange/${userId}/all`);
+  return data;
+};
+
 export const addPosts = async () => [];
