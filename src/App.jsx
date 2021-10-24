@@ -20,7 +20,9 @@ function App() {
   useEffect(async () => {
     const intervalId = setInterval(async () => {
       try {
-        await dispatch(fetchAllOffersId(userId)).unwrap();
+        if (userId) {
+          await dispatch(fetchAllOffersId(userId)).unwrap();
+        }
       } catch (err) {
         dispatch(setAlert({ text: `Не удалось загрузить список, ${err.message}`, severity: 'error' }));
       }
