@@ -126,7 +126,6 @@ const exchangesSlice = createSlice({
     [fetchAllOffersId.pending]: (state) => {
       state.allOffersIdIsLoading = true;
       state.allOffersIdError = null;
-      state.selectedBook = undefined;
     },
     [fetchAllOffersId.fulfilled]: (state, { payload }) => {
       state.allOffersIdIsLoading = false;
