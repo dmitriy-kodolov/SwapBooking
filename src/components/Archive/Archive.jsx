@@ -48,14 +48,17 @@ const Archive = () => {
       try {
         const resultGet = await restGet(`/api/archive/${userId}/all`);
         setMasOfId(resultGet.data);
-        const getForIdOffers = resultGet.data?.map((id) => getArchive(userId, id));
-        const fetchResultCards = await Promise.allSettled(getForIdOffers);
-        const resultCard = fetchResultCards
-          .filter((cardRes) => cardRes.status === 'fulfilled')
-          .filter((cardValue) => cardValue.value.status === 200)
-          .map((cardRes) => cardRes.value.data);
-        setInitialCard(resultCard);
+        if (resultGet?.data?.length) {
+          const getForIdOffers = resultGet.data?.map((id) => getArchive(userId, id));
+          const fetchResultCards = await Promise.allSettled(getForIdOffers);
+          const resultCard = fetchResultCards
+            .filter((cardRes) => cardRes.status === 'fulfilled')
+            .filter((cardValue) => cardValue.value.status === 200)
+            .map((cardRes) => cardRes.value.data);
+          setInitialCard(resultCard);
+        }
       } catch (err) {
+        console.log(err);
         dispatch(setAlert({ text: `Не удалось получить архив ${err.message}`, severity: 'error' }));
       }
     })();
