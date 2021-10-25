@@ -22,7 +22,7 @@ export default function NavBar() {
     if (exactPath) {
       setValue(exactPath.id);
     }
-  }, []);
+  }, [pathname]);
   const isLogin = useSelector((state) => state.login.isLogin);
 
   useEffect(() => {
