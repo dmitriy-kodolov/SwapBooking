@@ -118,7 +118,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
 
   useEffect(() => {
     if (error) {
-      const [field, text] = error.split(': ');
+      const [field, text] = error?.message.split(': ');
 
       let fieldName = '';
 

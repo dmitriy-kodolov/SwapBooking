@@ -133,6 +133,7 @@ const exchangesSlice = createSlice({
       state.allOffersId = payload;
       state.disabledTabs = payload ? [1, 2, 3] : [];
       state.selectedTab = payload ? 4 : state.selectedTab;
+      state.activeOfferError = null;
     },
     [fetchAllOffersId.rejected]: (state) => {
       state.allOffersIdIsLoading = false;

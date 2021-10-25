@@ -40,6 +40,7 @@ const ActiveOffers = () => {
   const style = useStyle();
   const exchange = useSelector((state) => state.exchanges.activeOffer);
   const activeOfferIsLoading = useSelector((state) => state.exchanges.activeOfferIsLoading);
+  const activeOfferError = useSelector((state) => state.exchanges.activeOfferError);
   const masOfIdExchange = useSelector((state) => state.exchanges.allOffersId);
   const propsFrom = useForm();
   const {
@@ -53,11 +54,11 @@ const ActiveOffers = () => {
     } catch (err) {
       dispatch(setAlert({ text: `Не удалось загрузить список, ${err.message}`, severity: 'error' }));
     }
-  }, [activeOfferIsLoading]);
+  }, []);
   // получение конкретного обмена
   useEffect(async () => {
     if (!activeOfferIsLoading
-      && !Object.keys(exchange || {})?.length && masOfIdExchange?.length) {
+      && !Object.keys(exchange || {})?.length && masOfIdExchange?.length && !activeOfferError) {
       try {
         await dispatch(fetchActiveOffer([userId, masOfIdExchange[0]])).unwrap();
       } catch (err) {
@@ -115,7 +116,9 @@ const ActiveOffers = () => {
       dispatch(setAlert({ text: `Не удалось получить активный обмен ${err.message}`, severity: 'error' }));
     }
   };
-
+  if (activeOfferError) {
+    return (<p>Ошибка обмена данными</p>);
+  }
   if (!masOfIdExchange?.length) {
     return (<p>У вас нет активного обмена</p>);
   }

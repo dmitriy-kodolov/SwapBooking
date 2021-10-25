@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   BrowserRouter as Router, Route, Switch, Redirect,
 } from 'react-router-dom';
@@ -16,9 +16,11 @@ function App() {
   const dispatch = useDispatch();
   const isLogin = useSelector((state) => state.login.isLogin);
   const userId = useSelector(((state) => state.login.userId));
+  const intervalId = useRef(-1);
 
   useEffect(async () => {
-    const intervalId = setInterval(async () => {
+    clearInterval(intervalId.current);
+    intervalId.current = setInterval(async () => {
       try {
         if (userId) {
           await dispatch(fetchAllOffersId(userId)).unwrap();
@@ -28,9 +30,9 @@ function App() {
       }
     }, 10000);
 
-    return () => {
-      clearInterval(intervalId);
-    };
+    // return () => {
+    //   clearInterval(intervalId);
+    // };
   }, [dispatch, userId]);
 
   return (
