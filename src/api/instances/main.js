@@ -1,7 +1,10 @@
 /* eslint-disable quote-props */
 import axios from 'axios';
 
-const baseURL = process.env.REACT_APP_BASE_URL;
+const baseURL = process.env.NODE_ENV === 'development'
+  ? process.env.REACT_APP_BASE_URL_DEV
+  : process.env.REACT_APP_BASE_URL_PROD;
+
 const getHeader = (headers = null) => {
   const defaultHeaders = {
     'Access-Control-Allow-Origin': '*',

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
@@ -63,7 +64,7 @@ const Profile = () => {
     },
   });
   const [profileInformation, setProfileInformation] = useState([]);
-  const initialProfile = useSelector((state) => state?.profileInfo?.userProfile?.[0]);
+  const initialProfile = useSelector((state) => state?.profileInfo?.userProfile?.[state?.profileInfo?.userProfile?.length - 1]);
   const [isPostForm, setIsPostForm] = useState(false);
   const formValues = propsFrom?.getValues();
   const userId = useSelector(((state) => state.login.userId));
@@ -359,7 +360,7 @@ const Profile = () => {
                 }
               control={control}
               label="Пароль"
-              name="password"
+              name="password_user"
             />
           </div>
         </Paper>
