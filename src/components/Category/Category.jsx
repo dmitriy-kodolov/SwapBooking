@@ -48,6 +48,10 @@ const useStyle = makeStyles({
   error: {
     display: 'flex',
     flexDirection: 'column',
+    position: 'sticky',
+    backgroundColor: 'white',
+    zIndex: 1,
+    top: '-15px',
   },
 });
 const Category = ({

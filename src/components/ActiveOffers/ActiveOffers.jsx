@@ -32,6 +32,10 @@ const useStyle = makeStyles({
   btn: {
     margin: '15px',
   },
+  listCategory: {
+    listStyle: 'none',
+    paddingLeft: '0',
+  },
 });
 
 const ActiveOffers = () => {
@@ -159,7 +163,7 @@ const ActiveOffers = () => {
             </Typography>
             <br />
             <Typography align="center" variant="body2">
-              <ul className={style.listOfBook}>
+              <ul className={style.listCategory}>
                 <li>
                   {exchange?.OtherBook?.AuthorFirstName}
                   {' '}
@@ -215,7 +219,7 @@ const ActiveOffers = () => {
             </Typography>
             <br />
             <Typography align="center" variant="body2">
-              <ul className={style.listOfBook}>
+              <ul className={style.listCategory}>
                 <li>
                   {exchange?.MyBook?.AuthorFirstName}
                   {' '}
