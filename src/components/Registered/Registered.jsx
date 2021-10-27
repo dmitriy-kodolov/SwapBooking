@@ -37,7 +37,7 @@ const style = {
 
 const regExpCyrillic = new RegExp(/^[а-яА-Я]+$/);
 const regExpCyrillicAndLatinic = new RegExp(/^[а-яА-Яa-zA-Z]+$/);
-const regExpNumber = new RegExp(/^[0-9]/);
+const regExpNumber = new RegExp(/^[0-9]{0,6}$/);
 const regExpStreet = new RegExp(/^[а-яА-Я0-9-\s]{0,25}$/);
 const regExpNumberHome = new RegExp(/^[0-9]+[а-яА-Я]?$/);
 const regExpDistrict = new RegExp(/^[а-яА-Я]?[0-9]{0,2}$/);
@@ -93,8 +93,13 @@ export default function Registered({ close, isOpen, toggleModal }) {
       }
     }).catch((error) => {
       // eslint-disable-next-line no-underscore-dangle
-      dispatch(setAlert({ text: JSON.parse(error.response.request.response).error, severity: 'error' }));
-      dispatch(loginError(JSON.parse(error.response.request.response).error));
+      try {
+        dispatch(setAlert({ text: JSON.parse(error.response.request.response).error, severity: 'error' }));
+        dispatch(loginError(JSON.parse(error.response.request.response).error));
+      } catch (e) {
+        dispatch(setAlert({ text: 'Что-то пошло не так :(', severity: 'error' }));
+        dispatch(loginError('Что-то пошло не так :('));
+      }
     });
   }, [
     dispatch,
