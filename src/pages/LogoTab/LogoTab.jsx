@@ -16,7 +16,11 @@ import {
   authClose,
   loginError,
   loginStart,
+  loginClear,
 } from '../../store/slices/loginSlice';
+import { userClear } from '../../store/slices/userProfileSlice';
+import { exchangesClear } from '../../store/slices/exchangesSlice';
+import { categoriesClear } from '../../store/slices/categoriesSlice';
 
 export default function ButtonAppBar() {
   const dispatch = useDispatch();
@@ -46,6 +50,10 @@ export default function ButtonAppBar() {
       .then((response) => {
         if (response.status === 200) {
           dispatch(logOut());
+          dispatch(loginClear());
+          dispatch(userClear());
+          dispatch(exchangesClear());
+          dispatch(categoriesClear());
         } else {
           throw response;
         }

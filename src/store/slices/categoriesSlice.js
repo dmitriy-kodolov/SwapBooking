@@ -34,6 +34,17 @@ const categoriesSlice = createSlice({
       state.error = 'ошибка на сервере';
     },
   },
+  reducers: {
+    categoriesClear(state) {
+      state.categories = null;
+      state.isLoading = null;
+      state.error = null;
+    },
+  },
 });
+
+export const {
+  categoriesClear,
+} = categoriesSlice.actions;
 
 export default categoriesSlice.reducer;

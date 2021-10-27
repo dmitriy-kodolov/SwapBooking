@@ -78,6 +78,23 @@ const exchangesSlice = createSlice({
     setTab(state, { payload }) {
       state.selectedTab = payload;
     },
+    exchangesClear(state) {
+      state.selectedBook = undefined;
+      state.selectedTab = 1;
+      state.disabledTabs = [];
+      state.offers = {};
+      state.offersIsLoading = false;
+      state.offersError = null;
+      state.activeOffer = {};
+      state.activeOffersIsLoading = false;
+      state.activeOffersError = null;
+      state.allOffersId = [];
+      state.allOffersIdIsLoading = false;
+      state.allOffersIdError = null;
+      state.exchangeConfirmIsLoading = false;
+      state.exchangeConfirm = {};
+      state.exchangeConfirmError = null;
+    },
   },
   extraReducers: {
     [fetchOffers.pending]: (state) => {
@@ -141,6 +158,6 @@ const exchangesSlice = createSlice({
   },
 });
 export const {
-  setBook, setTab,
+  setBook, setTab, exchangesClear,
 } = exchangesSlice.actions;
 export default exchangesSlice.reducer;
