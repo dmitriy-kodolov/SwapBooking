@@ -37,9 +37,17 @@ const loginSlice = createSlice({
       state.isError = true;
       state.error = payload;
     },
+    loginClear(state) {
+      state.userId = undefined;
+      state.isLogin = false;
+      state.isLoading = false;
+      state.isAuthModalOpen = false;
+      state.isError = false;
+      state.error = null;
+    },
   },
 });
 export const {
-  logIn, logOut, loginStart, authOpen, authClose, loginError,
+  logIn, logOut, loginStart, authOpen, authClose, loginError, loginClear,
 } = loginSlice.actions;
 export default loginSlice.reducer;

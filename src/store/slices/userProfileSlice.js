@@ -34,6 +34,17 @@ const profileInfoSlice = createSlice({
       state.error = 'ошибка';
     },
   },
+  reducers: {
+    userClear(state) {
+      state.userProfile = null;
+      state.isLoading = null;
+      state.error = null;
+    },
+  },
 });
+
+export const {
+  userClear,
+} = profileInfoSlice.actions;
 
 export default profileInfoSlice.reducer;

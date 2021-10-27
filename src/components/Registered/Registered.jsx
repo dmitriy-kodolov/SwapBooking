@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 // eslint-disable-next-line import/no-unresolved
 import { LoadingButton } from '@mui/lab';
 import { useEffect } from 'react';
+import Checkbox from '@mui/material/Checkbox';
 import { fetchProfileInfo } from '../../store/slices/userProfileSlice';
 import { logIn, loginError, loginStart } from '../../store/slices/loginSlice';
 import { restPost } from '../../api/instances/main';
@@ -44,6 +45,7 @@ const regExpPassword = new RegExp(/^[a-zA-Z0-9]{8,30}$/);
 const regExpEmail = new RegExp(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]{2,5}$/);
 
 export default function Registered({ close, isOpen, toggleModal }) {
+  const dispatch = useDispatch();
   const [login, setLogin] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [name, setName] = React.useState('');
@@ -56,7 +58,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
   const [numberHome, setNumberHome] = React.useState('');
   const [district, setDistrict] = React.useState('');
   const [numberRoom, setNumberRoom] = React.useState('');
-  const dispatch = useDispatch();
+  const [isCheck, setCheck] = React.useState(false);
 
   const submit = React.useCallback(() => {
     dispatch(loginStart());
@@ -117,8 +119,9 @@ export default function Registered({ close, isOpen, toggleModal }) {
   const error = useSelector((state) => state.login.error);
 
   useEffect(() => {
+    console.log(error);
     if (error) {
-      const [field, text] = error?.message.split(': ');
+      const [field, text] = error?.split(': ') || [];
 
       let fieldName = '';
 
@@ -157,14 +160,14 @@ export default function Registered({ close, isOpen, toggleModal }) {
           fieldName = 'numberRoom';
           break;
         default:
-          fieldName = '';
+          dispatch(setAlert({ text: error, severity: 'error' }));
       }
 
       if (fieldName) {
         setErrors((prevState) => ({ ...prevState, [fieldName]: text }));
       }
     }
-  }, [error]);
+  }, [dispatch, error]);
 
   const isSubmit = login
     && password
@@ -174,7 +177,8 @@ export default function Registered({ close, isOpen, toggleModal }) {
     && index
     && city
     && street
-    && numberHome;
+    && numberHome
+    && isCheck;
 
   const isLoading = useSelector((state) => state.login.isLoading);
 
@@ -212,9 +216,10 @@ export default function Registered({ close, isOpen, toggleModal }) {
                   id="name"
                   label="Имя"
                   value={name}
+                  sx={{ height: 68 }}
                   onChange={(e) => {
                     if (e.target.value.length > 25) {
-                      setErrors((prevState) => ({ ...prevState, name: 'Ограничение 25 символов' }));
+                      setErrors((prevState) => ({ ...prevState, name: 'Ограничение 25 символов кириллицы' }));
                     } else if (!regExpCyrillic.test(e.target.value)) {
                       setErrors((prevState) => ({ ...prevState, name: 'Только буквы кириллицы' }));
                     } else {
@@ -223,7 +228,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
 
                     setName(e.target.value);
                   }}
-                  helperText={errors?.name || 'Только буквы кириллицы до 25 символов'}
+                  helperText={errors?.name}
                 />
                 <TextField
                   required
@@ -231,6 +236,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
                   id="lastname"
                   label="Фамилия"
                   value={lastname}
+                  sx={{ height: 68 }}
                   onChange={(e) => {
                     if (e.target.value.length > 25) {
                       setErrors((prevState) => ({ ...prevState, lastname: 'Ограничение 50 символов' }));
@@ -242,13 +248,14 @@ export default function Registered({ close, isOpen, toggleModal }) {
 
                     setLastname(e.target.value);
                   }}
-                  helperText={errors?.lastname || 'Только буквы кириллицы до 50 символов'}
+                  helperText={errors?.lastname}
                 />
                 <TextField
                   error={errors?.fatherName}
                   id="father-name"
                   label="Отчество"
                   value={fatherName}
+                  sx={{ height: 68 }}
                   onChange={(e) => {
                     if (e.target.value.length > 25) {
                       setErrors((prevState) => ({ ...prevState, fatherName: 'Ограничение 25 символов' }));
@@ -260,7 +267,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
 
                     setFatherName(e.target.value);
                   }}
-                  helperText={errors?.fathername || 'Необязательно'}
+                  helperText={errors?.fathername}
                 />
               </div>
               <div>
@@ -270,6 +277,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
                   id="email"
                   label="Email"
                   value={email}
+                  sx={{ height: 68 }}
                   onChange={(e) => {
                     setErrors((prevState) => ({ ...prevState, email: null }));
                     setEmail(e.target.value);
@@ -281,7 +289,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
                       setErrors((prevState) => ({ ...prevState, email: null }));
                     }
                   }}
-                  helperText={errors?.email || 'Пример : example@simbirsoft.com'}
+                  helperText={errors?.email}
                 />
                 <TextField
                   required
@@ -289,6 +297,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
                   id="login"
                   label="Логин"
                   value={login}
+                  sx={{ height: 68 }}
                   onChange={(e) => {
                     if (e.target.value.length > 10) {
                       setErrors((prevState) => ({ ...prevState, login: 'Ограничение 10 символов' }));
@@ -300,7 +309,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
 
                     setLogin(e.target.value);
                   }}
-                  helperText={errors?.login || 'Только буквы Кириллицы и Латинницы'}
+                  helperText={errors?.login}
                 />
                 <TextField
                   required
@@ -309,13 +318,14 @@ export default function Registered({ close, isOpen, toggleModal }) {
                   label="Пароль"
                   type="password"
                   value={password}
+                  sx={{ height: 68 }}
                   onChange={(e) => {
                     if (e.target.value.length < 8) {
                       setErrors((prevState) => ({ ...prevState, password: 'Минимум 8 символов' }));
                     } else if (!regExpPassword.test(e.target.value)) {
                       setErrors((prevState) => ({
                         ...prevState,
-                        password: 'Длинна не меньше 8 символов, должна быть одна заглавная и одна прописная буква,а так же одна цифри, не должно быть спецсимволов',
+                        password: 'Не меньше 8 символов, без спецсимволов',
                       }));
                     } else {
                       setErrors((prevState) => ({ ...prevState, password: null }));
@@ -323,7 +333,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
 
                     setPassword(e.target.value);
                   }}
-                  helperText={errors?.password || 'Длинна не меньше 8 символов, должна быть одна заглавная и одна прописная буква,а так же одна цифри, не должно быть спецсимволов'}
+                  helperText={errors?.password}
                 />
               </div>
             </div>
@@ -335,9 +345,10 @@ export default function Registered({ close, isOpen, toggleModal }) {
                   id="index"
                   label="Индекс"
                   value={index}
+                  sx={{ height: 68 }}
                   onChange={(e) => {
                     if (e.target.value.length > 6) {
-                      setErrors((prevState) => ({ ...prevState, index: 'Ограничение 6 символов' }));
+                      setErrors((prevState) => ({ ...prevState, index: 'Ограничение 6 цифр' }));
                     } else if (!regExpNumber.test(e.target.value)) {
                       setErrors((prevState) => ({ ...prevState, index: 'Только цифры' }));
                     } else {
@@ -346,7 +357,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
 
                     setIndex(e.target.value);
                   }}
-                  helperText={errors?.index || 'Только 6 цифр'}
+                  helperText={errors?.index}
                 />
                 <TextField
                   required
@@ -354,6 +365,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
                   id="city"
                   label="Город"
                   value={city}
+                  sx={{ height: 68 }}
                   onChange={(e) => {
                     if (e.target.value.length > 15) {
                       setErrors((prevState) => ({ ...prevState, city: 'Ограничение 15 символов' }));
@@ -365,7 +377,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
 
                     setCity(e.target.value);
                   }}
-                  helperText={errors?.city || 'Ограничение в 15 букв кириллицы'}
+                  helperText={errors?.city}
                 />
                 <TextField
                   required
@@ -373,6 +385,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
                   id="street"
                   label="Улица"
                   value={street}
+                  sx={{ height: 68 }}
                   onChange={(e) => {
                     if (e.target.value.length > 15) {
                       setErrors((prevState) => ({ ...prevState, street: 'Ограничение 25 символов' }));
@@ -384,7 +397,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
 
                     setStreet(e.target.value);
                   }}
-                  helperText={errors?.city || 'Обязательно, ограничение в 25 символов'}
+                  helperText={errors?.city}
                 />
               </div>
               <div>
@@ -394,24 +407,26 @@ export default function Registered({ close, isOpen, toggleModal }) {
                   id="number-home"
                   label="Номер дома"
                   value={numberHome}
+                  sx={{ height: 68 }}
                   onChange={(e) => {
                     if (e.target.value.length > 5) {
                       setErrors((prevState) => ({ ...prevState, numberHome: 'Ограничение в 5 символов' }));
                     } else if (!regExpNumberHome.test(e.target.value)) {
-                      setErrors((prevState) => ({ ...prevState, numberHome: 'Только цифры , и 1 буква' }));
+                      setErrors((prevState) => ({ ...prevState, numberHome: 'Только цифры, и 1 буква' }));
                     } else {
                       setErrors((prevState) => ({ ...prevState, numberHome: null }));
                     }
 
                     setNumberHome(e.target.value);
                   }}
-                  helperText={errors?.numberHome || 'Обязательно, ограничение в 5 символов'}
+                  helperText={errors?.numberHome}
                 />
                 <TextField
                   error={errors?.district}
                   id="district"
                   label="Номер строения"
                   value={district}
+                  sx={{ height: 68 }}
                   onChange={(e) => {
                     if (e.target.value.length > 5) {
                       setErrors((prevState) => ({ ...prevState, district: 'буква или число до 2 знаков' }));
@@ -423,13 +438,14 @@ export default function Registered({ close, isOpen, toggleModal }) {
 
                     setDistrict(e.target.value);
                   }}
-                  helperText={errors?.numberHome || 'Обязательно, буква и число до 2 знаков'}
+                  helperText={errors?.district}
                 />
                 <TextField
                   error={errors?.numberRoom}
                   id="number-room"
                   label="Номер квартиры"
                   value={numberRoom}
+                  sx={{ height: 68 }}
                   onChange={(e) => {
                     if (e.target.value.length > 3) {
                       setErrors((prevState) => ({ ...prevState, numberRoom: 'Ограничение 3 символа' }));
@@ -441,13 +457,20 @@ export default function Registered({ close, isOpen, toggleModal }) {
 
                     setNumberRoom(e.target.value);
                   }}
-                  helperText={errors?.numberRoom || 'Только 3 цифры'}
+                  helperText={errors?.numberRoom}
                 />
               </div>
             </div>
+            <Checkbox
+              checked={isCheck}
+              onChange={() => {
+                setCheck((prev) => !prev);
+              }}
+            />
             <span style={{ paddingLeft: '8px', fontSize: '12px' }}>
               Нажимая эту кнопку, вы подтверждаете... и  даёте согласие...
             </span>
+
           </CardContent>
           <CardActions>
             <LoadingButton
