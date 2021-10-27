@@ -32,7 +32,7 @@ const useStyle = makeStyles({
   },
   reciveContrUser: {
     position: 'relative',
-    top: '70px',
+    top: '59px',
   },
 });
 
@@ -58,7 +58,6 @@ const Archive = () => {
           setInitialCard(resultCard);
         }
       } catch (err) {
-        console.log(err);
         dispatch(setAlert({ text: `Не удалось получить архив ${err.message}`, severity: 'error' }));
       }
     })();
@@ -92,9 +91,14 @@ const Archive = () => {
                   <li>
                     {card?.MyBook?.BookName}
                   </li>
+
+                  {card?.DateTime
+                  && (
                   <li>
-                    {card?.MyBook?.Note}
+                    {new Date(card?.DateTime).toLocaleString()}
                   </li>
+                  )}
+
                 </ul>
               </Typography>
               <Typography className={style.reciveUser} align="center" variant="body3" component="div">
@@ -124,13 +128,27 @@ const Archive = () => {
                   <li>
                     {card?.OtherBook?.BookName}
                   </li>
+                  {card?.DateTime
+                  && (
                   <li>
-                    {card?.OtherBook?.Note}
+                    {new Date(card?.DateTime).toLocaleString()}
+                  </li>
+                  )}
+                  <br />
+                  <li>
+                    Город:
+                    {' '}
+                    {card?.OtherUser?.CityName}
+                  </li>
+                  <li>
+                    Рэйтинг:
+                    {' '}
+                    {card?.OtherUser?.Rating}
                   </li>
                 </ul>
               </Typography>
               <Typography align="center" variant="body3" />
-              <Typography className={style.reciveUser} align="center" variant="body3" component="div">
+              <Typography className={style.reciveContrUser} align="center" variant="body3" component="div">
                 Книга поулчена
               </Typography>
             </CardContent>

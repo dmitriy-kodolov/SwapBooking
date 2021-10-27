@@ -101,16 +101,6 @@ const WantsExchange = () => {
               {new Date(item.create_at).toLocaleString()}
             </Typography>
             <Typography variant="body2">
-              Дата редактирования -
-              {' '}
-              {new Date(item.update_at).toLocaleString()}
-            </Typography>
-            <Typography variant="body2">
-              Статус заявки -
-              {' '}
-              {item.id_status}
-            </Typography>
-            <Typography variant="body2">
               Название книги -
               {' '}
               {item.book_name}

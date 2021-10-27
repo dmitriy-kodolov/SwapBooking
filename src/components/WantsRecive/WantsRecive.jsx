@@ -94,16 +94,6 @@ const WantsRecive = () => {
               {new Date(item.wish_data.create_at).toLocaleString()}
             </Typography>
             <Typography variant="body2">
-              Дата редактирования -
-              {' '}
-              {new Date(item.wish_data.update_at).toLocaleString()}
-            </Typography>
-            <Typography variant="body2">
-              Статус заявки -
-              {' '}
-              {item.wish_data.id_status}
-            </Typography>
-            <Typography variant="body2">
               {item.categories?.length
               && (
               <>
