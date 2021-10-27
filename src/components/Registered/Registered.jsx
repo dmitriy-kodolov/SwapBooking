@@ -119,9 +119,8 @@ export default function Registered({ close, isOpen, toggleModal }) {
   const error = useSelector((state) => state.login.error);
 
   useEffect(() => {
-    console.log(error);
     if (error) {
-      const [field, text] = error?.split(': ') || [];
+      const [field, text] = error?.message?.split?.(': ') || error?.split?.(': ') || [];
 
       let fieldName = '';
 

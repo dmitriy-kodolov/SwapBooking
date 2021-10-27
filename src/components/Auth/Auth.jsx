@@ -50,8 +50,7 @@ export default function Auth({ close, isOpen, toggleModal }) {
           throw response;
         }
       }).catch((error) => {
-        dispatch(loginError(error));
-        console.log(error);
+        dispatch(loginError(error?.message));
       });
   }, [dispatch, login, password]);
 
