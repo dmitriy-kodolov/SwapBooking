@@ -1,10 +1,4 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable camelcase */
 /* eslint-disable import/no-unresolved */
-/* eslint-disable max-len */
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/require-default-props */
 import React, { useState, useEffect } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -16,7 +10,7 @@ import { Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfileInfo } from 'store/slices/userProfileSlice';
 import { fetchCategories } from 'store/slices/categoriesSlice';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { setAlert } from 'store/slices/alertSlice';
 import Category from '../Category';
 import Exchange from './Exchange';
@@ -43,11 +37,18 @@ const useStyle = makeStyles({
     display: 'flex',
     justifyContent: 'space-between',
   },
+  error: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginTop: '60px',
+  },
 });
 
 export default function ExchangeForm() {
   const dispatch = useDispatch();
   const style = useStyle();
+  const history = useHistory();
   const userId = useSelector(((state) => state.login.userId));
   const propsFrom = useForm({
     defaultValues: {
@@ -65,11 +66,11 @@ export default function ExchangeForm() {
     },
   });
   const {
-    handleSubmit, control, setValue, setError, formState: { errors },
+    handleSubmit, control, setValue, setError,
     clearErrors,
   } = propsFrom;
   const formValues = propsFrom?.getValues();
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(3);
   const [categorFromRecive, setCategorFromRecive] = useState([]);
   const [categorFromExchange, setCategorFromExchange] = useState([]);
   const categorFromApi = useSelector((state) => state?.category?.categories?.Categories);
@@ -115,14 +116,19 @@ export default function ExchangeForm() {
   useEffect(() => {
     setValue('is_default', isDefaultAddr);
   }, [isDefaultAddr]);
+
   const onSubmitForm = (value) => {
     setStep((prevState) => prevState + 1);
     if (step === 3) {
-      const result = restPost(`/api/order/${userId}`, value)
+      restPost(`/api/order/${userId}`, value)
         .then(() => {
           setIsPostForm(true);
+          history.push('/myExchanges');
         })
-        .catch((error) => dispatch(setAlert({ text: `Не удалось отправить форму', ${error.message}`, severity: 'error' })));
+        .catch(async (error) => {
+          await setStep((prevState) => prevState + 1);
+          await dispatch(setAlert({ text: `Не удалось отправить форму', ${error.message}`, severity: 'error' }));
+        });
     }
   };
   const Next = () => (
@@ -148,60 +154,71 @@ export default function ExchangeForm() {
       Назад
     </Button>
   );
+  if (step === 5 && !isPostForm) {
+    return (
+      <div className={style.error}>
+        <p>Данные не отправились, попробуйте еще раз</p>
+        <Link className={style.root} to="/main">На главную</Link>
+      </div>
+    );
+  }
   return (
-    <form className={style.root} onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}>
-      <Box sx={{ width: '100%' }}>
-        <Tabs
-          centered
-          value={step - 1}
-          textColor="secondary"
-          indicatorColor="secondary"
-          aria-label="secondary tabs example"
-        >
-          <Tab label="Хочу обменять" />
-          <Tab label="Хочу получить" />
-          <Tab label="Адрес доставки" />
-        </Tabs>
-      </Box>
-      {step === 1 && (
-      <div>
-        <div className={style.containerOfExchange}>
-          <Exchange
-            control={control}
-          />
-          <div>
-            <Category
-              clearErrors={clearErrors}
-              setError={setError}
-              selectedCategories={formValues?.category_offer}
-              setCategoriesForm={setCategorFromExchange}
-              initialCategories={initialCategory}
-              isError={true && !initialCategory}
+
+    <div className={style.root}>
+      <h3>Бланк обмена</h3>
+      <form className={style.root} onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}>
+        <Box sx={{ width: '100%' }}>
+          <Tabs
+            centered
+            value={step - 1}
+            textColor="secondary"
+            indicatorColor="secondary"
+            aria-label="secondary tabs example"
+          >
+            <Tab label="Хочу обменять" />
+            <Tab label="Хочу получить" />
+            <Tab label="Адрес доставки" />
+          </Tabs>
+        </Box>
+        {step === 1 && (
+        <div>
+          <div className={style.containerOfExchange}>
+            <Exchange
+              control={control}
             />
+            <div>
+              <Category
+                clearErrors={clearErrors}
+                setError={setError}
+                selectedCategories={formValues?.category_offer}
+                setCategoriesForm={setCategorFromExchange}
+                initialCategories={initialCategory}
+                isError={true && !initialCategory}
+              />
+            </div>
+          </div>
+          <div className={style.exchange}>
+            <Next />
           </div>
         </div>
-        <div className={style.exchange}>
-          <Next />
+        )}
+        {step === 2 && (
+        <div className={style.root}>
+          <Category
+            clearErrors={clearErrors}
+            setError={setError}
+            selectedCategories={formValues?.category_wish}
+            setCategoriesForm={setCategorFromRecive}
+            initialCategories={initialCategory}
+            isError={true && !initialCategory}
+          />
+          <div className={style.delivery}>
+            <Back />
+            <Next />
+          </div>
         </div>
-      </div>
-      )}
-      {step === 2 && (
-      <div className={style.root}>
-        <Category
-          clearErrors={clearErrors}
-          setError={setError}
-          selectedCategories={formValues?.category_wish}
-          setCategoriesForm={setCategorFromRecive}
-          initialCategories={initialCategory}
-          isError={true && !initialCategory}
-        />
-        <div className={style.delivery}>
-          <Back />
-          <Next />
-        </div>
-      </div>
-      )}
-      {step === 3
+        )}
+        {step === 3
       && (
       <div>
         <Delivery
@@ -216,20 +233,7 @@ export default function ExchangeForm() {
         </div>
       </div>
       )}
-      {(step === 4 && isPostForm)
-      && (
-        <div>
-          <p>Данные успешно отправлены</p>
-          <Link className={style.root} to="/main">На главную</Link>
-        </div>
-      )}
-      {(step === 4 && !isPostForm)
-      && (
-        <div>
-          <p>Данные не отправились, попробуйте еще раз</p>
-          <Link className={style.root} to="/main">На главную</Link>
-        </div>
-      )}
-    </form>
+      </form>
+    </div>
   );
 }
