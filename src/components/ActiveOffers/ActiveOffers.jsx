@@ -128,12 +128,13 @@ const ActiveOffers = () => {
   }
   return (
     <div className={style.root}>
-      {(exchange?.OtherBook?.StatusID === 2 && exchange?.MyBook?.StatusID === 1)
+      {((exchange?.OtherBook?.StatusID === 2 && exchange?.MyBook?.StatusID === 1)
+      || (exchange?.OtherBook?.StatusID === 1 && exchange?.MyBook?.StatusID === 2))
       && (
         <Box sx={{ position: 'absolute', left: 16 }}>
           <Button
             variant="contained"
-            color="info"
+            color="error"
             onClick={() => {
               handleCancel();
               try {
@@ -159,7 +160,7 @@ const ActiveOffers = () => {
         >
           <CardContent>
             <Typography align="center" variant="h6" component="div">
-              Мне
+              <b>Мне</b>
             </Typography>
             <br />
             <Typography align="center" variant="body2">
@@ -185,23 +186,22 @@ const ActiveOffers = () => {
               {exchange?.OtherBook?.StatusID === 1 && <p>{exchange?.OtherBook?.StatusText}</p>}
               {exchange?.OtherBook?.StatusID === 2 && <p>{exchange?.OtherBook?.StatusText}</p> }
               {exchange?.OtherBook?.StatusID === 2 && exchange?.OtherBook?.TrackNumber === ''
-&& (
-<p>Книга еще не отправлена</p>
-)}
+                && (
+                <p>Книга еще не отправлена</p>
+                )}
               {exchange?.OtherBook?.StatusID === 3 && exchange?.OtherBook?.TrackNumber === ''
-&& (
-<p>Книга еще не отправлена</p>
-)}
+                  && (
+                  <p>Книга еще не отправлена</p>
+                  )}
 
               {exchange?.OtherBook?.StatusID === 3 && exchange?.OtherBook?.TrackNumber !== ''
-&& (
-<>
-  <p>{exchange?.OtherBook?.StatusText}</p>
-  <p>{exchange?.OtherBook?.TrackNumber}</p>
-</>
-)}
+                    && (
+                    <>
+                      <p>{exchange?.OtherBook?.StatusText}</p>
+                      <p>{exchange?.OtherBook?.TrackNumber}</p>
+                    </>
+                    )}
               {exchange?.OtherBook?.StatusID === 4 && <p>{exchange?.OtherBook?.StatusText}</p>}
-
             </Typography>
           </CardContent>
         </Card>
@@ -215,7 +215,7 @@ const ActiveOffers = () => {
         >
           <CardContent>
             <Typography align="center" variant="h6" component="div">
-              Я
+              <b>Я</b>
             </Typography>
             <br />
             <Typography align="center" variant="body2">
@@ -239,44 +239,46 @@ const ActiveOffers = () => {
             <br />
             <Typography align="center" variant="body2">
               {exchange?.MyBook?.StatusID === 1
-&& (
-<>
-  <p>{exchange?.MyBook?.StatusText}</p>
-  <Button
-    variant="contained"
-    onClick={agreementHandler}
-    size="small"
-  >
-    Подтвердить
-  </Button>
-</>
-)}
+                  && (
+                  <>
+                    <p>{exchange?.MyBook?.StatusText}</p>
+                    <Button
+                      variant="contained"
+                      onClick={agreementHandler}
+                      size="small"
+                    >
+                      Подтвердить
+                    </Button>
+                  </>
+                  )}
               {exchange?.MyBook?.StatusID === 2 && <p>{exchange?.MyBook?.StatusText}</p>}
-              {exchange?.MyBook?.StatusID === 2 && exchange?.MyBook?.TrackNumber === '' && (
+              {(exchange?.MyBook?.StatusID === 2 && exchange?.MyBook?.TrackNumber === ''
+              && exchange?.OtherBook?.StatusID !== 1)
+              && (
               <form
                 onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}
                 className={style.root}
               >
                 <Input
                   rules={
-{
-  required: {
-    value: true,
-    message: 'Поле обязательно',
-  },
-  maxLength: {
-    value: 5,
-    message: 'Не больше 5-ти символов',
-  },
-  minLength: {
-    value: 1,
-    message: 'Не менее 1-го символов',
-  },
-  pattern: {
-    value: /^[0-9]+$/,
-    message: 'Только цифры',
-  },
-}
+                  {
+                    required: {
+                      value: true,
+                      message: 'Поле обязательно',
+                    },
+                    maxLength: {
+                      value: 5,
+                      message: 'Не больше 5-ти символов',
+                    },
+                    minLength: {
+                      value: 1,
+                      message: 'Не менее 1-го символов',
+                    },
+                    pattern: {
+                      value: /^[0-9]+$/,
+                      message: 'Только цифры',
+                    },
+                  }
 }
                   control={control}
                   label="Номер отправления*"
@@ -292,74 +294,74 @@ const ActiveOffers = () => {
               </form>
               )}
               {exchange?.MyBook?.StatusID === 3 && exchange?.MyBook?.TrackNumber === ''
-&& (
-<form
-  onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}
-  className={style.root}
->
-  <Input
-    rules={
-{
-  required: {
-    value: true,
-    message: 'Поле обязательно',
-  },
-  maxLength: {
-    value: 5,
-    message: 'Не больше 5-ти символов',
-  },
-  minLength: {
-    value: 1,
-    message: 'Не менее 1-ти символов',
-  },
-  pattern: {
-    value: /^[0-9]+$/,
-    message: 'Только цифры',
-  },
+                && (
+                <form
+                  onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}
+                  className={style.root}
+                >
+                  <Input
+                    rules={
+                  {
+                    required: {
+                      value: true,
+                      message: 'Поле обязательно',
+                    },
+                    maxLength: {
+                      value: 5,
+                      message: 'Не больше 5-ти символов',
+                    },
+                    minLength: {
+                      value: 1,
+                      message: 'Не менее 1-ти символов',
+                    },
+                    pattern: {
+                      value: /^[0-9]+$/,
+                      message: 'Только цифры',
+                    },
+                  }
 }
-}
-    control={control}
-    label="Номер отправления*"
-    name="TrackNumber"
-  />
-  <Button
-    className={style.btn}
-    variant="contained"
-    type="submit"
-  >
-    Отправил
-  </Button>
-</form>
-)}
+                    control={control}
+                    label="Номер отправления*"
+                    name="TrackNumber"
+                  />
+                  <Button
+                    className={style.btn}
+                    variant="contained"
+                    type="submit"
+                  >
+                    Отправил
+                  </Button>
+                </form>
+                )}
               {exchange?.MyBook?.StatusID === 3 && exchange?.MyBook?.TrackNumber !== ''
-&& (
-<>
-  <p>{exchange?.MyBook?.StatusText}</p>
-  <p>{exchange?.MyBook?.TrackNumber}</p>
-</>
-)}
+                && (
+                <>
+                  <p>{exchange?.MyBook?.StatusText}</p>
+                  <p>{exchange?.MyBook?.TrackNumber}</p>
+                </>
+                )}
               {exchange?.MyBook?.StatusID === 3 && exchange?.MyBook?.TrackNumber !== ''
-&& exchange?.OtherBook?.StatusID === 3 && exchange?.OtherBook?.TrackNumber !== ''
-&& (
-<Button
-  className={style.btn}
-  variant="contained"
-  onClick={acceptDelivery}
->
-  Получил
-</Button>
-)}
+              && exchange?.OtherBook?.StatusID === 3 && exchange?.OtherBook?.TrackNumber !== ''
+              && (
+                <Button
+                  className={style.btn}
+                  variant="contained"
+                  onClick={acceptDelivery}
+                >
+                  Получил
+                </Button>
+              )}
               {exchange?.MyBook?.StatusID === 3 && exchange?.MyBook?.TrackNumber !== ''
-&& exchange?.OtherBook?.StatusID === 4
-&& (
-<Button
-  className={style.btn}
-  variant="contained"
-  onClick={acceptDelivery}
->
-  Получил
-</Button>
-)}
+              && exchange?.OtherBook?.StatusID === 4
+              && (
+              <Button
+                className={style.btn}
+                variant="contained"
+                onClick={acceptDelivery}
+              >
+                Получил
+              </Button>
+              )}
               {exchange?.MyBook?.StatusID === 4 && <p>{exchange?.MyBook?.StatusText}</p>}
             </Typography>
           </CardContent>
