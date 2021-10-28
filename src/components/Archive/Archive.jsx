@@ -102,7 +102,7 @@ const Archive = () => {
                 </ul>
               </Typography>
               <Typography className={style.reciveUser} align="center" variant="body3" component="div">
-                Книга поулчена
+                Книга получена
               </Typography>
             </CardContent>
           </Card>
@@ -149,7 +149,7 @@ const Archive = () => {
               </Typography>
               <Typography align="center" variant="body3" />
               <Typography className={style.reciveContrUser} align="center" variant="body3" component="div">
-                Книга поулчена
+                Книга получена
               </Typography>
             </CardContent>
           </Card>

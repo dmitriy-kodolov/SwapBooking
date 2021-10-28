@@ -305,12 +305,12 @@ const ActiveOffers = () => {
     message: 'Поле обязательно',
   },
   maxLength: {
-    value: 5,
-    message: 'Не больше 5-ти символов',
+    value: 14,
+    message: 'Не больше 14-ти символов',
   },
   minLength: {
-    value: 1,
-    message: 'Не менее 1-ти символов',
+    value: 14,
+    message: 'Не менее 14-ти символов',
   },
   pattern: {
     value: /^[0-9]+$/,

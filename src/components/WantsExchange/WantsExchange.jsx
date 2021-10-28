@@ -122,7 +122,7 @@ const WantsExchange = () => {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button onClick={() => deleteCard(item.id_offer_list)} size="small">Убрать из желаемого</Button>
+            <Button onClick={() => deleteCard(item.id_offer_list)} size="small">Удалить</Button>
             {selectedBook ? (
               <Button
                 variant="contained"

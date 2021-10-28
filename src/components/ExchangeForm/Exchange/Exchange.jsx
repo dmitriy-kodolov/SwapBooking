@@ -64,7 +64,7 @@ const Exchange = ({
                       message: 'Не больше 20-ти символов',
                     },
                     pattern: {
-                      value: /^[а-яА-Яa-zA-z]+$/,
+                      value: /^[а-яА-Яa-zA-z ]+$/,
                       message: 'Только буквы',
                     },
                   }
@@ -86,7 +86,7 @@ const Exchange = ({
                       message: 'Не больше 50-ти символов',
                     },
                     pattern: {
-                      value: /^[а-яА-Яa-zA-z]+$/,
+                      value: /^[а-яА-Яa-zA-z ]+$/,
                       message: 'Только буквы',
                     },
                   }
