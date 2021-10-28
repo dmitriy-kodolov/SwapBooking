@@ -267,12 +267,12 @@ const ActiveOffers = () => {
                       message: 'Поле обязательно',
                     },
                     maxLength: {
-                      value: 5,
-                      message: 'Не больше 5-ти символов',
+                      value: 14,
+                      message: 'Не больше 14-ти символов',
                     },
                     minLength: {
-                      value: 1,
-                      message: 'Не менее 1-го символов',
+                      value: 14,
+                      message: 'Не менее 14-ти символов',
                     },
                     pattern: {
                       value: /^[0-9]+$/,
@@ -294,45 +294,45 @@ const ActiveOffers = () => {
               </form>
               )}
               {exchange?.MyBook?.StatusID === 3 && exchange?.MyBook?.TrackNumber === ''
-&& (
-<form
-  onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}
-  className={style.root}
->
-  <Input
-    rules={
-{
-  required: {
-    value: true,
-    message: 'Поле обязательно',
-  },
-  maxLength: {
-    value: 14,
-    message: 'Не больше 14-ти символов',
-  },
-  minLength: {
-    value: 14,
-    message: 'Не менее 14-ти символов',
-  },
-  pattern: {
-    value: /^[0-9]+$/,
-    message: 'Только цифры',
-  },
+            && (
+            <form
+              onSubmit={(event) => { handleSubmit(onSubmitForm)(event); }}
+              className={style.root}
+            >
+              <Input
+                rules={
+                {
+                  required: {
+                    value: true,
+                    message: 'Поле обязательно',
+                  },
+                  maxLength: {
+                    value: 14,
+                    message: 'Не больше 14-ти символов',
+                  },
+                  minLength: {
+                    value: 14,
+                    message: 'Не менее 14-ти символов',
+                  },
+                  pattern: {
+                    value: /^[0-9]+$/,
+                    message: 'Только цифры',
+                  },
+                }
 }
-}
-                    control={control}
-                    label="Номер отправления*"
-                    name="TrackNumber"
-                  />
-                  <Button
-                    className={style.btn}
-                    variant="contained"
-                    type="submit"
-                  >
-                    Отправил
-                  </Button>
-                </form>
-                )}
+                control={control}
+                label="Номер отправления*"
+                name="TrackNumber"
+              />
+              <Button
+                className={style.btn}
+                variant="contained"
+                type="submit"
+              >
+                Отправил
+              </Button>
+            </form>
+            )}
               {exchange?.MyBook?.StatusID === 3 && exchange?.MyBook?.TrackNumber !== ''
                 && (
                 <>

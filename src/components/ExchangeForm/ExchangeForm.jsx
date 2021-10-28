@@ -70,7 +70,7 @@ export default function ExchangeForm() {
     clearErrors,
   } = propsFrom;
   const formValues = propsFrom?.getValues();
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(1);
   const [categorFromRecive, setCategorFromRecive] = useState([]);
   const [categorFromExchange, setCategorFromExchange] = useState([]);
   const categorFromApi = useSelector((state) => state?.category?.categories?.Categories);
