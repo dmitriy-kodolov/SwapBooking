@@ -118,7 +118,7 @@ const WantsExchange = () => {
             <Typography variant="body2">
               Год публикации -
               {' '}
-              {item.year_publishing}
+              {item.date_part}
             </Typography>
           </CardContent>
           <CardActions>

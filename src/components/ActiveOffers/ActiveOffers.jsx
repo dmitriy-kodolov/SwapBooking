@@ -173,9 +173,6 @@ const ActiveOffers = () => {
                 <li>
                   {exchange?.OtherBook?.BookName}
                 </li>
-                <li>
-                  {exchange?.OtherBook?.Note}
-                </li>
               </ul>
             </Typography>
             <br />
@@ -227,9 +224,6 @@ const ActiveOffers = () => {
                 </li>
                 <li>
                   {exchange?.MyBook?.BookName}
-                </li>
-                <li>
-                  {exchange?.MyBook?.Note}
                 </li>
               </ul>
             </Typography>
