@@ -38,6 +38,7 @@ const style = {
 const regExpCyrillic = new RegExp(/^[а-яА-Я]+$/);
 const regExpCyrillicAndLatinic = new RegExp(/^[а-яА-Яa-zA-Z]+$/);
 const regExpNumber = new RegExp(/^[0-9]{0,6}$/);
+const regExpIndex = new RegExp(/^[0-9]{0,6}$/);
 const regExpStreet = new RegExp(/^[а-яА-Я0-9-\s]{0,25}$/);
 const regExpNumberHome = new RegExp(/^[0-9]+[а-яА-Я]?$/);
 const regExpDistrict = new RegExp(/^[а-яА-Я]?[0-9]{0,2}$/);
@@ -353,13 +354,15 @@ export default function Registered({ close, isOpen, toggleModal }) {
                   onChange={(e) => {
                     if (e.target.value.length > 6) {
                       setErrors((prevState) => ({ ...prevState, index: 'Ограничение 6 цифр' }));
-                    } else if (!regExpNumber.test(e.target.value)) {
+                    } else if (!regExpIndex.test(e.target.value)) {
                       setErrors((prevState) => ({ ...prevState, index: 'Только цифры' }));
                     } else {
                       setErrors((prevState) => ({ ...prevState, index: null }));
                     }
 
-                    setIndex(e.target.value);
+                    if (e.target.value.length <= 6) {
+                      setIndex(e.target.value);
+                    }
                   }}
                   helperText={errors?.index}
                 />

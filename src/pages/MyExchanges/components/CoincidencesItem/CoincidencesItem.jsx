@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { setBook } from '../../../../store/slices/exchangesSlice';
 
 export default function CoincidencesItem({
-  name, city, rating, book,
+  name, city, rating, book, author,
 }) {
   const dispatch = useDispatch();
 
@@ -24,8 +24,11 @@ export default function CoincidencesItem({
 
   return (
     <>
-      <Grid item xs={5}>
+      <Grid item xs={2}>
         <Item>{name}</Item>
+      </Grid>
+      <Grid item xs={2}>
+        <Item>{author}</Item>
       </Grid>
       <Grid item xs={2} sx={{ display: 'flex', justifyContent: 'center' }}>
         <Item>{city}</Item>
@@ -34,7 +37,7 @@ export default function CoincidencesItem({
         <Item>{`рейтинг ${rating}`}</Item>
       </Grid>
       <Grid item xs={3} sx={{ display: 'flex', justifyContent: 'end', paddingRight: 2 }}>
-        <Button variant="contained" color="info" onClick={handleCoincidence}>Меняюсь</Button>
+        <Button variant="contained" color="info" sx={{ maxHeight: '40px' }} onClick={handleCoincidence}>Меняюсь</Button>
       </Grid>
     </>
   );
@@ -44,8 +47,10 @@ CoincidencesItem.propTypes = {
   name: PropTypes.string.isRequired,
   city: PropTypes.string.isRequired,
   rating: PropTypes.number.isRequired,
+  author: PropTypes.string.isRequired,
   book: PropTypes.shape({
     OfferID: PropTypes.number.isRequired,
+    author: PropTypes.string.isRequired,
     BookName: PropTypes.string.isRequired,
     OfferUser: PropTypes.shape({
       CityName: PropTypes.string.isRequired,

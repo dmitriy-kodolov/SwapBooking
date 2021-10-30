@@ -88,6 +88,7 @@ export default function CoincidencesList() {
                           rating={book.OfferUser.Rating}
                           key={book.OfferID}
                           book={book}
+                          author={book.Author}
                         />
                       )) || null
                     }
@@ -150,6 +151,7 @@ export default function CoincidencesList() {
                           rating={book.OfferUser.Rating}
                           key={book.OfferID}
                           book={book}
+                          author={book.Author}
                         />
                       )) || null
                     }
