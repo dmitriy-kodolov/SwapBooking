@@ -146,29 +146,6 @@ const Exchange = ({
               setYearOfDataPicker={setYearOfDataPicker}
               yearOfDataPicker={yearOfDataPicker}
             />
-            {/* <Input
-              className={style.test}
-              rules={
-                  {
-                    required: {
-                      value: true,
-                      message: 'Поле обязательно',
-                    },
-                    maxLength: {
-                      value: 4,
-                      message: 'Не больше 4-eх символов',
-                    },
-                    pattern: {
-                      value: /^[0-9]+$/,
-                      message: 'Только цифры',
-                    },
-                    validate: (value) => value <= new Date().getFullYear() || 'Не больше текущего года',
-                  }
-                }
-              control={control}
-              label="Год издания*"
-              name="year_publishing"
-            /> */}
           </div>
         </div>
       </Paper>

@@ -126,6 +126,7 @@ const ActiveOffers = () => {
   if (!masOfIdExchange?.length) {
     return (<p>У вас нет активного обмена</p>);
   }
+  console.log(exchange);
   return (
     <div className={style.root}>
       {((exchange?.OtherBook?.StatusID === 2 && exchange?.MyBook?.StatusID === 1)
@@ -172,6 +173,31 @@ const ActiveOffers = () => {
                 </li>
                 <li>
                   {exchange?.OtherBook?.BookName}
+                </li>
+                <li>
+                  Город:
+                  {' '}
+                  {exchange?.OtherUser?.AddrCity}
+                </li>
+                <li>
+                  Улица:
+                  {' '}
+                  {exchange?.OtherUser?.AddrStreet}
+                </li>
+                <li>
+                  Дом:
+                  {' '}
+                  {exchange?.OtherUser?.AddrHouse}
+                </li>
+                <li>
+                  Строение:
+                  {' '}
+                  {exchange?.OtherUser?.AddrStructure}
+                </li>
+                <li>
+                  Квартира:
+                  {' '}
+                  {exchange?.OtherUser?.AddrAppart}
                 </li>
               </ul>
             </Typography>
@@ -225,6 +251,11 @@ const ActiveOffers = () => {
                 <li>
                   {exchange?.MyBook?.BookName}
                 </li>
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
               </ul>
             </Typography>
             <br />

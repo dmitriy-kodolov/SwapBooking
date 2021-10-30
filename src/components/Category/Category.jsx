@@ -108,7 +108,7 @@ const Category = ({
         <div className={style.error}>
           {isError && <p className={style.required}>Ошибка при загрузки категорий, попробуйте повторить позже</p>}
           {!categories?.length
-                && <p className={style.required}>Выберите хотябы один жанр</p>}
+                && <p className={style.required}>Выберите хотябы одну категорию</p>}
         </div>
         {initialCategories
                 && (
