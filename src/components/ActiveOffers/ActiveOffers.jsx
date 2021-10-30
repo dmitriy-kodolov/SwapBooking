@@ -274,6 +274,7 @@ const ActiveOffers = () => {
                     },
                   }
 }
+                  inputProps={{ maxLength: 14 }}
                   control={control}
                   label="Номер отправления*"
                   name="TrackNumber"
@@ -315,6 +316,7 @@ const ActiveOffers = () => {
                 }
 }
                 control={control}
+                inputProps={{ maxLength: 14 }}
                 label="Номер отправления*"
                 name="TrackNumber"
               />
