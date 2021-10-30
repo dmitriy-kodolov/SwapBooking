@@ -27,7 +27,7 @@ const DataPicker = ({ yearOfDataPicker, setYearOfDataPicker }) => {
           onChange={(newValue) => {
             setYearOfDataPicker(newValue);
           }}
-          renderInput={(params) => <TextField {...params} variant="standard" required helperText="Incorrect entry." />}
+          renderInput={(params) => <TextField {...params} variant="standard" required />}
         />
       </Stack>
     </LocalizationProvider>

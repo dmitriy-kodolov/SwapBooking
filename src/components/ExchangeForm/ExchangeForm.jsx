@@ -119,11 +119,10 @@ export default function ExchangeForm() {
   }, [isDefaultAddr]);
 
   useEffect(() => {
-    setValue('year_publishing', yearOfDataPicker?.getFullYear());
+    setValue('year_publishing', yearOfDataPicker?.getFullYear()?.toString());
   }, [yearOfDataPicker]);
 
   const onSubmitForm = (value) => {
-    console.log(value);
     setStep((prevState) => prevState + 1);
     if (step === 3) {
       restPost(`/api/order/${userId}`, value)
@@ -137,10 +136,7 @@ export default function ExchangeForm() {
         });
     }
   };
-  // if (yearOfDataPicker?.getFullYear() === undefined) {
-  //   console.log(yearOfDataPicker?.getFullYear());
-  //   setError('year_publishing', { type: 'required' });
-  // }
+
   const Next = () => (
     <Button
       className={style.btn}
