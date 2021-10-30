@@ -67,6 +67,7 @@ export default function Registered({ close, isOpen, toggleModal }) {
       user_name: login,
       first_name: name,
       last_name: lastname,
+      second_name: fatherName,
       e_mail: email,
       password_user: password,
       addr_index: index,
