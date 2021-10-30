@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable import/no-unresolved */
 import React, { useState, useEffect } from 'react';
 import Tabs from '@mui/material/Tabs';
@@ -79,7 +80,7 @@ export default function ExchangeForm() {
   const [profileInformation, setProfileInformation] = useState([]);
   const [isDefaultAddr, setIsDefaultAddr] = useState(false);
   const [isPostForm, setIsPostForm] = useState(false);
-
+  const [yearOfDataPicker, setYearOfDataPicker] = useState(null);
   // запрос на получение данных с сервака
   useEffect(() => {
     dispatch(fetchProfileInfo(userId));
@@ -117,7 +118,12 @@ export default function ExchangeForm() {
     setValue('is_default', isDefaultAddr);
   }, [isDefaultAddr]);
 
+  useEffect(() => {
+    setValue('year_publishing', yearOfDataPicker?.getFullYear());
+  }, [yearOfDataPicker]);
+
   const onSubmitForm = (value) => {
+    console.log(value);
     setStep((prevState) => prevState + 1);
     if (step === 3) {
       restPost(`/api/order/${userId}`, value)
@@ -131,6 +137,10 @@ export default function ExchangeForm() {
         });
     }
   };
+  // if (yearOfDataPicker?.getFullYear() === undefined) {
+  //   console.log(yearOfDataPicker?.getFullYear());
+  //   setError('year_publishing', { type: 'required' });
+  // }
   const Next = () => (
     <Button
       className={style.btn}
@@ -185,6 +195,8 @@ export default function ExchangeForm() {
           <div className={style.containerOfExchange}>
             <Exchange
               control={control}
+              yearOfDataPicker={yearOfDataPicker}
+              setYearOfDataPicker={setYearOfDataPicker}
             />
             <div>
               <Category

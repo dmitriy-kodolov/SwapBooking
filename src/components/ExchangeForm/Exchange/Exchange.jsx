@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { Paper } from '@mui/material';
 import Input from '../../Input/Input';
+import DataPicker from './DataPicker';
 
 const useStyle = makeStyles(() => ({
   paper: {
@@ -44,6 +45,9 @@ const useStyle = makeStyles(() => ({
 
 const Exchange = ({
   control,
+  setError,
+  setYearOfDataPicker,
+  yearOfDataPicker,
 }) => {
   const style = useStyle();
   return (
@@ -138,7 +142,11 @@ const Exchange = ({
               label="ISBN"
               name="isbn"
             />
-            <Input
+            <DataPicker
+              setYearOfDataPicker={setYearOfDataPicker}
+              yearOfDataPicker={yearOfDataPicker}
+            />
+            {/* <Input
               className={style.test}
               rules={
                   {
@@ -160,7 +168,7 @@ const Exchange = ({
               control={control}
               label="Год издания*"
               name="year_publishing"
-            />
+            /> */}
           </div>
         </div>
       </Paper>
